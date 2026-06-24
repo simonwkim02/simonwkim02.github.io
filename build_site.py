@@ -1,0 +1,156 @@
+#!/usr/bin/env python3
+"""Generate the thesis results site (index.html) from a per-trial CSV.
+
+CSV header (required), one row per trial:
+  variant,trial,ego,wrist,isometric,closeup,approach,precontact,grasp,pickplace
+    variant      display name; rows are grouped by variant in first-seen order
+    trial        label, e.g. 01
+    ego/wrist/isometric/closeup   video URL or path ("" = none -> shows a dash)
+    approach/precontact/grasp/pickplace   1/0 | y/n | true/false | check
+
+Usage:  python build_site.py results.csv > index.html
+"""
+import csv, html, sys
+from collections import OrderedDict
+
+TITLE = "Pre-Contact Perception for Multifinger Grasping"
+SUBTITLE = ("Integrating Time-of-Flight Proximity Sensing into a "
+            "&pi;<sub>0.5</sub> Vision&ndash;Language&ndash;Action Policy")
+AUTHOR = "Simon Won-Jin Kim (&#44608;&#50896;&#51652;) &middot; KAIST &middot; Master's Thesis Defense"
+
+VIDEO_COLS = [("ego", "Ego cam"), ("wrist", "Wrist cam"),
+              ("isometric", "Isometric (approach)"), ("closeup", "Closeup (grip)")]
+METRIC_COLS = [("approach", "Approach"), ("precontact", "Pre-contact pose"),
+               ("grasp", "Grasp / contact"), ("pickplace", "Pick &amp; place")]
+
+CSS = """
+:root{--blue:#5b9bd5;--blue-d:#3f7cb8;--ink:#1f2937;--muted:#6b7280;--line:#d8dee9;
+--ok:#15803d;--no:#b91c1c;--bg:#f5f7fb;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
+header{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;padding:42px 24px 34px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header h1{margin:0 0 6px;font-size:30px;font-weight:800}header .sub{font-size:15px;opacity:.92}
+header .auth{margin-top:14px;font-size:14px;opacity:.9}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(20,40,80,.05);padding:22px 26px;margin:18px 0}
+.card h2{margin:0 0 14px;font-size:20px;color:var(--blue-d);border-bottom:2px solid var(--line);padding-bottom:8px}
+.row{margin:12px 0}.lbl{font-weight:700}.sub-bullet{margin:6px 0 0 22px}
+ol.contrib{margin:6px 0 0 4px;padding-left:22px}ol.contrib li{margin:8px 0}
+.variant{margin:26px 0}.variant h3{font-size:17px;margin:0 0 8px}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px;background:#eef4fb;color:var(--blue-d);margin-left:8px;vertical-align:middle}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff;border-radius:10px;overflow:hidden}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+th{background:#eef4fb;color:var(--blue-d);font-weight:700}
+td.trial{font-weight:700;background:#fafcff}
+.vid{color:var(--blue-d);text-decoration:none;font-weight:600}.vid:hover{text-decoration:underline}
+.yes{color:var(--ok);font-weight:800}.no{color:var(--no);font-weight:800}
+tr.summary td{background:#f3f7fc;font-weight:700}
+.legend{font-size:13px;color:var(--muted);margin:8px 0 0}
+footer{color:var(--muted);font-size:12.5px;text-align:center;padding:30px 0 50px}
+"""
+
+SUMMARY_HTML = """
+  <section class="card">
+    <h2>Research Summary</h2>
+    <div class="row"><span class="lbl">Objective:</span> integrate the multizone TMF8829 ToF sensor as a complementary input to a &pi;<sub>0.5</sub> VLA model.</div>
+    <div class="row"><span class="lbl">Hypothesis:</span> proximity improves grasping where vision-only VLAs fail &mdash; precision grasps of small / thin objects.</div>
+    <div class="row"><span class="lbl">Metrics:</span> success rate of the VPLA model versus a vision-only baseline.
+      <div class="sub-bullet">&bull; Pick-and-place of small / thin objects (<b>chopstick only</b>), scored as a per-trial funnel: approach &rarr; pre-contact pose &rarr; grasp/contact &rarr; pick-and-place.</div>
+    </div>
+  </section>
+  <section class="card">
+    <h2>Contributions</h2>
+    <ol class="contrib">
+      <li>Integration of multizone ToF sensing into an existing VLA architecture (late fusion at the &pi;<sub>0.5</sub> action expert).</li>
+      <li>An ablation of various VPLA models against a vision-only baseline on the evaluation task.</li>
+    </ol>
+  </section>
+"""
+
+EXPLAIN_HTML = """
+  <section class="card">
+    <h2>Why these models? &mdash; the ablation story</h2>
+    <p>Each model was chosen to answer the question the previous one raised. Read top to bottom:</p>
+    <ol class="contrib">
+      <li><b>Vision-only &pi;<sub>0.5</sub> (VLA baseline)</b> &mdash; <i>Does vision alone suffice?</i> It establishes the failure mode: in the last few centimeters the closing fingers occlude the chopstick and the wrist camera loses depth, so a vision-only policy mis-judges the final approach. &rarr; <b>motivates adding proximity.</b></li>
+      <li><b>VLPA late fusion, no dropout</b> &mdash; <i>Does adding proximity help?</i> The policy <b>over-relies</b> on the high-rate proximity stream: offline it is strongly proximity-conditioned, but in closed loop it jitters in place and never approaches. &rarr; <b>motivates balancing the modalities.</b></li>
+      <li><b>Modality-dropout sweep</b> (proximity-drop p<sub>p</sub> = 0, 0.3, 0.5, and 0.2) &mdash; <i>How hard should we force vision vs. proximity?</i> High p<sub>p</sub> &rarr; proximity ignored; no dropout &rarr; over-relied; <b>p<sub>p</sub> = 0.2</b> is the balanced point (vision drives the approach, proximity conditions the pre-contact grasp). &rarr; <b>identifies the balanced recipe.</b></li>
+      <li><b>Over-training check</b> &mdash; <i>Is the balance stable?</i> Even at p<sub>p</sub> = 0.2, training longer keeps raising proximity reliance during the approach, so the best closed-loop checkpoint is an <i>intermediate</i> one. Dropout balances the modalities <i>probabilistically</i> but cannot <i>structurally</i> keep proximity out of the approach. &rarr; <b>motivates gating.</b></li>
+      <li><b>VLPA-Gated</b> &mdash; <i>Can we structurally confine proximity to where it helps?</i> The proposed fix, and the model evaluated live below.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>What &ldquo;gated&rdquo; means, and how I implemented it</h2>
+    <p><b>The problem it solves:</b> proximity is exactly what we want at <i>pre-contact</i> (it measures the depth the occluded camera can't), but during the far-field <i>approach</i> the signal is mostly empty/saturated and the policy learns to lean on it &mdash; mis-positioning the hand before the grasp.</p>
+    <p><b>Gating:</b> the proximity input is held at a neutral &ldquo;nothing-near&rdquo; value during the approach and switched to the <b>real</b> signal only once a surface is close (pre-contact). So <b>vision owns the approach; proximity sharpens only the final grasp</b> &mdash; the division of labor the dropout model could only approximate.</p>
+    <p><b>Implementation:</b> the gate lives in the <i>data pipeline</i> and is keyed on proximity closeness (it opens once a sufficient fraction of valid sensor zones report a surface within a near-distance band, ~100&nbsp;mm). Because it runs in the data pipeline, the model is <b>trained on gated proximity</b> &mdash; it never sees real proximity during the approach &mdash; so the same gate at inference is in-distribution, not a perturbation. No modality dropout is used (gating is the lever). The gate is a fixed near-distance threshold; a soft ramp at the hand-off and a learned contact-imminence gate are future work.</p>
+  </section>
+
+  <section class="card">
+    <h2>How the validation tests work</h2>
+    <p><b>Two layers.</b> The offline diagnostics ask <i>&ldquo;does the policy actually use proximity?&rdquo;</i>; the live trials ask <i>&ldquo;does it actually grasp?&rdquo;</i></p>
+    <p class="lbl">Offline proximity-conditioning diagnostics (computed on held-out frames):</p>
+    <ul>
+      <li><b>Controlled-noise ratio &rho;</b> (the headline test): feed the policy the same frame twice &mdash; once with <i>real</i> proximity, once with <i>neutral</i> proximity &mdash; while holding the decoder's internal randomness fixed, and measure how much the predicted action changes, divided by the action's own noise floor. <b>&rho; &asymp; 1</b> = proximity ignored; <b>&rho; &gg; 1</b> = over-relied; <b>&rho; moderately &gt; 1</b> = balanced.</li>
+      <li><b>Phase-split:</b> separate frames into <i>approach</i> vs. <i>pre-contact</i> and confirm the intended division of labor &mdash; vision dominates the approach, proximity matters at pre-contact.</li>
+      <li><b>Approach-robustness (swing):</b> during the approach, perturb proximity to an extreme &ldquo;very close&rdquo; value; if the action barely moves (swing &lt; 1) the approach is robust to a bad proximity reading.</li>
+    </ul>
+    <p class="lbl">Live per-trial funnel (the table below):</p>
+    <p>Each of the 20 trials per variant is scored on four stages, where <b>each stage requires the previous</b>:
+      <b>approach</b> (reach the chopstick) &rarr; <b>pre-contact pose</b> (hand positioned &amp; oriented to grasp) &rarr; <b>grasp/contact</b> (close on it) &rarr; <b>pick-and-place</b> (lift &amp; place). Because it's nested, the table shows exactly <i>where</i> each model breaks and <i>which modality</i> owns that stage &mdash; e.g. the vision-only baseline reaching the object but failing the pre-contact pose, which is the stage proximity is meant to fix.</p>
+  </section>
+"""
+
+def truthy(v):
+    return str(v).strip().lower() in ("1", "y", "yes", "true", "t", "check", "pass", "✓")
+
+def mark(v):
+    return '<span class="yes">&#10003;</span>' if truthy(v) else '<span class="no">&#10007;</span>'
+
+def vid(url, label):
+    url = (url or "").strip()
+    return (f'<a class="vid" href="{html.escape(url)}">&#9654; {label}</a>'
+            if url else '<span style="color:#c2c9d6">&mdash;</span>')
+
+def main():
+    if len(sys.argv) < 2:
+        sys.stderr.write("usage: build_site.py results.csv > index.html\n"); sys.exit(1)
+    groups = OrderedDict()
+    with open(sys.argv[1], newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            groups.setdefault(r["variant"].strip(), []).append(r)
+
+    out = [f'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">',
+           '<meta name="viewport" content="width=device-width, initial-scale=1">',
+           f'<title>{html.escape(TITLE)}</title><style>{CSS}</style></head><body>',
+           f'<header><div class="wrap"><h1>{TITLE}</h1>',
+           f'<div class="sub">{SUBTITLE}</div><div class="auth">{AUTHOR}</div></div></header>',
+           '<div class="wrap">', SUMMARY_HTML, EXPLAIN_HTML,
+           '<section><div class="card"><h2>Live Evaluation &mdash; Per-Trial Results</h2>',
+           '<p>20 live trials per model variant on the chopstick pick-and-place task. Each trial is scored on a four-stage funnel (each stage requires the previous), with ego + wrist policy-camera recordings plus two external views.</p>',
+           '<p class="legend"><span class="yes">&#10003;</span> pass &nbsp; <span class="no">&#10007;</span> fail</p>']
+
+    head_cells = "".join(f"<th>{lab}</th>" for _, lab in VIDEO_COLS) + \
+                 "".join(f"<th>{lab}</th>" for _, lab in METRIC_COLS)
+    for variant, rows in groups.items():
+        out.append(f'<div class="variant"><h3>{html.escape(variant)}</h3><table>')
+        out.append(f"<tr><th>Trial</th>{head_cells}</tr>")
+        tally = {k: 0 for k, _ in METRIC_COLS}
+        for r in rows:
+            cells = "".join(f"<td>{vid(r.get(k), lab.split()[0])}</td>" for k, lab in VIDEO_COLS)
+            for k, _ in METRIC_COLS:
+                if truthy(r.get(k)):
+                    tally[k] += 1
+            cells += "".join(f"<td>{mark(r.get(k))}</td>" for k, _ in METRIC_COLS)
+            out.append(f'<tr><td class="trial">{html.escape(str(r.get("trial","")))}</td>{cells}</tr>')
+        n = len(rows)
+        summ = "".join(f'<td>{tally[k]}/{n}</td>' for k, _ in METRIC_COLS)
+        out.append(f'<tr class="summary"><td>Rate</td><td colspan="{len(VIDEO_COLS)}">n = {n}</td>{summ}</tr>')
+        out.append("</table></div>")
+
+    out += ['</div></section></div>',
+            '<footer>Generated by build_site.py &middot; KAIST</footer></body></html>']
+    sys.stdout.write("\n".join(out))
+
+if __name__ == "__main__":
+    main()

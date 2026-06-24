@@ -1,0 +1,10 @@
+variant,trial,ego,wrist,isometric,closeup,approach,precontact,grasp,pickplace
+Vision-only π0.5 (VLA baseline),01,#,#,#,#,1,0,0,0
+Vision-only π0.5 (VLA baseline),02,#,#,#,#,1,0,0,0
+Vision-only π0.5 (VLA baseline),03,#,#,#,#,1,1,0,0
+VLPA-Gated + real proximity,01,#,#,#,#,1,1,1,1
+VLPA-Gated + real proximity,02,#,#,#,#,1,1,1,0
+VLPA-Gated + real proximity,03,#,#,#,#,1,1,1,1
+VLPA-Gated + neutral proximity,01,#,#,#,#,1,0,0,0
+VLPA-Gated + neutral proximity,02,#,#,#,#,1,1,0,0
+VLPA-Gated + neutral proximity,03,#,#,#,#,1,0,0,0
