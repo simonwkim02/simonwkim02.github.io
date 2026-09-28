@@ -1,106 +1,458 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pre-Contact Perception for Multifinger Grasping</title><style>
-:root{--blue:#5b9bd5;--blue-d:#3f7cb8;--ink:#1f2937;--muted:#6b7280;--line:#d8dee9;
---ok:#15803d;--no:#b91c1c;--bg:#f5f7fb;--card:#fff}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
-header{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;padding:42px 24px 34px}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-header h1{margin:0 0 6px;font-size:30px;font-weight:800}header .sub{font-size:15px;opacity:.92}
-header .auth{margin-top:14px;font-size:14px;opacity:.9}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(20,40,80,.05);padding:22px 26px;margin:18px 0}
-.card h2{margin:0 0 14px;font-size:20px;color:var(--blue-d);border-bottom:2px solid var(--line);padding-bottom:8px}
-.row{margin:12px 0}.lbl{font-weight:700}.sub-bullet{margin:6px 0 0 22px}
-ol.contrib{margin:6px 0 0 4px;padding-left:22px}ol.contrib li{margin:8px 0}
-.variant{margin:26px 0}.variant h3{font-size:17px;margin:0 0 8px}
-.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px;background:#eef4fb;color:var(--blue-d);margin-left:8px;vertical-align:middle}
-table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff;border-radius:10px;overflow:hidden}
-th,td{border:1px solid var(--line);padding:8px 10px;text-align:center}
-th{background:#eef4fb;color:var(--blue-d);font-weight:700}
-td.trial{font-weight:700;background:#fafcff}
-.vid{color:var(--blue-d);text-decoration:none;font-weight:600}.vid:hover{text-decoration:underline}
-.yes{color:var(--ok);font-weight:800}.no{color:var(--no);font-weight:800}
-tr.summary td{background:#f3f7fc;font-weight:700}
-.legend{font-size:13px;color:var(--muted);margin:8px 0 0}
-footer{color:var(--muted);font-size:12.5px;text-align:center;padding:30px 0 50px}
-</style></head><body>
-<header><div class="wrap"><h1>Pre-Contact Perception for Multifinger Grasping</h1>
-<div class="sub">Integrating Time-of-Flight Proximity Sensing into a &pi;<sub>0.5</sub> Vision&ndash;Language&ndash;Action Policy</div><div class="auth">Simon Won-Jin Kim (&#44608;&#50896;&#51652;) &middot; KAIST &middot; Master's Thesis Defense</div></div></header>
-<div class="wrap">
+<title>VPLA research log</title>
+<meta name="description" content="Research log for a master's thesis on vision–proximity–language–action models: what the vision-only π0.5 policy can do on a five-finger hand, why it fails, and what this week's evaluation decides.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-  <section class="card">
-    <h2>Research Summary</h2>
-    <div class="row"><span class="lbl">Objective:</span> integrate the multizone TMF8829 ToF sensor as a complementary input to a &pi;<sub>0.5</sub> VLA model.</div>
-    <div class="row"><span class="lbl">Hypothesis:</span> proximity improves grasping where vision-only VLAs fail &mdash; precision grasps of small / thin objects.</div>
-    <div class="row"><span class="lbl">Metrics:</span> success rate of the VPLA model versus a vision-only baseline.
-      <div class="sub-bullet">&bull; Pick-and-place of small / thin objects (<b>chopstick only</b>), scored as a per-trial funnel: approach &rarr; pre-contact pose &rarr; grasp/contact &rarr; pick-and-place.</div>
+<header class="topbar">
+  <div class="page">
+    <a href="./">Simon Won-Jin Kim</a>
+    <nav aria-label="Sections">
+      <a href="#summary">In short</a>
+      <a href="#s2">Results</a>
+      <a href="#s3">Why</a>
+      <a href="#s4">Next</a>
+      <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Switch between light and dark theme">Dark</button>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="masthead">
+    <h1>Teaching a five-finger robot hand to pick up a chopstick</h1>
+    <p class="dek">Progress report on my VPLA thesis: what the vision-only policy can do, why it fails, and the new dataset that targets the cause.</p>
+    <p class="meta">Simon Won-Jin Kim, KAIST Mechanical Engineering. Updated 28 September 2026.</p>
+  </div>
+
+  <section class="summary" id="summary" aria-labelledby="summary-h">
+    <h2 id="summary-h">In short</h2>
+    <ol>
+      <li><strong>At socket P1 the vision-only policy does the whole task</strong> (grasp, lift, place) in 4 of 4 trials. Overall it succeeds in 7 of 36, and 0 of 8 at the two sockets it never saw in training.</li>
+      <li><strong>Main cause of the failures: the policy memorised arm positions.</strong> It picks a rough target from its first camera look, then follows the arm movements it memorised. The cameras barely steer the rest of the reach or the grasp.</li>
+      <li><strong>So it closes the hand in the wrong place.</strong> At P1 it happens to close slightly short and succeeds; at the other sockets it closes too deep, with the chopstick against the palm. After a missed grasp it carries on with an empty hand, which looks like a drift.</li>
+      <li><strong>Fix: a new dataset (29 September) that forces the policy to use the cameras</strong>: fewer clean demos, more demos that start wrong and correct themselves.</li>
+    </ol>
+    <figure class="hero">
+      <div class="clip"><video data-auto muted loop playsinline controls preload="metadata" poster="media/hr_P1_BL.jpg" src="media/hr_P1_BL.mp4" aria-label="Successful trial at socket P1, side and top views"></video></div>
+      <figcaption><b>P1, 16 September:</b> the vision-only policy grasps the chopstick and places it in the white container. Side and top views, real time.</figcaption>
+    </figure>
+  </section>
+
+  <!-- 1 -->
+  <section class="step" id="s1" aria-labelledby="s1-h">
+    <div><div class="marker" aria-hidden="true">1</div></div>
+    <div class="step-body">
+      <div class="step-head"><h2 id="s1-h">The task</h2></div>
+      <p>My thesis asks whether proximity sensors in the hand (a <strong>VPLA</strong>) help a vision-language-action model (<strong>VLA</strong>) grasp thin objects. To test that, we first need a solid vision-only baseline.</p>
+      <p>The FR10 arm with a five-finger DG-5F hand picks a chopstick from one of nine sockets and places it in the white container. We fine-tuned π0.5 on 154 teleoperated demonstrations. <strong>P5 and P9 were never shown in training</strong>, to test whether the policy generalises.</p>
+      <div class="setup-figs">
+        <figure>
+          <div class="plate"><svg viewBox="0 0 520 400" role="img" aria-labelledby="board-title board-desc" style="width:100%;height:auto;display:block">
+            <title id="board-title">Top view of the socket board</title>
+            <desc id="board-desc">Nine sockets in a 3 by 3 grid. Near row, closest to the robot: P1, P2, P3 from the robot's left to right. Middle row: P4, P5, P6. Far row: P7, P8, P9. P5 and P9 are held out of training. The white container sits to the left of the grid.</desc>
+            <g font-family="Archivo, sans-serif" font-size="15" fill="currentColor" style="color:var(--ink)">
+              <rect x="150" y="30" width="240" height="240" rx="10" fill="none" stroke="var(--rule-strong)" stroke-width="2"/>
+              <!-- sockets: x = 190/270/350 (left->right), y = 70/150/230 (far->near) -->
+              <g font-weight="700" text-anchor="middle">
+                <circle cx="190" cy="70" r="24" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><text x="190" y="75">P7</text>
+                <circle cx="270" cy="70" r="24" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><text x="270" y="75">P8</text>
+                <circle cx="350" cy="70" r="24" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="5 4"/><text x="350" y="75" fill="var(--ink-2)">P9</text>
+                <circle cx="190" cy="150" r="24" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><text x="190" y="155">P4</text>
+                <circle cx="270" cy="150" r="24" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="5 4"/><text x="270" y="155" fill="var(--ink-2)">P5</text>
+                <circle cx="350" cy="150" r="24" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><text x="350" y="155">P6</text>
+                <circle cx="190" cy="230" r="24" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><text x="190" y="235">P1</text>
+                <circle cx="270" cy="230" r="24" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><text x="270" y="235">P2</text>
+                <circle cx="350" cy="230" r="24" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><text x="350" y="235">P3</text>
+              </g>
+              <!-- pitch -->
+              <g stroke="var(--ink-3)" stroke-width="1.5" fill="none">
+                <path d="M190 290 V300 M270 290 V300 M190 295 H270"/>
+              </g>
+              <text x="230" y="318" text-anchor="middle" font-size="13" fill="var(--ink-3)">80 mm</text>
+              <!-- container -->
+              <rect x="14" y="30" width="122" height="240" rx="10" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+              <rect x="26" y="42" width="98" height="216" rx="6" fill="none" stroke="var(--rule-strong)" stroke-width="1.5"/>
+              <text x="75" y="146" text-anchor="middle" font-size="15">white</text>
+              <text x="75" y="165" text-anchor="middle" font-size="15">container</text>
+              <!-- robot base -->
+              <path d="M205 372 H335" stroke="var(--ink)" stroke-width="3"/>
+              <text x="270" y="392" text-anchor="middle" font-size="13" fill="var(--ink-2)">robot base (the arm reaches up the page)</text>
+              <!-- legend -->
+              <g font-size="13" fill="var(--ink-2)">
+                <circle cx="420" cy="110" r="9" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><text x="436" y="115">trained</text>
+                <circle cx="420" cy="140" r="9" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 3"/><text x="436" y="145">held out</text>
+              </g>
+            </g>
+          </svg></div>
+          <figcaption><b>The socket board, from above.</b> Dashed: held out of training.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><svg viewBox="0 0 220 210" role="img" aria-labelledby="corner-t corner-d" style="width:100%;max-width:220px;height:auto;display:block">
+            <title id="corner-t">The four chopstick corners in a socket</title>
+            <desc id="corner-d">Seen from above with the robot base below: back-left (BL) and back-right (BR) corners at the top, front-left (FL) and front-right (FR) at the bottom, nearest the robot. The chopstick leans into one corner.</desc>
+            <g font-family="Archivo, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">
+              <rect x="50" y="30" width="120" height="120" rx="12" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+              <text x="36" y="26" text-anchor="middle">BL</text><text x="184" y="26" text-anchor="middle">BR</text>
+              <text x="36" y="166" text-anchor="middle">FL</text><text x="184" y="166" text-anchor="middle">FR</text>
+              <circle cx="66" cy="46" r="7" fill="var(--ink)"/><circle cx="154" cy="46" r="7" fill="none" stroke="var(--ink-3)" stroke-width="2"/>
+              <circle cx="66" cy="134" r="7" fill="none" stroke="var(--ink-3)" stroke-width="2"/><circle cx="154" cy="134" r="7" fill="none" stroke="var(--ink-3)" stroke-width="2"/>
+              <path d="M110 90 L70 50" stroke="var(--ink-2)" stroke-width="5" stroke-linecap="round"/>
+              <text x="110" y="198" text-anchor="middle" font-weight="500" font-size="13" fill="var(--ink-2)">robot base ↓</text>
+            </g>
+          </svg></div>
+          <figcaption><b>Four chopstick positions per socket.</b> The chopstick leans into one corner of its socket: front-left (FL), front-right (FR), back-left (BL) or back-right (BR), where front is the side nearest the robot. This moves its tip by about 13&nbsp;mm.</figcaption>
+        </figure>
+      </div>
+      <figure>
+        <div class="corners">
+          <figure><img src="media/corner_FL.jpg" alt="Chopstick leaning into the near-left corner of its socket" loading="lazy" width="600" height="800"><span>FL</span></figure>
+          <figure><img src="media/corner_FR.jpg" alt="Chopstick leaning into the near-right corner of its socket" loading="lazy" width="600" height="800"><span>FR</span></figure>
+          <figure><img src="media/corner_BL.jpg" alt="Chopstick leaning into the far-left corner of its socket" loading="lazy" width="600" height="800"><span>BL</span></figure>
+          <figure><img src="media/corner_BR.jpg" alt="Chopstick leaning into the far-right corner of its socket" loading="lazy" width="600" height="800"><span>BR</span></figure>
+          <figure class="corner-clip"><video data-auto muted loop playsinline preload="none" poster="media/corners.jpg" src="media/corners.mp4" aria-label="The chopstick being moved into each of the four corners"></video></figure>
+        </div>
+        <figcaption><b>The four corner positions on the real socket</b>, and a clip of the chopstick being moved between them.</figcaption>
+      </figure>
+      <p><strong>The corners are part of the task.</strong> In the demonstrations we rotated through all four corners at every socket, about 5–6 demos each. In the evaluation, every socket is tested once per corner: 9 sockets × 4 corners = 36 trials.</p>
     </div>
   </section>
-  <section class="card">
-    <h2>Contributions</h2>
-    <ol class="contrib">
-      <li>Integration of multizone ToF sensing into an existing VLA architecture (late fusion at the &pi;<sub>0.5</sub> action expert).</li>
-      <li>An ablation of various VPLA models against a vision-only baseline on the evaluation task.</li>
-    </ol>
+
+  <!-- 2 -->
+  <section class="step" id="s2" aria-labelledby="s2-h">
+    <div><div class="marker" aria-hidden="true">2</div></div>
+    <div class="step-body">
+      <div class="step-head"><p class="when">16 September 2026</p><h2 id="s2-h">P1: 4 of 4. Overall: 7 of 36.</h2></div>
+      <p>At P1 the policy completed the whole task in every trial, from vision alone. Elsewhere it mostly failed, and at the held-out P5 and P9 it never got into position.</p>
+      <figure>
+        <div class="board-wrap">
+          <div>
+            <div class="board" role="img" aria-label="Stage reached in each of the 36 trials, laid out like the board. Only P1 is all 4s; P5 all 1s; P9 all 0s.">
+          <div class="cell-socket"><div class="name">P7 <small>2/4</small></div><div class="stage-grid"><span class="stage s4" title="P7 near-left: stage 4, success">4</span><span class="stage s2" title="P7 near-right: stage 2, reached it, grasp failed">2</span><span class="stage s4" title="P7 far-left: stage 4, success">4</span><span class="stage s2" title="P7 far-right: stage 2, reached it, grasp failed">2</span></div></div>
+          <div class="cell-socket"><div class="name">P8 <small>0/4</small></div><div class="stage-grid"><span class="stage s2" title="P8 near-left: stage 2, reached it, grasp failed">2</span><span class="stage s2" title="P8 near-right: stage 2, reached it, grasp failed">2</span><span class="stage s2" title="P8 far-left: stage 2, reached it, grasp failed">2</span><span class="stage s1" title="P8 far-right: stage 1, approach failed">1</span></div></div>
+          <div class="cell-socket heldout"><div class="name">P9 <small>held out, 0/4</small></div><div class="stage-grid"><span class="stage s0" title="P9 near-left: stage 0, collision or no approach">0</span><span class="stage s0" title="P9 near-right: stage 0, collision or no approach">0</span><span class="stage s0" title="P9 far-left: stage 0, collision or no approach">0</span><span class="stage s0" title="P9 far-right: stage 0, collision or no approach">0</span></div></div>
+          <div class="cell-socket"><div class="name">P4 <small>0/4</small></div><div class="stage-grid"><span class="stage s2" title="P4 near-left: stage 2, reached it, grasp failed">2</span><span class="stage s2" title="P4 near-right: stage 2, reached it, grasp failed">2</span><span class="stage s3" title="P4 far-left: stage 3, lifted, not placed">3</span><span class="stage s2" title="P4 far-right: stage 2, reached it, grasp failed">2</span></div></div>
+          <div class="cell-socket heldout"><div class="name">P5 <small>held out, 0/4</small></div><div class="stage-grid"><span class="stage s1" title="P5 near-left: stage 1, approach failed">1</span><span class="stage s1" title="P5 near-right: stage 1, approach failed">1</span><span class="stage s1" title="P5 far-left: stage 1, approach failed">1</span><span class="stage s1" title="P5 far-right: stage 1, approach failed">1</span></div></div>
+          <div class="cell-socket"><div class="name">P6 <small>1/4</small></div><div class="stage-grid"><span class="stage s4" title="P6 near-left: stage 4, success">4</span><span class="stage s2" title="P6 near-right: stage 2, reached it, grasp failed">2</span><span class="stage s3" title="P6 far-left: stage 3, lifted, not placed">3</span><span class="stage s2" title="P6 far-right: stage 2, reached it, grasp failed">2</span></div></div>
+          <div class="cell-socket"><div class="name">P1 <small>4/4</small></div><div class="stage-grid"><span class="stage s4" title="P1 near-left: stage 4, success">4</span><span class="stage s4" title="P1 near-right: stage 4, success">4</span><span class="stage s4" title="P1 far-left: stage 4, success">4</span><span class="stage s4" title="P1 far-right: stage 4, success">4</span></div></div>
+          <div class="cell-socket"><div class="name">P2 <small>0/4</small></div><div class="stage-grid"><span class="stage s2" title="P2 near-left: stage 2, reached it, grasp failed">2</span><span class="stage s2" title="P2 near-right: stage 2, reached it, grasp failed">2</span><span class="stage s2" title="P2 far-left: stage 2, reached it, grasp failed">2</span><span class="stage s2" title="P2 far-right: stage 2, reached it, grasp failed">2</span></div></div>
+          <div class="cell-socket"><div class="name">P3 <small>0/4</small></div><div class="stage-grid"><span class="stage s1" title="P3 near-left: stage 1, approach failed">1</span><span class="stage s2" title="P3 near-right: stage 2, reached it, grasp failed">2</span><span class="stage s2" title="P3 far-left: stage 2, reached it, grasp failed">2</span><span class="stage s1" title="P3 far-right: stage 1, approach failed">1</span></div></div>
+            </div>
+            <p class="board-axis">Each socket shows its four corners in place: far corners on top, near corners below.</p>
+          </div>
+          <div class="legend" aria-label="Stage legend">
+            <div><span class="stage s4">4</span><span>Success: placed in the container</span></div>
+            <div><span class="stage s3">3</span><span>Lifted, not placed</span></div>
+            <div><span class="stage s2">2</span><span>Reached it, grasp failed</span></div>
+            <div><span class="stage s1">1</span><span>Approach failed</span></div>
+            <div><span class="stage s0">0</span><span>Collision or no approach</span></div>
+          </div>
+        </div>
+        <figcaption><b>How far each of the 36 trials got.</b> Dashed outline: held out of training.</figcaption>
+      </figure>
+      <div class="viewer" data-viewer aria-label="Successful trials at P1">
+        <div class="clip"><video data-auto muted loop playsinline controls preload="none" poster="media/hr_P1_BR.jpg" src="media/hr_P1_BR.mp4" aria-label="Successful trials at P1"></video></div>
+        <div class="view-label"><span>Side view</span><span>Top view</span></div>
+        <div class="tabs" role="group" aria-label="Choose a trial">
+          <button type="button" aria-pressed="true" data-src="media/hr_P1_BR.mp4" data-poster="media/hr_P1_BR.jpg" data-policy="media/b36_P1_BR.mp4" data-ok="1" data-stage="Success" data-text="P1, far-right corner, 16 September. Grasp, lift and place, in real time.">P1 far-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P1_FL.mp4" data-poster="media/hr_P1_FL.jpg" data-policy="media/b36_P1_FL.mp4" data-ok="1" data-stage="Success" data-text="P1, near-left corner, 16 September. Grasp, lift and place, in real time.">P1 near-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P1_FR.mp4" data-poster="media/hr_P1_FR.jpg" data-policy="media/b36_P1_FR.mp4" data-ok="1" data-stage="Success" data-text="P1, near-right corner, 16 September. Grasp, lift and place, in real time.">P1 near-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P1_BL.mp4" data-poster="media/hr_P1_BL.jpg" data-policy="media/b36_P1_BL.mp4" data-ok="1" data-stage="Success" data-text="P1, far-left corner, 16 September. Grasp, lift and place, in real time.">P1 far-left</button>
+        </div>
+        <p class="viewer-caption"><span class="outcome ok">Success</span> <span class="cap-text">P1, far-right corner, 16 September. Grasp, lift and place, in real time.</span></p>
+        <p class="policy-link"><a href="media/b36_P1_BR.mp4">What the policy saw in this trial (224-pixel ego and wrist cameras)</a></p>
+      </div>
+      <details>
+        <summary>Details</summary>
+        <ul>
+          <li>7/36 = 19% (95% interval 9–35%). With one trial per socket corner, only P1 clearly stands out.</li>
+          <li>Evaluations before 15 September are void: the evaluation code fed the policy a lagging arm position. Fixing it took the same checkpoint from 0 of 6 to 4 of 5.</li>
+        </ul>
+      </details>
+    </div>
   </section>
 
-
-  <section class="card">
-    <h2>Why these models? &mdash; the ablation story</h2>
-    <p>Each model was chosen to answer the question the previous one raised. Read top to bottom:</p>
-    <ol class="contrib">
-      <li><b>Vision-only &pi;<sub>0.5</sub> (VLA baseline)</b> &mdash; <i>Does vision alone suffice?</i> It establishes the failure mode: in the last few centimeters the closing fingers occlude the chopstick and the wrist camera loses depth, so a vision-only policy mis-judges the final approach. &rarr; <b>motivates adding proximity.</b></li>
-      <li><b>VLPA late fusion, no dropout</b> &mdash; <i>Does adding proximity help?</i> The policy <b>over-relies</b> on the high-rate proximity stream: offline it is strongly proximity-conditioned, but in closed loop it jitters in place and never approaches. &rarr; <b>motivates balancing the modalities.</b></li>
-      <li><b>Modality-dropout sweep</b> (proximity-drop p<sub>p</sub> = 0, 0.3, 0.5, and 0.2) &mdash; <i>How hard should we force vision vs. proximity?</i> High p<sub>p</sub> &rarr; proximity ignored; no dropout &rarr; over-relied; <b>p<sub>p</sub> = 0.2</b> is the balanced point (vision drives the approach, proximity conditions the pre-contact grasp). &rarr; <b>identifies the balanced recipe.</b></li>
-      <li><b>Over-training check</b> &mdash; <i>Is the balance stable?</i> Even at p<sub>p</sub> = 0.2, training longer keeps raising proximity reliance during the approach, so the best closed-loop checkpoint is an <i>intermediate</i> one. Dropout balances the modalities <i>probabilistically</i> but cannot <i>structurally</i> keep proximity out of the approach. &rarr; <b>motivates gating.</b></li>
-      <li><b>VLPA-Gated</b> &mdash; <i>Can we structurally confine proximity to where it helps?</i> The proposed fix, and the model evaluated live below.</li>
-    </ol>
+  <!-- 3 -->
+  <section class="step" id="s3" aria-labelledby="s3-h">
+    <div><div class="marker" aria-hidden="true">3</div></div>
+    <div class="step-body">
+      <div class="step-head"><p class="when">28 September 2026</p><h2 id="s3-h">Why it fails: the policy memorised arm positions</h2></div>
+      <p>The policy sees two cameras and the arm's own joint angles. In our demonstrations, each socket was always reached along nearly the same arm path. So once the arm starts moving, its joint angles alone say where it is going, and the policy learned to follow them instead of looking.</p>
+      <ul class="points">
+        <li><strong>Wrong socket.</strong> At P3 the hand went to P6; at the held-out P5 and P9 it never got into position. The first camera look sets only a rough target, and the memorised path does the rest.</li>
+        <li><strong>Wrong depth at closing.</strong> The hand reaches the right socket but closes too deep, so the chopstick ends up against the palm and slips out.</li>
+        <li><strong>No recovery.</strong> After a missed grasp the hand carries on to the container empty. This is the drift we saw: the same motion as in a success, just with nothing in the hand.</li>
+      </ul>
+      <div class="viewer failures" data-viewer aria-label="Every failed trial, grouped by failure mode">
+        <div class="clip"><video data-auto muted loop playsinline controls preload="none" poster="media/hr_P3_BL.jpg" src="media/hr_P3_BL.mp4" aria-label="Failed trial, side and top views"></video></div>
+        <div class="view-label"><span>Side view</span><span>Top view</span></div>
+        <p class="mode-label">Wrong socket <span>(3)</span></p>
+        <div class="tabs" role="group" aria-label="Wrong socket">
+          <button type="button" aria-pressed="true" data-src="media/hr_P3_BL.mp4" data-poster="media/hr_P3_BL.jpg" data-policy="media/b36_P3_BL.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P3, far-left corner. The hand overshoots 52 mm past P3 toward P6 and closes there.">P3 far-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P3_FL.mp4" data-poster="media/hr_P3_FL.jpg" data-policy="media/b36_P3_FL.mp4" data-ok="0" data-stage="Stage 1: approach failed" data-text="P3, near-left corner. The hand overshoots 56 mm past P3 toward P6 and closes there.">P3 near-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P3_FR.mp4" data-poster="media/hr_P3_FR.jpg" data-policy="media/b36_P3_FR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P3, near-right corner. The hand overshoots 69 mm past P3 toward P6 and closes there.">P3 near-right</button>
+        </div>
+        <p class="mode-label">Lateral misalignment: too deep, chopstick against the palm <span>(10)</span></p>
+        <div class="tabs" role="group" aria-label="Lateral misalignment: too deep, chopstick against the palm">
+          <button type="button" aria-pressed="false" data-src="media/hr_P2_BR.mp4" data-poster="media/hr_P2_BR.jpg" data-policy="media/b36_P2_BR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P2, far-right corner. Closes 9 mm too deep: the chopstick ends up against the palm and the grasp misses.">P2 far-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P4_BR.mp4" data-poster="media/hr_P4_BR.jpg" data-policy="media/b36_P4_BR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P4, far-right corner. Closes 8 mm too deep: the chopstick ends up against the palm and the grasp misses.">P4 far-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P4_FR.mp4" data-poster="media/hr_P4_FR.jpg" data-policy="media/b36_P4_FR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P4, near-right corner. Closes 11 mm too deep: the chopstick ends up against the palm and the grasp misses.">P4 near-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P6_BL.mp4" data-poster="media/hr_P6_BL.jpg" data-policy="media/b36_P6_BL.mp4" data-ok="0" data-stage="Stage 3, but the wrist video shows an empty hand" data-text="P6, far-left corner. Closes 8 mm too deep: the chopstick ends up against the palm and the grasp misses.">P6 far-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P6_BR.mp4" data-poster="media/hr_P6_BR.jpg" data-policy="media/b36_P6_BR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P6, far-right corner. Closes 14 mm too deep: the chopstick ends up against the palm and the grasp misses.">P6 far-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P6_FR.mp4" data-poster="media/hr_P6_FR.jpg" data-policy="media/b36_P6_FR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P6, near-right corner. Closes 14 mm too deep: the chopstick ends up against the palm and the grasp misses.">P6 near-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P7_BR.mp4" data-poster="media/hr_P7_BR.jpg" data-policy="media/b36_P7_BR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P7, far-right corner. Closes 14 mm too deep: the chopstick ends up against the palm and the grasp misses.">P7 far-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P7_FR.mp4" data-poster="media/hr_P7_FR.jpg" data-policy="media/b36_P7_FR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P7, near-right corner. Closes 15 mm too deep: the chopstick ends up against the palm and the grasp misses.">P7 near-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P8_BR.mp4" data-poster="media/hr_P8_BR.jpg" data-policy="media/b36_P8_BR.mp4" data-ok="0" data-stage="Stage 1: approach failed" data-text="P8, far-right corner. Closes 16 mm too deep: the chopstick ends up against the palm and the grasp misses.">P8 far-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P8_FL.mp4" data-poster="media/hr_P8_FL.jpg" data-policy="media/b36_P8_FL.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P8, near-left corner. Closes 8 mm too deep: the chopstick ends up against the palm and the grasp misses.">P8 near-left</button>
+        </div>
+        <p class="mode-label">Right depth, grasp still missed <span>(6)</span></p>
+        <div class="tabs" role="group" aria-label="Right depth, grasp still missed">
+          <button type="button" aria-pressed="false" data-src="media/hr_P2_BL.mp4" data-poster="media/hr_P2_BL.jpg" data-policy="media/b36_P2_BL.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P2, far-left corner. Closes at about the demonstrations' depth (+3 mm) but still misses.">P2 far-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P2_FL.mp4" data-poster="media/hr_P2_FL.jpg" data-policy="media/b36_P2_FL.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P2, near-left corner. Closes at about the demonstrations' depth (+4 mm) but still misses.">P2 near-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P4_BL.mp4" data-poster="media/hr_P4_BL.jpg" data-policy="media/b36_P4_BL.mp4" data-ok="0" data-stage="Stage 3: lifted, not placed" data-text="P4, far-left corner. Closes at about the demonstrations' depth (-5 mm) but still misses.">P4 far-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P4_FL.mp4" data-poster="media/hr_P4_FL.jpg" data-policy="media/b36_P4_FL.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P4, near-left corner. Closes at about the demonstrations' depth (-6 mm) but still misses.">P4 near-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P8_BL.mp4" data-poster="media/hr_P8_BL.jpg" data-policy="media/b36_P8_BL.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P8, far-left corner. Closes at about the demonstrations' depth (+6 mm) but still misses.">P8 far-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P8_FR.mp4" data-poster="media/hr_P8_FR.jpg" data-policy="media/b36_P8_FR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P8, near-right corner. Closes at about the demonstrations' depth (+4 mm) but still misses.">P8 near-right</button>
+        </div>
+        <p class="mode-label">Closed too early <span>(1)</span></p>
+        <div class="tabs" role="group" aria-label="Closed too early">
+          <button type="button" aria-pressed="false" data-src="media/hr_P2_FR.mp4" data-poster="media/hr_P2_FR.jpg" data-policy="media/b36_P2_FR.mp4" data-ok="0" data-stage="Stage 2: reached it, grasp failed" data-text="P2, near-right corner. The hand closes early, 182 mm short of the socket, on nothing.">P2 near-right</button>
+        </div>
+        <p class="mode-label">Never closed <span>(1)</span></p>
+        <div class="tabs" role="group" aria-label="Never closed">
+          <button type="button" aria-pressed="false" data-src="media/hr_P3_BR.mp4" data-poster="media/hr_P3_BR.jpg" data-policy="media/b36_P3_BR.mp4" data-ok="0" data-stage="Stage 1: approach failed" data-text="P3, far-right corner. The hand never closes at the socket.">P3 far-right</button>
+        </div>
+        <p class="mode-label">Held out: never in position <span>(4)</span></p>
+        <div class="tabs" role="group" aria-label="Held out: never in position">
+          <button type="button" aria-pressed="false" data-src="media/hr_P5_BL.mp4" data-poster="media/hr_P5_BL.jpg" data-policy="media/b36_P5_BL.mp4" data-ok="0" data-stage="Stage 1: approach failed" data-text="P5, far-left corner. Held out: never gets into position.">P5 far-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P5_BR.mp4" data-poster="media/hr_P5_BR.jpg" data-policy="media/b36_P5_BR.mp4" data-ok="0" data-stage="Stage 1: approach failed" data-text="P5, far-right corner. Held out: never gets into position.">P5 far-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P5_FL.mp4" data-poster="media/hr_P5_FL.jpg" data-policy="media/b36_P5_FL.mp4" data-ok="0" data-stage="Stage 1: approach failed" data-text="P5, near-left corner. Held out: never gets into position.">P5 near-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P5_FR.mp4" data-poster="media/hr_P5_FR.jpg" data-policy="media/b36_P5_FR.mp4" data-ok="0" data-stage="Stage 1: approach failed" data-text="P5, near-right corner. Held out: never gets into position.">P5 near-right</button>
+        </div>
+        <p class="mode-label">Held out: collision or no approach <span>(4)</span></p>
+        <div class="tabs" role="group" aria-label="Held out: collision or no approach">
+          <button type="button" aria-pressed="false" data-src="media/hr_P9_BL.mp4" data-poster="media/hr_P9_BL.jpg" data-policy="media/b36_P9_BL.mp4" data-ok="0" data-stage="Stage 0: collision or no approach" data-text="P9, far-left corner. Held out: stage 0, a collision or no approach.">P9 far-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P9_BR.mp4" data-poster="media/hr_P9_BR.jpg" data-policy="media/b36_P9_BR.mp4" data-ok="0" data-stage="Stage 0: collision or no approach" data-text="P9, far-right corner. Held out: stage 0, a collision or no approach.">P9 far-right</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P9_FL.mp4" data-poster="media/hr_P9_FL.jpg" data-policy="media/b36_P9_FL.mp4" data-ok="0" data-stage="Stage 0: collision or no approach" data-text="P9, near-left corner. Held out: the back of the fingers hits the chopstick on the way in, and the trial is stopped.">P9 near-left</button>
+          <button type="button" aria-pressed="false" data-src="media/hr_P9_FR.mp4" data-poster="media/hr_P9_FR.jpg" data-policy="media/b36_P9_FR.mp4" data-ok="0" data-stage="Stage 0: collision or no approach" data-text="P9, near-right corner. Held out: stage 0, a collision or no approach.">P9 near-right</button>
+        </div>
+        <p class="viewer-caption"><span class="outcome fail">Stage 2: reached it, grasp failed</span> <span class="cap-text">P3, far-left corner. The hand overshoots 52 mm past P3 toward P6 and closes there.</span></p>
+        <p class="policy-link"><a href="media/b36_P3_BL.mp4">What the policy saw in this trial (224-pixel ego and wrist cameras)</a></p>
+      </div>
+      <p class="fineprint">All 29 failed trials from 16 September, grouped by what went wrong. Modes come from the logged arm poses (depth = hand position along the palm's facing direction when the fingers closed, relative to the demonstrations); the stage is the operator's score. There is no separate "drift" group: the sliding after a missed grasp is the policy's normal lift-and-carry motion with an empty hand (step 3).</p>
+      <h3>Where the hand closes</h3>
+      <p>From the logged arm poses we measured where the hand was when the fingers closed, along the direction the palm faces, compared with the demonstrations at the same socket. <strong>At P1 the policy closes about 8&nbsp;mm short of the demonstrations, and all 4 grasps held.</strong> At the other trained sockets it closes at their depth or deeper (21 of 24 trials). The 7 successes closed at a median of −5&nbsp;mm; the 21 failures at +8&nbsp;mm.</p>
+      <figure class="plate">
+<svg class="depth-chart" viewBox="0 0 640 342" role="img" aria-labelledby="dc-t dc-d">
+<title id="dc-t">Where the hand closes, relative to the demonstrations</title>
+<desc id="dc-d">For each trained socket, the grey band is the middle half of the demonstrations and each mark is one policy trial. Positive = hand further toward the chopstick, so the chopstick sits closer to the palm.</desc>
+<line class="grid" x1="107.3" x2="107.3" y1="26" y2="290"/>
+<text class="tick" x="107.3" y="306" text-anchor="middle">-20</text>
+<line class="grid" x1="209.8" x2="209.8" y1="26" y2="290"/>
+<text class="tick" x="209.8" y="306" text-anchor="middle">-10</text>
+<line class="zero" x1="312.4" x2="312.4" y1="26" y2="290"/>
+<text class="tick" x="312.4" y="306" text-anchor="middle">0</text>
+<line class="grid" x1="414.9" x2="414.9" y1="26" y2="290"/>
+<text class="tick" x="414.9" y="306" text-anchor="middle">+10</text>
+<line class="grid" x1="517.5" x2="517.5" y1="26" y2="290"/>
+<text class="tick" x="517.5" y="306" text-anchor="middle">+20</text>
+<line class="grid" x1="620.0" x2="620.0" y1="26" y2="290"/>
+<text class="tick" x="620.0" y="306" text-anchor="middle">+30</text>
+<text class="axis" x="56.0" y="336">← chopstick nearer the fingertips</text>
+<text class="axis" x="620.0" y="336" text-anchor="end">chopstick nearer the palm →</text>
+<text class="sock" x="44" y="50" text-anchor="end">P1</text>
+<rect class="band" x="272.3" y="37" width="110.6" height="18" rx="4"><title>P1: middle half of 22 demonstrations, -4 to +7 mm</title></rect>
+<circle class="ok" cx="56.0" cy="42.5" r="5"><title>P1 near-left (16 Sep): -40 mm, success</title></circle>
+<text class="clip" x="64.0" y="46.5">‹ -40</text>
+<circle class="ok" cx="227.0" cy="49.5" r="5"><title>P1 far-right (16 Sep): -8 mm, success</title></circle>
+<circle class="ok" cx="256.9" cy="42.5" r="5"><title>P1 far-left (16 Sep): -5 mm, success</title></circle>
+<circle class="ok" cx="260.7" cy="49.5" r="5"><title>P1 near-right (16 Sep): -5 mm, success</title></circle>
+<text class="sock" x="44" y="94" text-anchor="end">P2</text>
+<rect class="band" x="234.8" y="81" width="144.2" height="18" rx="4"><title>P2: middle half of 22 demonstrations, -8 to +6 mm</title></rect>
+<path class="fail" d="M319.2,82.5L327.2,90.5M319.2,90.5L327.2,82.5"><title>P2 near-right (17 Sep): +1 mm, failed</title></path>
+<path class="fail" d="M343.3,89.5L351.3,97.5M343.3,97.5L351.3,89.5"><title>P2 far-left (16 Sep): +3 mm, failed</title></path>
+<path class="fail" d="M343.6,82.5L351.6,90.5M343.6,90.5L351.6,82.5"><title>P2 far-left (17 Sep): +3 mm, failed</title></path>
+<path class="fail" d="M348.9,89.5L356.9,97.5M348.9,97.5L356.9,89.5"><title>P2 near-left (16 Sep): +4 mm, failed</title></path>
+<path class="fail" d="M393.4,82.5L401.4,90.5M393.4,90.5L401.4,82.5"><title>P2 near-left (17 Sep): +8 mm, failed</title></path>
+<path class="fail" d="M401.7,89.5L409.7,97.5M401.7,97.5L409.7,89.5"><title>P2 far-right (16 Sep): +9 mm, failed</title></path>
+<path class="fail" d="M549.5,82.5L557.5,90.5M549.5,90.5L557.5,82.5"><title>P2 far-right (17 Sep): +24 mm, failed</title></path>
+<path class="fail" d="M616.0,89.5L624.0,97.5M616.0,97.5L624.0,89.5"><title>P2 near-right (16 Sep): +71 mm, failed</title></path>
+<text class="clip" x="612.0" y="97.5" text-anchor="end">+71 ›</text>
+<text class="sock" x="44" y="138" text-anchor="end">P4</text>
+<rect class="band" x="273.1" y="125" width="82.6" height="18" rx="4"><title>P4: middle half of 22 demonstrations, -4 to +4 mm</title></rect>
+<path class="fail" d="M250.4,126.5L258.4,134.5M250.4,134.5L258.4,126.5"><title>P4 near-left (16 Sep): -6 mm, failed</title></path>
+<path class="fail" d="M258.2,133.5L266.2,141.5M258.2,141.5L266.2,133.5"><title>P4 far-left (16 Sep): -5 mm, failed</title></path>
+<path class="fail" d="M389.6,126.5L397.6,134.5M389.6,134.5L397.6,126.5"><title>P4 far-right (16 Sep): +8 mm, failed</title></path>
+<path class="fail" d="M423.8,133.5L431.8,141.5M423.8,141.5L431.8,133.5"><title>P4 near-right (16 Sep): +11 mm, failed</title></path>
+<text class="sock" x="44" y="182" text-anchor="end">P6</text>
+<rect class="band" x="274.4" y="169" width="72.1" height="18" rx="4"><title>P6: middle half of 22 demonstrations, -4 to +3 mm</title></rect>
+<circle class="ok" cx="325.4" cy="174.5" r="5"><title>P6 near-left (16 Sep): +1 mm, success</title></circle>
+<path class="fail" d="M388.6,177.5L396.6,185.5M388.6,185.5L396.6,177.5"><title>P6 far-left (16 Sep): +8 mm, failed</title></path>
+<path class="fail" d="M448.8,170.5L456.8,178.5M448.8,178.5L456.8,170.5"><title>P6 far-right (16 Sep): +14 mm, failed</title></path>
+<path class="fail" d="M451.9,177.5L459.9,185.5M451.9,185.5L459.9,177.5"><title>P6 near-right (16 Sep): +14 mm, failed</title></path>
+<text class="sock" x="44" y="226" text-anchor="end">P7</text>
+<rect class="band" x="263.8" y="213" width="97.7" height="18" rx="4"><title>P7: middle half of 22 demonstrations, -5 to +5 mm</title></rect>
+<circle class="ok" cx="268.0" cy="218.5" r="5"><title>P7 near-left (16 Sep): -4 mm, success</title></circle>
+<circle class="ok" cx="364.4" cy="225.5" r="5"><title>P7 far-left (16 Sep): +5 mm, success</title></circle>
+<path class="fail" d="M450.9,214.5L458.9,222.5M450.9,222.5L458.9,214.5"><title>P7 far-right (16 Sep): +14 mm, failed</title></path>
+<path class="fail" d="M463.8,221.5L471.8,229.5M463.8,229.5L471.8,221.5"><title>P7 near-right (16 Sep): +15 mm, failed</title></path>
+<text class="sock" x="44" y="270" text-anchor="end">P8</text>
+<rect class="band" x="274.7" y="257" width="77.8" height="18" rx="4"><title>P8: middle half of 22 demonstrations, -4 to +4 mm</title></rect>
+<path class="fail" d="M352.5,258.5L360.5,266.5M352.5,266.5L360.5,258.5"><title>P8 near-right (16 Sep): +4 mm, failed</title></path>
+<path class="fail" d="M371.1,265.5L379.1,273.5M371.1,273.5L379.1,265.5"><title>P8 far-left (16 Sep): +6 mm, failed</title></path>
+<path class="fail" d="M385.5,258.5L393.5,266.5M385.5,266.5L393.5,258.5"><title>P8 near-left (16 Sep): +8 mm, failed</title></path>
+<path class="fail" d="M470.3,265.5L478.3,273.5M470.3,273.5L478.3,265.5"><title>P8 far-right (16 Sep): +16 mm, failed</title></path>
+<circle class="ok" cx="62" cy="12" r="5"/><text class="leg" x="72" y="16">success</text>
+<path class="fail" d="M132,8L140,16M132,16L140,8"/><text class="leg" x="146" y="16">failed</text>
+<rect class="band" x="202" y="5" width="20" height="14" rx="3"/><text class="leg" x="228" y="16">demos (middle half; 0 = their median)</text>
+</svg>
+        <figcaption><b>Where the hand closes, relative to the demonstrations.</b> Each mark is one trial; the grey band is the middle half of the 22 demonstrations at that socket, and 0 is their median. Right = the chopstick ends nearer the palm. P3 is left out (it closed at the wrong socket); P5 and P9 never closed. With 4 trials per socket (8 at P2), only P1, P6 and P8 differ clearly from their demonstrations.</figcaption>
+      </figure>
+      <h3>How we know it is memory, not the cameras</h3>
+      <p>We replayed recorded trials through the policy offline and changed only the camera images:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Test</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Freeze both cameras for the last 4&nbsp;cm before closing</td><td>Closing position moves by at most 1.5&nbsp;mm (the errors are 6–12&nbsp;mm)</td></tr>
+            <tr><td>Show a successful trial's images instead</td><td>Moves 1–4&nbsp;mm, never toward the successful trial's position</td></tr>
+            <tr><td>Freeze both cameras from the start of the reach</td><td>P3 still heads for P6; the drift after closing is 83% unchanged</td></tr>
+            <tr><td>Same test on checkpoints from 10k to 45k training steps</td><td>No change, so training for less time would not help</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>What about the camera angle?</strong> The old ego camera looked along the row P1→P2→P3, so neighbouring sockets looked alike. That made the first look weaker, but it is a smaller factor: even with the view changed, a policy that follows memorised arm paths would make the same mistakes. We re-aimed the camera anyway.</p>
+      <details>
+        <summary>Details and limits</summary>
+        <ul>
+          <li>Depth is measured horizontally along the palm's facing direction (checked on the top-view video), at the moment the commanded finger closure reaches 80%. Moving the assumed grasp point on the hand by ±50&nbsp;mm changes each socket's number by at most about 3&nbsp;mm.</li>
+          <li>The success/failure split was not planned in advance (p&nbsp;=&nbsp;0.002, 7 vs 21 trials, 4 of the 7 successes at P1): treat it as a lead.</li>
+          <li>The replays are open-loop: the recorded arm state is fed back at every step, so small image effects cannot build up as they would on the robot.</li>
+          <li>The first camera look does steer the target: swapping ego images between sockets moves the starting aim about half a socket forward/back and a fifth sideways. The wrist camera contributes almost nothing.</li>
+          <li>The policy cannot feel a failed grasp: no touch or force signal is recorded.</li>
+        </ul>
+      </details>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>What &ldquo;gated&rdquo; means, and how I implemented it</h2>
-    <p><b>The problem it solves:</b> proximity is exactly what we want at <i>pre-contact</i> (it measures the depth the occluded camera can't), but during the far-field <i>approach</i> the signal is mostly empty/saturated and the policy learns to lean on it &mdash; mis-positioning the hand before the grasp.</p>
-    <p><b>Gating:</b> the proximity input is held at a neutral &ldquo;nothing-near&rdquo; value during the approach and switched to the <b>real</b> signal only once a surface is close (pre-contact). So <b>vision owns the approach; proximity sharpens only the final grasp</b> &mdash; the division of labor the dropout model could only approximate.</p>
-    <p><b>Implementation:</b> the gate lives in the <i>data pipeline</i> and is keyed on proximity closeness (it opens once a sufficient fraction of valid sensor zones report a surface within a near-distance band, ~100&nbsp;mm). Because it runs in the data pipeline, the model is <b>trained on gated proximity</b> &mdash; it never sees real proximity during the approach &mdash; so the same gate at inference is in-distribution, not a perturbation. No modality dropout is used (gating is the lever). The gate is a fixed near-distance threshold; a soft ramp at the hand-off and a learned contact-imminence gate are future work.</p>
+  <!-- 4 -->
+  <section class="step" id="s4" aria-labelledby="s4-h">
+    <div><div class="marker" aria-hidden="true">4</div></div>
+    <div class="step-body">
+      <div class="step-head"><p class="when">29 September 2026</p><h2 id="s4-h">Next: a dataset that forces the policy to look</h2></div>
+      <p>If every demonstration reaches a socket along the same path, the arm position gives the answer away. The new dataset breaks that: the same arm position must lead to different moves, depending on what the cameras show. Every episode still ends in a successful pick and place.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Demo type</th><th>Per socket</th><th>What it teaches</th></tr></thead>
+          <tbody>
+            <tr><td>Clean</td><td>12</td><td>The task, with the chopstick placed at varied spots inside the socket</td></tr>
+            <tr><td>Lateral correction</td><td>8</td><td>Start too close to or too far from the palm (15–35&nbsp;mm), correct before closing</td></tr>
+            <tr><td>Regrasp</td><td>8</td><td>Close on nothing, re-open, correct, grasp properly</td></tr>
+            <tr><td>Redirect</td><td>4</td><td>Start toward a neighbouring socket, then turn to the right one</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="points">
+        <li><strong>224 demos</strong>: 32 at each of the 7 trained sockets, in shuffled rounds so that time of day can't give the socket away. P5 and P9 stay out of training.</li>
+        <li><strong>Also changed:</strong> the ego camera now looks diagonally from above, the arm starts higher, and a green table makes the chopstick easier to see.</li>
+        <li><strong>Then:</strong> train, and test on all 36 socket–corner slots, including checkpoints from partway through training.</li>
+      </ul>
+      <figure>
+        <div class="photos">
+          <figure><img src="media/setup_old_sideview.jpg" alt="Old setup: white table, the ego camera on a post looking at the board from the side" loading="lazy"><figcaption><b>Before:</b> side-view ego camera, white table.</figcaption></figure>
+          <figure><img src="media/setup_new_iso.jpg" alt="New setup: green table, the ego camera looking at the board diagonally from above" loading="lazy"><figcaption><b>After:</b> diagonal ego camera, green table.</figcaption></figure>
+        </div>
+      </figure>
+      <p><strong>Why it matters for the thesis:</strong> if the vision-only policy then succeeds everywhere, proximity sensing isn't needed for this task and the VPLA needs a harder one. If it still misses at the final grasp, proximity sensing has a clear job here.</p>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>How the validation tests work</h2>
-    <p><b>Two layers.</b> The offline diagnostics ask <i>&ldquo;does the policy actually use proximity?&rdquo;</i>; the live trials ask <i>&ldquo;does it actually grasp?&rdquo;</i></p>
-    <p class="lbl">Offline proximity-conditioning diagnostics (computed on held-out frames):</p>
-    <ul>
-      <li><b>Controlled-noise ratio &rho;</b> (the headline test): feed the policy the same frame twice &mdash; once with <i>real</i> proximity, once with <i>neutral</i> proximity &mdash; while holding the decoder's internal randomness fixed, and measure how much the predicted action changes, divided by the action's own noise floor. <b>&rho; &asymp; 1</b> = proximity ignored; <b>&rho; &gg; 1</b> = over-relied; <b>&rho; moderately &gt; 1</b> = balanced.</li>
-      <li><b>Phase-split:</b> separate frames into <i>approach</i> vs. <i>pre-contact</i> and confirm the intended division of labor &mdash; vision dominates the approach, proximity matters at pre-contact.</li>
-      <li><b>Approach-robustness (swing):</b> during the approach, perturb proximity to an extreme &ldquo;very close&rdquo; value; if the action barely moves (swing &lt; 1) the approach is robust to a bad proximity reading.</li>
-    </ul>
-    <p class="lbl">Live per-trial funnel (the table below):</p>
-    <p>Each of the 20 trials per variant is scored on four stages, where <b>each stage requires the previous</b>:
-      <b>approach</b> (reach the chopstick) &rarr; <b>pre-contact pose</b> (hand positioned &amp; oriented to grasp) &rarr; <b>grasp/contact</b> (close on it) &rarr; <b>pick-and-place</b> (lift &amp; place). Because it's nested, the table shows exactly <i>where</i> each model breaks and <i>which modality</i> owns that stage &mdash; e.g. the vision-only baseline reaching the object but failing the pre-contact pose, which is the stage proximity is meant to fix.</p>
+  <section class="appendix" aria-label="Timeline and glossary">
+    <details>
+      <summary>Timeline</summary>
+      <ol class="timeline">
+        <li><time>Aug</time><span>Arm upgraded from FR5 to FR10; teleop, recording and evaluation rebuilt.</span></li>
+        <li><time>9–13 Sep</time><span>a100 dataset recorded (215 demos, 154 for training); π0.5 fine-tuned.</span></li>
+        <li><time>15 Sep</time><span>Evaluation bug (lagging arm position) found and fixed: 0/6 → 4/5.</span></li>
+        <li><time>16–17 Sep</time><span>36-trial baseline: 7 successes, P1 4/4, P5 and P9 0/8. Re-run of P2, P3, P5, P9: 0/16.</span></li>
+        <li><time>22–24 Sep</time><span>Camera re-aimed, green table, new start pose.</span></li>
+        <li><time>28 Sep</time><span>Offline tests: the failures come from memorised arm positions. New dataset designed.</span></li>
+        <li><time>29 Sep</time><span>New dataset recorded; training starts.</span></li>
+      </ol>
+    </details>
+    <details>
+      <summary>Glossary</summary>
+      <dl class="glossary">
+        <dt>VLA / VPLA</dt><dd>Vision-language-action model (here π0.5); VPLA adds proximity sensors on the palm and fingertips.</dd>
+        <dt>Ego / wrist camera</dt><dd>The fixed camera that sees the scene, and the camera that moves with the hand.</dd>
+        <dt>Socket, corner</dt><dd>Nine chopstick positions P1–P9; in each, the chopstick leans into one of four corners.</dd>
+        <dt>Held out</dt><dd>Never seen in training: P5 and P9.</dd>
+        <dt>Stage</dt><dd>How far a trial got: 0 (collision) to 4 (placed in the container).</dd>
+      </dl>
+    </details>
   </section>
 
-<section><div class="card"><h2>Live Evaluation &mdash; Per-Trial Results</h2>
-<p>20 live trials per model variant on the chopstick pick-and-place task. Each trial is scored on a four-stage funnel (each stage requires the previous), with ego + wrist policy-camera recordings plus two external views.</p>
-<p class="legend"><span class="yes">&#10003;</span> pass &nbsp; <span class="no">&#10007;</span> fail</p>
-<div class="variant"><h3>Vision-only π0.5 (VLA baseline)</h3><table>
-<tr><th>Trial</th><th>Ego cam</th><th>Wrist cam</th><th>Isometric (approach)</th><th>Closeup (grip)</th><th>Approach</th><th>Pre-contact pose</th><th>Grasp / contact</th><th>Pick &amp; place</th></tr>
-<tr><td class="trial">01</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td></tr>
-<tr><td class="trial">02</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td></tr>
-<tr><td class="trial">03</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td></tr>
-<tr class="summary"><td>Rate</td><td colspan="4">n = 3</td><td>3/3</td><td>1/3</td><td>0/3</td><td>0/3</td></tr>
-</table></div>
-<div class="variant"><h3>VLPA-Gated + real proximity</h3><table>
-<tr><th>Trial</th><th>Ego cam</th><th>Wrist cam</th><th>Isometric (approach)</th><th>Closeup (grip)</th><th>Approach</th><th>Pre-contact pose</th><th>Grasp / contact</th><th>Pick &amp; place</th></tr>
-<tr><td class="trial">01</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td></tr>
-<tr><td class="trial">02</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td><td><span class="no">&#10007;</span></td></tr>
-<tr><td class="trial">03</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td></tr>
-<tr class="summary"><td>Rate</td><td colspan="4">n = 3</td><td>3/3</td><td>3/3</td><td>3/3</td><td>2/3</td></tr>
-</table></div>
-<div class="variant"><h3>VLPA-Gated + neutral proximity</h3><table>
-<tr><th>Trial</th><th>Ego cam</th><th>Wrist cam</th><th>Isometric (approach)</th><th>Closeup (grip)</th><th>Approach</th><th>Pre-contact pose</th><th>Grasp / contact</th><th>Pick &amp; place</th></tr>
-<tr><td class="trial">01</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td></tr>
-<tr><td class="trial">02</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td></tr>
-<tr><td class="trial">03</td><td><a class="vid" href="#">&#9654; Ego</a></td><td><a class="vid" href="#">&#9654; Wrist</a></td><td><a class="vid" href="#">&#9654; Isometric</a></td><td><a class="vid" href="#">&#9654; Closeup</a></td><td><span class="yes">&#10003;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td><td><span class="no">&#10007;</span></td></tr>
-<tr class="summary"><td>Rate</td><td colspan="4">n = 3</td><td>3/3</td><td>1/3</td><td>0/3</td><td>0/3</td></tr>
-</table></div>
-</div></section></div>
-</body></html>
+  <footer>Code: <a href="https://github.com/simonwkim02/vpla-stack">github.com/simonwkim02/vpla-stack</a>. Robot: Fairino FR10 with a Tesollo DG-5F hand. Policy: π0.5 (openpi).</footer>
+</main>
+
+<script>
+  // Theme toggle (remembered per viewer; the page works without storage).
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('theme-toggle');
+    function current() {
+      return root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function label() { btn.textContent = current() === 'dark' ? 'Light' : 'Dark'; }
+    try { var saved = localStorage.getItem('theme'); if (saved) root.dataset.theme = saved; } catch (e) {}
+    label();
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      label();
+    });
+  })();
+
+  // Play clips only while they are on screen; never autoplay for reduced motion.
+  (function () {
+    var vids = document.querySelectorAll('video[data-auto]');
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) {
+      vids.forEach(function (v) { v.controls = true; });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () { v.controls = true; }); }
+        else v.pause();
+      });
+    }, { threshold: 0.35 });
+    vids.forEach(function (v) { io.observe(v); });
+  })();
+</script>
+<script>
+  // Trial viewers: one player per section; buttons switch the trial.
+  document.querySelectorAll('[data-viewer]').forEach(function (vw) {
+    var v = vw.querySelector('video'), out = vw.querySelector('.outcome'), txt = vw.querySelector('.cap-text'), pol = vw.querySelector('.policy-link a');
+    vw.querySelectorAll('.tabs button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        vw.querySelectorAll('.tabs button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        v.poster = b.dataset.poster; v.src = b.dataset.src;
+        out.className = 'outcome ' + (b.dataset.ok === '1' ? 'ok' : 'fail'); out.textContent = b.dataset.stage;
+        txt.textContent = b.dataset.text; pol.href = b.dataset.policy;
+        var p = v.play(); if (p && p.catch) p.catch(function () {});
+      });
+    });
+  });
+</script>
+</body>
+</html>
