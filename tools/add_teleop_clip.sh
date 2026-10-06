@@ -3,17 +3,18 @@
 #
 #   tools/add_teleop_clip.sh <slot> <input.mp4> [start_s] [end_s]
 #
-#   slot: lateral_too_far | lateral_too_close | regrasp_too_far | regrasp_too_deep
+#   slot: lateral_too_far | lateral_too_close | regrasp_too_far | regrasp_too_deep  (front view, cam0),
+#         or the same name + _top (top view, cam1)
 #   start_s / end_s (optional): trim the input to this window, in seconds.
 #
 # Writes media/teleop_<slot>.mp4 (H.264, at most 720p, no audio, about 3 MB at most) and a poster
 # media/teleop_<slot>.jpg. The page shows the clip automatically once the file is on the site.
-# A label "TELEOP DEMONSTRATION - a human controls the robot (training data)" is burned into the
+# A label "TELEOP DEMONSTRATION - a human controls the robot" is burned into the
 # top-left corner when python3 with PIL is available.
 # Environment: FFMPEG=/path/to/ffmpeg overrides the encoder. Runs at nice 19 on at most 4 threads.
 set -euo pipefail
 
-SLOTS="lateral_too_far lateral_too_close regrasp_too_far regrasp_too_deep"
+SLOTS="lateral_too_far lateral_too_close regrasp_too_far regrasp_too_deep lateral_too_far_top lateral_too_close_top regrasp_too_far_top regrasp_too_deep_top"
 usage() { sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
 [ $# -ge 2 ] || usage
 slot="$1"; in="$2"; ss="${3:-}"; to="${4:-}"
@@ -65,7 +66,7 @@ def font(bold):
         except OSError:
             pass
     return ImageFont.load_default()
-l1, l2 = "TELEOP DEMONSTRATION", "a human controls the robot (training data)"
+l1, l2 = "TELEOP DEMONSTRATION", "a human controls the robot"
 f1, f2 = font(True), font(False)
 d = ImageDraw.Draw(Image.new("RGBA", (10, 10)))
 w = max(d.textlength(l1, font=f1), d.textlength(l2, font=f2))

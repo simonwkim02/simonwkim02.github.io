@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VPLA progress, 7 October</title>
-<meta name="description" content="Progress report for 7 October 2026: 28 robot trials of the round-4 vision-only policy A, how its grasps fail, what the hand's ToF sensors saw, and the VPLA test that comes next.">
+<meta name="description" content="Progress report for 7 October 2026: the corrective teleop demonstrations, 28 robot trials of the round-4 vision-only policy A, how its grasps fail, what the hand's ToF sensors saw, and the VPLA trials that come next.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&display=swap" rel="stylesheet">
@@ -15,7 +15,6 @@
   .masthead .meta a { color: var(--link); }
   .step { padding-top: 52px; }
   .step-body { min-width: 0; }
-  table.results { min-width: 600px; }
   .step-head { margin-bottom: 16px; }
   .step-head h2 { font-size: 30px; }
   .step-body > .points { margin-top: 0; }
@@ -31,23 +30,21 @@
   .hl figure, .teleop-grid figure, .gallery figure { margin: 0; }
   .hl video, .teleop-grid video, .gallery video { width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; background: #000; border-radius: 6px; }
   .hl .badge, .teleop-grid .badge { margin-bottom: 8px; }
-  .hl h3, .teleop-grid h3 { font-size: 17px; margin: 10px 0 2px; font-stretch: 94%; }
+  .hl h3, .teleop-grid h4 { font-size: 17px; margin: 10px 0 2px; font-stretch: 94%; }
+  .teleop-grid h4 { margin: 0 0 8px; }
   .hl figcaption, .teleop-grid figcaption { margin-top: 4px; }
-  .hl q { quotes: "\201C" "\201D"; color: var(--ink); font-style: italic; }
 
   .key { font-family: var(--sans); font-weight: 700; font-size: 12.5px; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
   .key.k4 { background: var(--stage-4); color: var(--stage-4-ink); } .key.k3 { background: var(--stage-3); color: var(--stage-3-ink); }
   .key.k2 { background: var(--stage-2); color: var(--stage-2-ink); } .key.k1 { background: var(--stage-1); color: var(--stage-1-ink); }
   .key.k0 { background: var(--stage-0); color: var(--stage-0-ink); }
 
-  table.results td, table.results th { white-space: nowrap; }
-  table.results td.m { white-space: normal; min-width: 15ch; }
-  table.results { table-layout: fixed; }
-  table.results th:first-child { width: 34%; }
+  /* results table: one value column, fits a phone without sideways scrolling */
+  table.results { width: 100%; min-width: 0; max-width: 640px; }
+  table.results td.r { white-space: nowrap; width: 1%; }
+  table.results td.r small { color: var(--ink-3); }
   table.results tr.total td { font-weight: 650; }
-  table.results th.all, table.results td.all { border-left: 2px solid var(--rule-strong); }
-  .table-hint { display: none; font-family: var(--sans); font-size: 13px; color: var(--ink-3); margin: -14px 0 18px; }
-  @media (max-width: 640px) { .table-hint { display: block; } }
+  @media (max-width: 640px) { table.results td.r small { display: block; } }
   .fn { font-family: var(--sans); font-size: 13.5px; color: var(--ink-3); margin: -10px 0 18px; max-width: 90ch; }
 
   /* strip plot: where the fingers finish closing */
@@ -91,29 +88,29 @@
   .pg-legend { font-family: var(--sans); font-size: 13px; line-height: 1.5; color: var(--ink-2); margin: 12px 0 0; }
   .pg-sw { display: inline-block; width: 12px; height: 12px; vertical-align: -1px; border-radius: 2px; margin-right: 2px; }
   .pg-li { display: block; }
-  .tof-scatter .legbg { fill: var(--surface); stroke: var(--rule); stroke-width: 1; }
   .tof-scatter { width: 100%; max-width: 540px; height: auto; display: block; font-family: var(--sans); }
   .tof-scatter .grid { stroke: var(--rule); stroke-width: 1; }
   .tof-scatter .zero { stroke: var(--rule-strong); stroke-width: 1.5; }
   .tof-scatter .tick { font-size: 12px; fill: var(--ink-3); }
-  .tof-scatter .axis, .tof-scatter .leg { font-size: 12.5px; fill: var(--ink-2); }
-  .tof-scatter .pt { fill: var(--ink-3); fill-opacity: .6; stroke: var(--surface); stroke-width: 1.5; }
-  .tof-scatter .path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; stroke-opacity: .75; }
-  .tof-scatter .pth { fill: var(--ink); stroke: var(--surface); stroke-width: 2; }
-  .tof-scatter .pth-held { fill: var(--ok); stroke: var(--surface); stroke-width: 2; }
+  .tof-scatter .axis { font-size: 12.5px; fill: var(--ink-2); }
+  .tof-scatter .pt, .tsc-key .pt { fill: var(--ink-3); fill-opacity: .6; stroke: var(--surface); stroke-width: 1.5; }
+  .tof-scatter .path, .tsc-key .path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; stroke-opacity: .75; }
+  .tof-scatter .pth, .tsc-key .pth { fill: var(--ink); stroke: var(--surface); stroke-width: 2; }
+  .tof-scatter .pth-held, .tsc-key .pth-held { fill: var(--ok); stroke: var(--surface); stroke-width: 2; }
   .tof-scatter .pnum { font-size: 12px; font-weight: 700; fill: var(--ink); }
   .tof-scatter circle:hover { stroke: var(--ink); }
   .tof-scatter .narrow { display: none; }
   @media (max-width: 640px) { .tof-scatter .narrow { display: inline; } }
+  .tsc-legend { font-family: var(--sans); font-size: 13px; line-height: 1.5; color: var(--ink-2); margin: 8px 0 0; }
+  .tsc-li { display: block; }
+  .tsc-key { display: inline-block; vertical-align: -1px; margin-right: 6px; overflow: visible; }
 
-  /* camera views */
-  .views3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 760px; }
-  .views3 figure { margin: 0; }
-  .views3 img { width: 100%; height: auto; display: block; border-radius: 6px; outline: 2px solid var(--policy); outline-offset: -2px; }
-  .views3 figure:first-child img { filter: saturate(.8); outline-color: var(--before); }
-  .views3 figcaption { font-size: 13.5px; margin-top: 6px; }
   /* teleop demonstration slots */
   .teleop-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 22px; margin: 18px 0 8px; }
+  .teleop-grid.two-views { grid-template-columns: 1fr; }
+  .tviews { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .tviews .vlab { display: block; font-family: var(--sans); font-size: 12.5px; color: var(--ink-3); margin-top: 4px; }
+  @media (max-width: 640px) { .tviews { grid-template-columns: 1fr; } }
   .slot-ph { aspect-ratio: 16 / 7; display: grid; place-items: center; text-align: center; padding: 12px; border: 2px dashed var(--rule-strong);
              border-radius: 6px; font-family: var(--sans); font-size: 14px; color: var(--ink-3); background: var(--surface); }
   .slot-ph b { display: block; color: var(--ink-2); font-size: 15px; }
@@ -132,12 +129,15 @@
   details.gallery-details > summary { font-size: 18px; }
   .appendix details.gallery-details { max-width: none; }
 
+  /* placeholder until the VPLA robot trials are in */
+  .next-ph { max-width: var(--measure); padding: 14px 18px; border: 2px dashed var(--rule-strong); border-radius: 8px;
+             font-family: var(--sans); font-size: 16px; line-height: 1.5; color: var(--ink-2); }
+
   @media (max-width: 900px) { .hl { grid-template-columns: 1fr; max-width: 640px; } }
   @media (max-width: 760px) { .tof-fig { grid-template-columns: 1fr; } }
-  @media (max-width: 520px) { .views3 { grid-template-columns: 1fr 1fr; } .views3 figure:first-child { grid-column: 1 / -1; max-width: 60%; } }
   @media (max-width: 640px) {
     .step { grid-template-columns: minmax(0, 1fr); }
-    .tof-scatter .tick, .tof-scatter .leg, .tof-scatter .pnum { font-size: 14.5px; }
+    .tof-scatter .tick, .tof-scatter .pnum { font-size: 14.5px; }
     .tof-scatter .axis { font-size: 15px; }
     .tof-scatter .wide { display: none; }
     .dek.headline { font-size: 19px; }
@@ -154,6 +154,7 @@
     <a href="./">Simon Won-Jin Kim</a>
     <nav aria-label="Sections">
       <a href="#since">Since 28 Sep</a>
+      <a href="#teleop">Teleop demos</a>
       <a href="#trials">28 trials</a>
       <a href="#fails">How it fails</a>
       <a href="#tof">ToF</a>
@@ -167,48 +168,53 @@
 
   <div class="masthead">
     <h1>The robot finds the chopstick, then misses the last centimetre</h1>
-    <p class="dek headline">Policy A, the round-4 vision-only policy, found the right socket in 26 of 28 robot trials and placed the chopstick in 18, but its first grasp held in only 12: when it misses, the hand stops moving forward while the fingers close and they shut about 1&nbsp;cm short, an offset the hand's ToF sensors can see but policy A never reads.</p>
+    <p class="dek headline">Policy A (round 4, vision only, trained with corrective teleop demonstrations) found the correct socket in 26 of 28 robot trials and placed the chopstick in the white container in 18. When its grasp misses, the fingers shut about 1&nbsp;cm short of the chopstick — an error the palm ToF sensor sees but A never reads.</p>
     <p class="meta">Simon Won-Jin Kim, KAIST Mechanical Engineering. Progress report for 7 October 2026. Previous report: <a href="./">28 September</a>.</p>
   </div>
 
-  <!-- 1 -->
   <section class="step" id="since" aria-labelledby="since-h">
     <div><div class="marker" aria-hidden="true">1</div></div>
     <div class="step-body">
       <div class="step-head"><p class="when">29 September – 6 October 2026</p><h2 id="since-h">What changed since 28 September</h2></div>
       <ul class="points">
-        <li><strong>New ego camera view:</strong> diagonal from above across the socket board, and both cameras now give the policy an undistorted square crop, the same in data collection and in every robot test.</li>
-        <li><strong>Teleop correction demonstrations</strong> (<a href="#teleop">videos below</a>): <em>lateral adjustment</em> (arrive too far from or too close to the palm, slide into place, then close) and <em>regrasp</em> (a deliberate empty first close, then reopen, re-centre and grasp).</li>
-        <li><strong>Round-3 dataset:</strong> 235 episodes recorded 29 September – 1 October; 198 of them train round 4: 82 clean, 58 lateral adjustment, 58 regrasp.</li>
-        <li><strong>Round-4 policies:</strong> A (cameras + arm and hand state), B (A with arm-state dropout), C (no state, relative end-effector actions), X (still training). On A's slots on 5 October, B placed 1 of 7 and C 0 of 7 (A: 3 and 4), so A got the full 28 trials.</li>
-        <li><strong>VPLA twins training now:</strong> A frozen as the planner, plus a proximity expert that reads the palm and fingertip ToF sensors. E_real sees the ToF; E_blind is identical with the ToF blanked.</li>
+        <li><strong>Corrective teleop demonstrations, a key reason policy A succeeds more often:</strong> the round-3 data adds <em>lateral adjustments</em> and <em>regrasps</em> to the clean grasps (<a href="#teleop">videos below</a>). Round 4 trains on 82 clean, 58 lateral-adjustment and 58 regrasp episodes.</li>
+        <li><strong>New ego camera view,</strong> diagonal from above; both cameras give the policy an undistorted square crop, in data collection and on the robot.</li>
+        <li><strong>Policy A</strong> (cameras + arm and hand state) beat round-4 variants B and C on 5 October (placed 3 and 4 of 7; B 1, C 0), so it got all 28 trials.</li>
       </ul>
-      <figure>
-        <div class="views3">
-          <figure><img src="media/cam_old_ego_policy.jpg" alt="Old ego camera view as the policy saw it: side-on view along the row of sockets, squashed into a square" loading="lazy" width="448" height="448"><figcaption><b>Before</b> (16 September): side-on, full frame squashed.</figcaption></figure>
-          <figure><img src="media/r4A_view_ego.jpg" alt="Current ego camera view as policy A sees it: diagonal view from above across the socket board, hand approaching the chopstick" loading="lazy" width="448" height="448"><figcaption><b>Now:</b> ego view, diagonal from above, square crop.</figcaption></figure>
-          <figure><img src="media/r4A_view_wrist.jpg" alt="Current wrist camera view as policy A sees it: the thumb on the left, the fingers with their small ToF boards on the right, the chopstick between them" loading="lazy" width="448" height="448"><figcaption><b>Now:</b> wrist view, square crop, as the fingers start to close.</figcaption></figure>
-        </div>
-        <figcaption><b>What the policy sees:</b> its actual 224-pixel camera inputs, enlarged. Right two: trial R4A P4 FR, 6 October.</figcaption>
-      </figure>
-      <details>
-        <summary>Details of these changes</summary>
-        <ul>
-          <li><b>Camera:</b> still the RealSense D455, re-aimed 22–24 Sep and turned a further 3° on 29 Sep. Both cameras now send a square centre crop resized to 224×224 (for the ego camera, 240×240 out of its 424×240 frame); earlier datasets squashed the full frame. A sub-pixel image shift seen on 2 Oct (about 5&nbsp;mm of apparent chopstick position) is checked during the evaluations.</li>
-          <li><b>Correction demos:</b> 58 lateral adjustment and 58 regrasp kept, 8 of each per trained socket (4 per direction) and 10 at P2. Offset sizes were judged by eye (about one or two finger widths).</li>
-          <li><b>Round-3 data:</b> 235 episodes recorded; 198 train round 4 after a quality audit and trimming. Round 4 uses the corrections only from the start of their recovery (the slide-in, or the reopen), so the approach itself is learned from the 82 clean demonstrations. Split frozen 1 Oct.</li>
-          <li><b>Why that trim (2 Oct):</b> a round-3 policy trained on every episode failed its first robot test (0 of 8 at P1 and P2): away from the clean path it copied the corrections' deliberate errors, such as the intentional empty close of the regrasp demos.</li>
-          <li><b>Round 4:</b> 55,110 steps each (10 epochs). A: absolute joint targets; final checkpoint 55109 (4 Oct). B: arm state dropped with p&nbsp;0.5 in training; final 55000. C: finished 5 Oct; its hand sinks during the close. X = C's actions with A's state, due about 8 Oct.</li>
-          <li><b>VPLA twins:</b> the expert reads the palm sensor up to 300&nbsp;mm and the fingertips up to 150&nbsp;mm; both twins train 15,000 steps on round 3 with the same data, batches and seed, finishing around 17:00 on 6 Oct.</li>
-          <li><b>Evaluation:</b> PLACED-148 placement measure (3 Oct; 77 of 81 clean demos pass); an arm safety envelope that holds the arm if a command lands more than 12° (now 16°) from every demonstrated pose (5 Oct); first-attempt grasp made the pre-registered primary measure, with a required "first close: secured / weak / empty / none" key (6 Oct).</li>
-          <li><b>Hardware:</b> the hand froze on 1 Oct (a loose Ethernet cable and a driver with no read timeout); both fixed. A teleop bug that dropped the smoothing after the first episode of a session was fixed before round 3.</li>
-        </ul>
-      </details>
 
+      <div id="teleop" class="teleop-block">
+        <h3 id="teleop-h">Corrective teleop demonstrations</h3>
+        <p class="fineprint">Recorded by a human with the glove on 6 October (socket P4, corner FR), the same way as the round-3 training data. These are <strong>not</strong> policy runs. Each is shown from the front and from above; the top view shows the lateral misalignment at the end of the coarse approach.</p>
+        <div class="teleop-grid two-views">
+          <figure>
+            <h4>Lateral adjustment: too far</h4>
+            <span class="badge teleop">Teleop demonstration <small>— a human controls the robot</small></span>
+            <div class="tviews"><div><video controls muted playsinline preload="metadata" poster="media/teleop_lateral_too_far.jpg" src="media/teleop_lateral_too_far.mp4" aria-label="Teleop demonstration, a human controls the robot: Lateral adjustment: too far, front view"></video><span class="vlab">Front view</span></div><div><video controls muted playsinline preload="metadata" poster="media/teleop_lateral_too_far_top.jpg" src="media/teleop_lateral_too_far_top.mp4" aria-label="Teleop demonstration, a human controls the robot: Lateral adjustment: too far, top view"></video><span class="vlab">Top view</span></div></div>
+            <figcaption>The hand arrives with the chopstick too far from the palm and moves closer before closing.</figcaption>
+          </figure>
+          <figure>
+            <h4>Lateral adjustment: too close</h4>
+            <span class="badge teleop">Teleop demonstration <small>— a human controls the robot</small></span>
+            <div class="tviews"><div><video controls muted playsinline preload="metadata" poster="media/teleop_lateral_too_close.jpg" src="media/teleop_lateral_too_close.mp4" aria-label="Teleop demonstration, a human controls the robot: Lateral adjustment: too close, front view"></video><span class="vlab">Front view</span></div><div><video controls muted playsinline preload="metadata" poster="media/teleop_lateral_too_close_top.jpg" src="media/teleop_lateral_too_close_top.mp4" aria-label="Teleop demonstration, a human controls the robot: Lateral adjustment: too close, top view"></video><span class="vlab">Top view</span></div></div>
+            <figcaption>The hand arrives with the chopstick too close to the palm and backs off before closing.</figcaption>
+          </figure>
+          <figure>
+            <h4>Regrasp: too far</h4>
+            <span class="badge teleop">Teleop demonstration <small>— a human controls the robot</small></span>
+            <div class="tviews"><div><video controls muted playsinline preload="metadata" poster="media/teleop_regrasp_too_far.jpg" src="media/teleop_regrasp_too_far.mp4" aria-label="Teleop demonstration, a human controls the robot: Regrasp: too far, front view"></video><span class="vlab">Front view</span></div><div><video controls muted playsinline preload="metadata" poster="media/teleop_regrasp_too_far_top.jpg" src="media/teleop_regrasp_too_far_top.mp4" aria-label="Teleop demonstration, a human controls the robot: Regrasp: too far, top view"></video><span class="vlab">Top view</span></div></div>
+            <figcaption>The fingers close with the chopstick too far from the palm and miss; the hand reopens, corrects and grasps.</figcaption>
+          </figure>
+          <figure>
+            <h4>Regrasp: too deep</h4>
+            <span class="badge teleop">Teleop demonstration <small>— a human controls the robot</small></span>
+            <div class="tviews"><div><video controls muted playsinline preload="metadata" poster="media/teleop_regrasp_too_deep.jpg" src="media/teleop_regrasp_too_deep.mp4" aria-label="Teleop demonstration, a human controls the robot: Regrasp: too deep, front view"></video><span class="vlab">Front view</span></div><div><video controls muted playsinline preload="metadata" poster="media/teleop_regrasp_too_deep_top.jpg" src="media/teleop_regrasp_too_deep_top.mp4" aria-label="Teleop demonstration, a human controls the robot: Regrasp: too deep, top view"></video><span class="vlab">Top view</span></div></div>
+            <figcaption>The fingers close with the chopstick too deep, against the palm; the hand reopens, corrects and grasps.</figcaption>
+          </figure>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 2 -->
   <section class="step" id="trials" aria-labelledby="trials-h">
     <div><div class="marker" aria-hidden="true">2</div></div>
     <div class="step-body">
@@ -216,59 +222,53 @@
       <div class="table-wrap">
         <table class="results">
           <thead>
-            <tr><th>Policy A, 28 trials</th><th class="r">R1A<br><small>5 Oct</small></th><th class="r">R2A<br><small>5 Oct</small></th><th class="r">R3A<br><small>6 Oct</small></th><th class="r">R4A<br><small>6 Oct</small></th><th class="r all">All 28</th></tr>
+            <tr><th>Policy A</th><th class="r">All 28 trials, 5–6&nbsp;Oct</th></tr>
           </thead>
           <tbody>
-            <tr class="total"><td class="m">Placed in the container (operator key 4)</td><td class="r">4</td><td class="r">3</td><td class="r">5</td><td class="r">6</td><td class="r all">18</td></tr>
-            <tr><td class="m">Went to the right socket</td><td class="r">7</td><td class="r">6 <small>(1 unclear)</small></td><td class="r">7</td><td class="r">6 <small>(1 wrong)</small></td><td class="r all">26</td></tr>
-            <tr><td class="m">First grasp held (FAG)</td><td class="r">4*</td><td class="r">2*</td><td class="r">3</td><td class="r">3</td><td class="r all">12 <small>(13 lenient)</small></td></tr>
-            <tr><td class="m">Hand on target when the first close starts (PLACED-148)</td><td class="r">3</td><td class="r">3 <small>of 6</small></td><td class="r">2</td><td class="r">5</td><td class="r all">13 <small>of 27</small></td></tr>
-            <tr><td class="m">Trials with regrasps <small>(regrasps in total)</small></td><td class="r">3 <small>(7)</small></td><td class="r">4 <small>(14)</small></td><td class="r">3 <small>(5)</small></td><td class="r">4 <small>(19)</small></td><td class="r all">14 <small>(45)</small></td></tr>
-            <tr><td class="m">Contact that bent or struck the chopstick <small>(stopped early)</small></td><td class="r">1 <small>(1)</small></td><td class="r">3 <small>(3)</small></td><td class="r">1 <small>(0)</small></td><td class="r">1 <small>(1)</small></td><td class="r all">6 <small>(5)</small></td></tr>
-            <tr><td class="m">Safety holds</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r all">0</td></tr>
+            <tr class="total"><td class="m">Overall success (grasped and placed in the white container)</td><td class="r">18 of 28 (64&nbsp;%)</td></tr>
+            <tr><td class="m">Correct socket</td><td class="r">26 of 28 (93&nbsp;%) <small>(1 unclear, 1 wrong)</small></td></tr>
+            <tr><td class="m">Correct hand placement during the first close</td><td class="r">12 of 28 (43&nbsp;%)</td></tr>
+            <tr><td class="m">Trials that needed regrasps</td><td class="r">14 of 28 (50&nbsp;%) <small>(45 regrasps)</small></td></tr>
+            <tr><td class="m">Hand or thumb bent or struck the chopstick</td><td class="r">6 of 28 (21&nbsp;%)</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="table-hint">Swipe the table sideways for R3A, R4A and the totals.</p>
-      <p class="fn">Checkpoint 55109; 7 trained sockets × 4 chopstick corners, one trial each; outcomes keyed by the operator (0 collision / no approach, 1 approach failed, 2 grasp failed, 3 placement failed, 4 placed). FAG = the first close lifted the chopstick out of the socket: pre-registered for 6 October (R3A, R4A); *for 5 October it was defined after the trials. PLACED-148 = hand within 14&nbsp;mm across and 12.5&nbsp;mm along the reach of the demonstrators' grasp point at the start of the first close (R2A P7 FR never closed).</p>
+      <p class="fn">Checkpoint 55109; 7 trained sockets × 4 chopstick corners, one trial each. First-close placement = the first close lifted the chopstick out of the socket (pre-registered for 6 October; defined after the trials for 5 October).</p>
       <ul class="points">
-        <li><strong>Localisation is good:</strong> the right socket in 26 of 28; no safety holds.</li>
-        <li><strong>The grasp is the weak step:</strong> the first close held in 12 of 28 (6 of 14 each day). Most other placements needed regrasp searches: 45 regrasps in 14 trials.</li>
-        <li><strong>Contact:</strong> in 6 trials the hand or thumb bent or struck the chopstick; the operator stopped 5 of them early.</li>
+        <li><strong>The policy found the correct chopstick socket position</strong> in 26 of 28 trials.</li>
+        <li><strong>The grasp is the weak step:</strong> the first close held the chopstick in only 12 of 28.</li>
       </ul>
       <div class="hl">
         <figure>
           <span class="badge auto">Autonomous policy inference <small>— policy A (VLA), no human control</small></span>
           <video controls muted playsinline preload="metadata" poster="media/r4A_hl_clean.jpg" src="media/r4A_hl_clean.mp4" aria-label="Autonomous policy inference, policy A, no human control: trial R4A P4 FR, a clean first grasp, real time"></video>
           <h3>A clean first grasp</h3>
-          <figcaption><b>R4A · P4 FR</b> <span class="key k4">4 placed</span> · real time. One close, lift, carry and release: 34&nbsp;s from the start to the stop. <q>successful p4 trial</q></figcaption>
+          <figcaption><b>R4A · P4 FR</b> <span class="key k4">4 placed</span> · real time. One close, lift, carry and release: 34&nbsp;s from the start to the stop.</figcaption>
         </figure>
         <figure>
           <span class="badge auto">Autonomous policy inference <small>— policy A (VLA), no human control</small></span>
           <video controls muted playsinline preload="metadata" poster="media/r4A_hl_search.jpg" src="media/r4A_hl_search.mp4" aria-label="Autonomous policy inference, policy A, no human control: trial R4A P8 BL, a long regrasp search at 4 times speed"></video>
           <h3>A long regrasp search</h3>
-          <figcaption><b>R4A · P8 BL</b> <span class="key k4">4 placed</span> · 4× speed, 3 minutes in 46&nbsp;s. Nine closes at the socket, six of them abandoned halfway, before the one that holds (at 0:41). <q>the policy was always positioning the hand laterally too close to the chopstick and it did this multiple times</q></figcaption>
+          <figcaption><b>R4A · P8 BL</b> <span class="key k4">4 placed</span> · 4× speed, 3 minutes in 46&nbsp;s. Nine closes at the socket, six of them abandoned halfway, before the one that holds (at 0:41).</figcaption>
         </figure>
         <figure>
           <span class="badge auto">Autonomous policy inference <small>— policy A (VLA), no human control</small></span>
           <video controls muted playsinline preload="metadata" poster="media/r4A_hl_contact.jpg" src="media/r4A_hl_contact.mp4" aria-label="Autonomous policy inference, policy A, no human control: trial R2A P1 BL, the thumb bends the chopstick, real time, zoomed"></video>
           <h3>Contact: the thumb bends the chopstick</h3>
-          <figcaption><b>R2A · P1 BL</b> <span class="key k2">2 grasp failed</span> · real time, last 34&nbsp;s, zoomed. The fourth close starts about 4&nbsp;cm past the chopstick; the thumb lands on it and the arm keeps pushing until the operator stops the trial (0:30). <q>thumb finger made contact with the chopstick and the manipulator keep moving, bending the chopstick so i stopped the trial early</q></figcaption>
+          <figcaption><b>R2A · P1 BL</b> <span class="key k2">2 grasp failed</span> · real time, last 34&nbsp;s, zoomed. The fourth close starts about 4&nbsp;cm past the chopstick; the thumb lands on it and the arm keeps pushing until the operator stops the trial (0:30).</figcaption>
         </figure>
       </div>
 
     </div>
   </section>
 
-  <!-- 3 -->
   <section class="step" id="fails" aria-labelledby="fails-h">
     <div><div class="marker" aria-hidden="true">3</div></div>
     <div class="step-body">
-      <div class="step-head"><p class="when">Offline analysis of the 28 trials, 6 October</p><h2 id="fails-h">How it fails: the hand stops advancing while the fingers close</h2></div>
+      <div class="step-head"><p class="when">Offline analysis of the 28 trials, 6 October</p><h2 id="fails-h">How it fails: the hand stops moving forward as the fingers close</h2></div>
       <ul class="points">
-        <li><strong>A clean first grasp looks like a demonstration:</strong> a median 37&nbsp;s of policy time, against 124&nbsp;s when the chopstick is secured only after regrasps.</li>
-        <li><strong>The miss happens in the last centimetre.</strong> Closes that held keep the hand moving forward while the fingers close and shut where the demonstrator's do (−11.1 vs −11.6&nbsp;mm). Closes that missed advance only 3–8&nbsp;mm and shut about 10&nbsp;mm short. Where the close <em>starts</em> does not separate them: 7 of 21 held and 25 of 47 failed closes started on target (PLACED-148).</li>
-        <li><strong>Retries do not converge:</strong> 16 of 68 closes were abandoned halfway (demos: 0 of 81); the next attempt started farther from the grasp point in 23 of 41 retries; the open hand parked 24–30&nbsp;mm away for up to 25&nbsp;s (demos: at most 4&nbsp;s); the thumb bends followed overshoots of 27–86&nbsp;mm.</li>
+        <li><strong>The miss happens in the last centimetre.</strong> When a grasp works, the hand keeps moving forward while the fingers close, like the demonstrations. When it misses, the hand stops moving forward and the fingers close about 1&nbsp;cm short of the chopstick. Starting the close in the right place does not fix this (on target at the start: 7 of 21 closes that held, 25 of 47 that missed).</li>
+        <li><strong>Retries do not get closer.</strong> The next attempt started farther from the chopstick in 23 of 41 retries. The policy abandoned 16 of 68 closes halfway (the demonstrators never did) and sometimes hovered 2–3&nbsp;cm away for up to 25&nbsp;s. Each time the thumb bent the chopstick, the hand had first gone 3–9&nbsp;cm past it.</li>
       </ul>
       <figure class="plate">
 <div class="sp" role="img" aria-label="Strip plot: where the fingers finished closing along the reach axis. Teleop demonstrations median −11.6 mm; policy A closes that held median −11.1 mm; policy A full closes that missed median −0.4 mm, about 10 mm short.">
@@ -453,166 +453,118 @@
 <p class="sp-unit">Reach-axis position of the hand when the fingers finished closing (mm). 0 = where the demonstrator typically <em>starts</em> closing at that socket and corner.</p>
 </div>
       </figure>
-      <p class="fineprint" style="margin-top:-14px"><b>Every close of the 28 trials</b> (one mark each), against the 81 clean teleop demonstrations of round 3. Grey band: where 95% of the demonstrators' closes finished. Not shown: A's 16 abandoned (partial) closes. Positions are the commanded hand pose relative to the demonstrators' typical close-start point at the same socket and corner; the measured pose differs by a median 1&nbsp;mm. The chopstick's true position is not measured, and contact can move it.</p>
+      <p class="fineprint" style="margin-top:-14px"><b>One mark per close.</b> Grey band: where 95% of the demonstrators' closes finished. Not shown: A's 16 abandoned closes.</p>
 
     </div>
   </section>
 
-  <!-- 4 -->
   <section class="step" id="tof" aria-labelledby="tof-h">
     <div><div class="marker" aria-hidden="true">4</div></div>
     <div class="step-body">
       <div class="step-head"><p class="when">Recorded during R3A and R4A (14 trials); policy A never reads it</p><h2 id="tof-h">What the hand's ToF sensors saw</h2></div>
       <ul class="points">
-        <li><strong>The palm sensor sees where the chopstick is along the reach.</strong> The chopstick shows as a band whose row follows the hand's offset (Spearman −0.84 over 37 closes; about 1.2 rows per 10&nbsp;mm, as in the teleop demos), and it tracks the chopstick from attempt to attempt, overshoot included (−0.97 over the 9 attempts of R4A P8 BL).</li>
-        <li><strong>But a single snapshot does not predict success:</strong> at the moment A starts to close, held and missed closes look alike (band row 6.8 vs 7.2). After the close the palm cannot see whether the chopstick is in the hand; the fingertip sensors partly can, and the <em>measured</em> finger positions almost can (10 of 12 vs 1 of 10), but A only gets the commanded hand state.</li>
+        <li><strong>The palm sensor sees how far short of the chopstick the hand stopped</strong> — the error behind A's misses. Each dot is one close of policy A (37 closes): when the hand stopped short, the palm sensor saw the chopstick near the top of its image; when the hand went past it, near the bottom. Policy A never reads this sensor; the VPLA does.</li>
+        <li><strong>Limits:</strong> one snapshot at the start of a close does not predict success, and once the fingers close, the palm sensor cannot tell whether the chopstick is in the hand.</li>
       </ul>
       <figure class="plate">
 <div class="tof-fig">
-<div class="pg-wrap"><div class="pg-row"><figure class="pg-item"><svg class="pgrid" viewBox="-0.5 -0.5 17 17" role="img" aria-label="Attempt 3: hand 59 mm short of the rod. Band near the top."><rect x="-0.5" y="-0.5" width="17" height="17" class="pg-bg"/><rect x="5" y="0" width="1" height="1" class="pg-self"/><rect x="7" y="0" width="1" height="1" class="pg-self"/><rect x="8" y="0" width="1" height="1" class="pg-self"/><rect x="9" y="0" width="1" height="1" class="pg-self"/><rect x="5" y="1" width="1" height="1" class="pg-self"/><rect x="6" y="1" width="1" height="1" class="pg-self"/><rect x="7" y="1" width="1" height="1" class="pg-self"/><rect x="8" y="1" width="1" height="1" class="pg-self"/><rect x="9" y="1" width="1" height="1" class="pg-self"/><rect x="0" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 0: 98 mm</title></rect><rect x="1" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 1: 96 mm</title></rect><rect x="2" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 2: 98 mm</title></rect><rect x="3" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 3: 97 mm</title></rect><rect x="4" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 4: 96 mm</title></rect><rect x="5" y="2" width="1" height="1" class="pg-self"/><rect x="6" y="2" width="1" height="1" class="pg-self"/><rect x="7" y="2" width="1" height="1" class="pg-self"/><rect x="8" y="2" width="1" height="1" class="pg-self"/><rect x="9" y="2" width="1" height="1" class="pg-self"/><rect x="10" y="2" width="1" height="1" class="pg-b1"><title>row 2, column 10: 101 mm</title></rect><rect x="0" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 0: 94 mm</title></rect><rect x="1" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 1: 96 mm</title></rect><rect x="2" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 2: 94 mm</title></rect><rect x="3" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 3: 97 mm</title></rect><rect x="4" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 4: 98 mm</title></rect><rect x="5" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 5: 98 mm</title></rect><rect x="6" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 6: 97 mm</title></rect><rect x="7" y="3" width="1" height="1" class="pg-b1"><title>row 3, column 7: 102 mm</title></rect><rect x="8" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 8: 100 mm</title></rect><rect x="9" y="3" width="1" height="1" class="pg-b1"><title>row 3, column 9: 102 mm</title></rect><rect x="10" y="3" width="1" height="1" class="pg-b1"><title>row 3, column 10: 102 mm</title></rect><rect x="0" y="4" width="1" height="1" class="pg-b1"><title>row 4, column 0: 104 mm</title></rect><rect x="1" y="4" width="1" height="1" class="pg-b1"><title>row 4, column 1: 119 mm</title></rect><rect x="8" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 8: 85 mm</title></rect><rect x="9" y="11" width="1" height="1" class="pg-b3"><title>row 11, column 9: 79 mm</title></rect><rect x="10" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 10: 94 mm</title></rect><rect x="7" y="12" width="1" height="1" class="pg-b2"><title>row 12, column 7: 86 mm</title></rect><rect x="8" y="12" width="1" height="1" class="pg-b3"><title>row 12, column 8: 79 mm</title></rect><rect x="9" y="12" width="1" height="1" class="pg-self"/><rect x="10" y="12" width="1" height="1" class="pg-self"/><rect x="11" y="12" width="1" height="1" class="pg-b1"><title>row 12, column 11: 100 mm</title></rect><rect x="7" y="13" width="1" height="1" class="pg-b2"><title>row 13, column 7: 89 mm</title></rect><rect x="8" y="13" width="1" height="1" class="pg-self"/><rect x="9" y="13" width="1" height="1" class="pg-self"/><rect x="10" y="13" width="1" height="1" class="pg-self"/><rect x="11" y="13" width="1" height="1" class="pg-self"/><rect x="7" y="14" width="1" height="1" class="pg-b2"><title>row 14, column 7: 88 mm</title></rect><rect x="8" y="14" width="1" height="1" class="pg-self"/><rect x="9" y="14" width="1" height="1" class="pg-self"/><rect x="10" y="14" width="1" height="1" class="pg-self"/><rect x="11" y="14" width="1" height="1" class="pg-self"/><rect x="7" y="15" width="1" height="1" class="pg-b2"><title>row 15, column 7: 84 mm</title></rect><rect x="8" y="15" width="1" height="1" class="pg-self"/><rect x="9" y="15" width="1" height="1" class="pg-self"/><rect x="10" y="15" width="1" height="1" class="pg-self"/><rect x="11" y="15" width="1" height="1" class="pg-self"/><rect x="0" y="0" width="16" height="16" class="pg-frame"/></svg><figcaption>Attempt 3: hand 59 mm short of the rod. Band near the top.</figcaption></figure><figure class="pg-item"><svg class="pgrid" viewBox="-0.5 -0.5 17 17" role="img" aria-label="Attempt 9, the close that held. Band in the middle."><rect x="-0.5" y="-0.5" width="17" height="17" class="pg-bg"/><rect x="4" y="0" width="1" height="1" class="pg-self"/><rect x="5" y="0" width="1" height="1" class="pg-self"/><rect x="6" y="0" width="1" height="1" class="pg-self"/><rect x="7" y="0" width="1" height="1" class="pg-self"/><rect x="8" y="0" width="1" height="1" class="pg-self"/><rect x="9" y="0" width="1" height="1" class="pg-self"/><rect x="4" y="1" width="1" height="1" class="pg-self"/><rect x="5" y="1" width="1" height="1" class="pg-self"/><rect x="6" y="1" width="1" height="1" class="pg-self"/><rect x="7" y="1" width="1" height="1" class="pg-self"/><rect x="8" y="1" width="1" height="1" class="pg-self"/><rect x="9" y="1" width="1" height="1" class="pg-self"/><rect x="4" y="2" width="1" height="1" class="pg-b1"><title>row 2, column 4: 100 mm</title></rect><rect x="5" y="2" width="1" height="1" class="pg-self"/><rect x="6" y="2" width="1" height="1" class="pg-self"/><rect x="7" y="2" width="1" height="1" class="pg-self"/><rect x="8" y="2" width="1" height="1" class="pg-self"/><rect x="9" y="2" width="1" height="1" class="pg-self"/><rect x="5" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 5: 100 mm</title></rect><rect x="6" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 6: 100 mm</title></rect><rect x="8" y="7" width="1" height="1" class="pg-b0"><title>row 7, column 8: 143 mm</title></rect><rect x="11" y="7" width="1" height="1" class="pg-b2"><title>row 7, column 11: 96 mm</title></rect><rect x="1" y="8" width="1" height="1" class="pg-b1"><title>row 8, column 1: 107 mm</title></rect><rect x="2" y="8" width="1" height="1" class="pg-b1"><title>row 8, column 2: 108 mm</title></rect><rect x="3" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 3: 93 mm</title></rect><rect x="4" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 4: 100 mm</title></rect><rect x="5" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 5: 95 mm</title></rect><rect x="6" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 6: 89 mm</title></rect><rect x="7" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 7: 84 mm</title></rect><rect x="8" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 8: 77 mm</title></rect><rect x="9" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 9: 79 mm</title></rect><rect x="10" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 10: 80 mm</title></rect><rect x="11" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 11: 78 mm</title></rect><rect x="12" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 12: 76 mm</title></rect><rect x="0" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 0: 80 mm</title></rect><rect x="1" y="9" width="1" height="1" class="pg-b2"><title>row 9, column 1: 81 mm</title></rect><rect x="2" y="9" width="1" height="1" class="pg-b2"><title>row 9, column 2: 81 mm</title></rect><rect x="3" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 3: 79 mm</title></rect><rect x="4" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 4: 77 mm</title></rect><rect x="5" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 5: 77 mm</title></rect><rect x="6" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 6: 76 mm</title></rect><rect x="7" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 7: 75 mm</title></rect><rect x="8" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 8: 75 mm</title></rect><rect x="9" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 9: 75 mm</title></rect><rect x="10" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 10: 77 mm</title></rect><rect x="11" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 11: 78 mm</title></rect><rect x="12" y="9" width="1" height="1" class="pg-b2"><title>row 9, column 12: 81 mm</title></rect><rect x="0" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 0: 78 mm</title></rect><rect x="1" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 1: 78 mm</title></rect><rect x="2" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 2: 78 mm</title></rect><rect x="3" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 3: 78 mm</title></rect><rect x="4" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 4: 78 mm</title></rect><rect x="5" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 5: 80 mm</title></rect><rect x="6" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 6: 82 mm</title></rect><rect x="7" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 7: 82 mm</title></rect><rect x="8" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 8: 88 mm</title></rect><rect x="9" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 9: 90 mm</title></rect><rect x="10" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 10: 89 mm</title></rect><rect x="11" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 11: 78 mm</title></rect><rect x="0" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 0: 89 mm</title></rect><rect x="1" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 1: 88 mm</title></rect><rect x="2" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 2: 86 mm</title></rect><rect x="3" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 3: 91 mm</title></rect><rect x="6" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 6: 99 mm</title></rect><rect x="9" y="13" width="1" height="1" class="pg-self"/><rect x="10" y="13" width="1" height="1" class="pg-self"/><rect x="11" y="13" width="1" height="1" class="pg-self"/><rect x="8" y="14" width="1" height="1" class="pg-self"/><rect x="9" y="14" width="1" height="1" class="pg-self"/><rect x="10" y="14" width="1" height="1" class="pg-self"/><rect x="11" y="14" width="1" height="1" class="pg-self"/><rect x="8" y="15" width="1" height="1" class="pg-self"/><rect x="9" y="15" width="1" height="1" class="pg-self"/><rect x="10" y="15" width="1" height="1" class="pg-self"/><rect x="11" y="15" width="1" height="1" class="pg-self"/><rect x="12" y="15" width="1" height="1" class="pg-self"/><rect x="0" y="0" width="16" height="16" class="pg-frame"/></svg><figcaption>Attempt 9, the close that held. Band in the middle.</figcaption></figure><figure class="pg-item"><svg class="pgrid" viewBox="-0.5 -0.5 17 17" role="img" aria-label="Attempt 7: hand 22 mm past the rod. Band at the bottom."><rect x="-0.5" y="-0.5" width="17" height="17" class="pg-bg"/><rect x="3" y="0" width="1" height="1" class="pg-b2"><title>row 0, column 3: 90 mm</title></rect><rect x="4" y="0" width="1" height="1" class="pg-self"/><rect x="5" y="0" width="1" height="1" class="pg-self"/><rect x="6" y="0" width="1" height="1" class="pg-self"/><rect x="7" y="0" width="1" height="1" class="pg-self"/><rect x="8" y="0" width="1" height="1" class="pg-self"/><rect x="9" y="0" width="1" height="1" class="pg-self"/><rect x="10" y="0" width="1" height="1" class="pg-self"/><rect x="3" y="1" width="1" height="1" class="pg-b1"><title>row 1, column 3: 100 mm</title></rect><rect x="4" y="1" width="1" height="1" class="pg-self"/><rect x="5" y="1" width="1" height="1" class="pg-self"/><rect x="6" y="1" width="1" height="1" class="pg-self"/><rect x="7" y="1" width="1" height="1" class="pg-self"/><rect x="8" y="1" width="1" height="1" class="pg-self"/><rect x="9" y="1" width="1" height="1" class="pg-self"/><rect x="10" y="1" width="1" height="1" class="pg-b2"><title>row 1, column 10: 96 mm</title></rect><rect x="4" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 4: 93 mm</title></rect><rect x="5" y="2" width="1" height="1" class="pg-self"/><rect x="6" y="2" width="1" height="1" class="pg-self"/><rect x="7" y="2" width="1" height="1" class="pg-self"/><rect x="8" y="2" width="1" height="1" class="pg-self"/><rect x="9" y="2" width="1" height="1" class="pg-self"/><rect x="10" y="12" width="1" height="1" class="pg-self"/><rect x="1" y="13" width="1" height="1" class="pg-b2"><title>row 13, column 1: 93 mm</title></rect><rect x="8" y="13" width="1" height="1" class="pg-self"/><rect x="9" y="13" width="1" height="1" class="pg-self"/><rect x="10" y="13" width="1" height="1" class="pg-self"/><rect x="11" y="13" width="1" height="1" class="pg-self"/><rect x="0" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 0: 54 mm</title></rect><rect x="1" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 1: 55 mm</title></rect><rect x="2" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 2: 58 mm</title></rect><rect x="3" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 3: 59 mm</title></rect><rect x="4" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 4: 60 mm</title></rect><rect x="5" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 5: 61 mm</title></rect><rect x="6" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 6: 65 mm</title></rect><rect x="7" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 7: 62 mm</title></rect><rect x="8" y="14" width="1" height="1" class="pg-self"/><rect x="9" y="14" width="1" height="1" class="pg-self"/><rect x="10" y="14" width="1" height="1" class="pg-self"/><rect x="11" y="14" width="1" height="1" class="pg-self"/><rect x="12" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 12: 72 mm</title></rect><rect x="13" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 13: 72 mm</title></rect><rect x="14" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 14: 72 mm</title></rect><rect x="15" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 15: 56 mm</title></rect><rect x="0" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 0: 48 mm</title></rect><rect x="1" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 1: 50 mm</title></rect><rect x="2" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 2: 50 mm</title></rect><rect x="3" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 3: 49 mm</title></rect><rect x="4" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 4: 49 mm</title></rect><rect x="5" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 5: 50 mm</title></rect><rect x="6" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 6: 50 mm</title></rect><rect x="7" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 7: 49 mm</title></rect><rect x="8" y="15" width="1" height="1" class="pg-self"/><rect x="9" y="15" width="1" height="1" class="pg-self"/><rect x="10" y="15" width="1" height="1" class="pg-self"/><rect x="11" y="15" width="1" height="1" class="pg-self"/><rect x="12" y="15" width="1" height="1" class="pg-self"/><rect x="13" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 13: 48 mm</title></rect><rect x="14" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 14: 46 mm</title></rect><rect x="15" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 15: 47 mm</title></rect><rect x="0" y="0" width="16" height="16" class="pg-frame"/></svg><figcaption>Attempt 7: hand 22 mm past the rod. Band at the bottom.</figcaption></figure></div>
+<div class="pg-wrap"><div class="pg-row"><figure class="pg-item"><svg class="pgrid" viewBox="-0.5 -0.5 17 17" role="img" aria-label="Attempt 3: hand 59 mm short of the chopstick. Chopstick near the top."><rect x="-0.5" y="-0.5" width="17" height="17" class="pg-bg"/><rect x="5" y="0" width="1" height="1" class="pg-self"/><rect x="7" y="0" width="1" height="1" class="pg-self"/><rect x="8" y="0" width="1" height="1" class="pg-self"/><rect x="9" y="0" width="1" height="1" class="pg-self"/><rect x="5" y="1" width="1" height="1" class="pg-self"/><rect x="6" y="1" width="1" height="1" class="pg-self"/><rect x="7" y="1" width="1" height="1" class="pg-self"/><rect x="8" y="1" width="1" height="1" class="pg-self"/><rect x="9" y="1" width="1" height="1" class="pg-self"/><rect x="0" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 0: 98 mm</title></rect><rect x="1" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 1: 96 mm</title></rect><rect x="2" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 2: 98 mm</title></rect><rect x="3" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 3: 97 mm</title></rect><rect x="4" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 4: 96 mm</title></rect><rect x="5" y="2" width="1" height="1" class="pg-self"/><rect x="6" y="2" width="1" height="1" class="pg-self"/><rect x="7" y="2" width="1" height="1" class="pg-self"/><rect x="8" y="2" width="1" height="1" class="pg-self"/><rect x="9" y="2" width="1" height="1" class="pg-self"/><rect x="10" y="2" width="1" height="1" class="pg-b1"><title>row 2, column 10: 101 mm</title></rect><rect x="0" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 0: 94 mm</title></rect><rect x="1" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 1: 96 mm</title></rect><rect x="2" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 2: 94 mm</title></rect><rect x="3" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 3: 97 mm</title></rect><rect x="4" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 4: 98 mm</title></rect><rect x="5" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 5: 98 mm</title></rect><rect x="6" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 6: 97 mm</title></rect><rect x="7" y="3" width="1" height="1" class="pg-b1"><title>row 3, column 7: 102 mm</title></rect><rect x="8" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 8: 100 mm</title></rect><rect x="9" y="3" width="1" height="1" class="pg-b1"><title>row 3, column 9: 102 mm</title></rect><rect x="10" y="3" width="1" height="1" class="pg-b1"><title>row 3, column 10: 102 mm</title></rect><rect x="0" y="4" width="1" height="1" class="pg-b1"><title>row 4, column 0: 104 mm</title></rect><rect x="1" y="4" width="1" height="1" class="pg-b1"><title>row 4, column 1: 119 mm</title></rect><rect x="8" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 8: 85 mm</title></rect><rect x="9" y="11" width="1" height="1" class="pg-b3"><title>row 11, column 9: 79 mm</title></rect><rect x="10" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 10: 94 mm</title></rect><rect x="7" y="12" width="1" height="1" class="pg-b2"><title>row 12, column 7: 86 mm</title></rect><rect x="8" y="12" width="1" height="1" class="pg-b3"><title>row 12, column 8: 79 mm</title></rect><rect x="9" y="12" width="1" height="1" class="pg-self"/><rect x="10" y="12" width="1" height="1" class="pg-self"/><rect x="11" y="12" width="1" height="1" class="pg-b1"><title>row 12, column 11: 100 mm</title></rect><rect x="7" y="13" width="1" height="1" class="pg-b2"><title>row 13, column 7: 89 mm</title></rect><rect x="8" y="13" width="1" height="1" class="pg-self"/><rect x="9" y="13" width="1" height="1" class="pg-self"/><rect x="10" y="13" width="1" height="1" class="pg-self"/><rect x="11" y="13" width="1" height="1" class="pg-self"/><rect x="7" y="14" width="1" height="1" class="pg-b2"><title>row 14, column 7: 88 mm</title></rect><rect x="8" y="14" width="1" height="1" class="pg-self"/><rect x="9" y="14" width="1" height="1" class="pg-self"/><rect x="10" y="14" width="1" height="1" class="pg-self"/><rect x="11" y="14" width="1" height="1" class="pg-self"/><rect x="7" y="15" width="1" height="1" class="pg-b2"><title>row 15, column 7: 84 mm</title></rect><rect x="8" y="15" width="1" height="1" class="pg-self"/><rect x="9" y="15" width="1" height="1" class="pg-self"/><rect x="10" y="15" width="1" height="1" class="pg-self"/><rect x="11" y="15" width="1" height="1" class="pg-self"/><rect x="0" y="0" width="16" height="16" class="pg-frame"/></svg><figcaption>Attempt 3: hand 59 mm short of the chopstick. Chopstick near the top.</figcaption></figure><figure class="pg-item"><svg class="pgrid" viewBox="-0.5 -0.5 17 17" role="img" aria-label="Attempt 9, the close that held. Chopstick in the middle."><rect x="-0.5" y="-0.5" width="17" height="17" class="pg-bg"/><rect x="4" y="0" width="1" height="1" class="pg-self"/><rect x="5" y="0" width="1" height="1" class="pg-self"/><rect x="6" y="0" width="1" height="1" class="pg-self"/><rect x="7" y="0" width="1" height="1" class="pg-self"/><rect x="8" y="0" width="1" height="1" class="pg-self"/><rect x="9" y="0" width="1" height="1" class="pg-self"/><rect x="4" y="1" width="1" height="1" class="pg-self"/><rect x="5" y="1" width="1" height="1" class="pg-self"/><rect x="6" y="1" width="1" height="1" class="pg-self"/><rect x="7" y="1" width="1" height="1" class="pg-self"/><rect x="8" y="1" width="1" height="1" class="pg-self"/><rect x="9" y="1" width="1" height="1" class="pg-self"/><rect x="4" y="2" width="1" height="1" class="pg-b1"><title>row 2, column 4: 100 mm</title></rect><rect x="5" y="2" width="1" height="1" class="pg-self"/><rect x="6" y="2" width="1" height="1" class="pg-self"/><rect x="7" y="2" width="1" height="1" class="pg-self"/><rect x="8" y="2" width="1" height="1" class="pg-self"/><rect x="9" y="2" width="1" height="1" class="pg-self"/><rect x="5" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 5: 100 mm</title></rect><rect x="6" y="3" width="1" height="1" class="pg-b2"><title>row 3, column 6: 100 mm</title></rect><rect x="8" y="7" width="1" height="1" class="pg-b0"><title>row 7, column 8: 143 mm</title></rect><rect x="11" y="7" width="1" height="1" class="pg-b2"><title>row 7, column 11: 96 mm</title></rect><rect x="1" y="8" width="1" height="1" class="pg-b1"><title>row 8, column 1: 107 mm</title></rect><rect x="2" y="8" width="1" height="1" class="pg-b1"><title>row 8, column 2: 108 mm</title></rect><rect x="3" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 3: 93 mm</title></rect><rect x="4" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 4: 100 mm</title></rect><rect x="5" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 5: 95 mm</title></rect><rect x="6" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 6: 89 mm</title></rect><rect x="7" y="8" width="1" height="1" class="pg-b2"><title>row 8, column 7: 84 mm</title></rect><rect x="8" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 8: 77 mm</title></rect><rect x="9" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 9: 79 mm</title></rect><rect x="10" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 10: 80 mm</title></rect><rect x="11" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 11: 78 mm</title></rect><rect x="12" y="8" width="1" height="1" class="pg-b3"><title>row 8, column 12: 76 mm</title></rect><rect x="0" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 0: 80 mm</title></rect><rect x="1" y="9" width="1" height="1" class="pg-b2"><title>row 9, column 1: 81 mm</title></rect><rect x="2" y="9" width="1" height="1" class="pg-b2"><title>row 9, column 2: 81 mm</title></rect><rect x="3" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 3: 79 mm</title></rect><rect x="4" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 4: 77 mm</title></rect><rect x="5" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 5: 77 mm</title></rect><rect x="6" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 6: 76 mm</title></rect><rect x="7" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 7: 75 mm</title></rect><rect x="8" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 8: 75 mm</title></rect><rect x="9" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 9: 75 mm</title></rect><rect x="10" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 10: 77 mm</title></rect><rect x="11" y="9" width="1" height="1" class="pg-b3"><title>row 9, column 11: 78 mm</title></rect><rect x="12" y="9" width="1" height="1" class="pg-b2"><title>row 9, column 12: 81 mm</title></rect><rect x="0" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 0: 78 mm</title></rect><rect x="1" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 1: 78 mm</title></rect><rect x="2" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 2: 78 mm</title></rect><rect x="3" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 3: 78 mm</title></rect><rect x="4" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 4: 78 mm</title></rect><rect x="5" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 5: 80 mm</title></rect><rect x="6" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 6: 82 mm</title></rect><rect x="7" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 7: 82 mm</title></rect><rect x="8" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 8: 88 mm</title></rect><rect x="9" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 9: 90 mm</title></rect><rect x="10" y="10" width="1" height="1" class="pg-b2"><title>row 10, column 10: 89 mm</title></rect><rect x="11" y="10" width="1" height="1" class="pg-b3"><title>row 10, column 11: 78 mm</title></rect><rect x="0" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 0: 89 mm</title></rect><rect x="1" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 1: 88 mm</title></rect><rect x="2" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 2: 86 mm</title></rect><rect x="3" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 3: 91 mm</title></rect><rect x="6" y="11" width="1" height="1" class="pg-b2"><title>row 11, column 6: 99 mm</title></rect><rect x="9" y="13" width="1" height="1" class="pg-self"/><rect x="10" y="13" width="1" height="1" class="pg-self"/><rect x="11" y="13" width="1" height="1" class="pg-self"/><rect x="8" y="14" width="1" height="1" class="pg-self"/><rect x="9" y="14" width="1" height="1" class="pg-self"/><rect x="10" y="14" width="1" height="1" class="pg-self"/><rect x="11" y="14" width="1" height="1" class="pg-self"/><rect x="8" y="15" width="1" height="1" class="pg-self"/><rect x="9" y="15" width="1" height="1" class="pg-self"/><rect x="10" y="15" width="1" height="1" class="pg-self"/><rect x="11" y="15" width="1" height="1" class="pg-self"/><rect x="12" y="15" width="1" height="1" class="pg-self"/><rect x="0" y="0" width="16" height="16" class="pg-frame"/></svg><figcaption>Attempt 9, the close that held. Chopstick in the middle.</figcaption></figure><figure class="pg-item"><svg class="pgrid" viewBox="-0.5 -0.5 17 17" role="img" aria-label="Attempt 7: hand 22 mm past the chopstick. Chopstick at the bottom."><rect x="-0.5" y="-0.5" width="17" height="17" class="pg-bg"/><rect x="3" y="0" width="1" height="1" class="pg-b2"><title>row 0, column 3: 90 mm</title></rect><rect x="4" y="0" width="1" height="1" class="pg-self"/><rect x="5" y="0" width="1" height="1" class="pg-self"/><rect x="6" y="0" width="1" height="1" class="pg-self"/><rect x="7" y="0" width="1" height="1" class="pg-self"/><rect x="8" y="0" width="1" height="1" class="pg-self"/><rect x="9" y="0" width="1" height="1" class="pg-self"/><rect x="10" y="0" width="1" height="1" class="pg-self"/><rect x="3" y="1" width="1" height="1" class="pg-b1"><title>row 1, column 3: 100 mm</title></rect><rect x="4" y="1" width="1" height="1" class="pg-self"/><rect x="5" y="1" width="1" height="1" class="pg-self"/><rect x="6" y="1" width="1" height="1" class="pg-self"/><rect x="7" y="1" width="1" height="1" class="pg-self"/><rect x="8" y="1" width="1" height="1" class="pg-self"/><rect x="9" y="1" width="1" height="1" class="pg-self"/><rect x="10" y="1" width="1" height="1" class="pg-b2"><title>row 1, column 10: 96 mm</title></rect><rect x="4" y="2" width="1" height="1" class="pg-b2"><title>row 2, column 4: 93 mm</title></rect><rect x="5" y="2" width="1" height="1" class="pg-self"/><rect x="6" y="2" width="1" height="1" class="pg-self"/><rect x="7" y="2" width="1" height="1" class="pg-self"/><rect x="8" y="2" width="1" height="1" class="pg-self"/><rect x="9" y="2" width="1" height="1" class="pg-self"/><rect x="10" y="12" width="1" height="1" class="pg-self"/><rect x="1" y="13" width="1" height="1" class="pg-b2"><title>row 13, column 1: 93 mm</title></rect><rect x="8" y="13" width="1" height="1" class="pg-self"/><rect x="9" y="13" width="1" height="1" class="pg-self"/><rect x="10" y="13" width="1" height="1" class="pg-self"/><rect x="11" y="13" width="1" height="1" class="pg-self"/><rect x="0" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 0: 54 mm</title></rect><rect x="1" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 1: 55 mm</title></rect><rect x="2" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 2: 58 mm</title></rect><rect x="3" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 3: 59 mm</title></rect><rect x="4" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 4: 60 mm</title></rect><rect x="5" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 5: 61 mm</title></rect><rect x="6" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 6: 65 mm</title></rect><rect x="7" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 7: 62 mm</title></rect><rect x="8" y="14" width="1" height="1" class="pg-self"/><rect x="9" y="14" width="1" height="1" class="pg-self"/><rect x="10" y="14" width="1" height="1" class="pg-self"/><rect x="11" y="14" width="1" height="1" class="pg-self"/><rect x="12" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 12: 72 mm</title></rect><rect x="13" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 13: 72 mm</title></rect><rect x="14" y="14" width="1" height="1" class="pg-b3"><title>row 14, column 14: 72 mm</title></rect><rect x="15" y="14" width="1" height="1" class="pg-b4"><title>row 14, column 15: 56 mm</title></rect><rect x="0" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 0: 48 mm</title></rect><rect x="1" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 1: 50 mm</title></rect><rect x="2" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 2: 50 mm</title></rect><rect x="3" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 3: 49 mm</title></rect><rect x="4" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 4: 49 mm</title></rect><rect x="5" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 5: 50 mm</title></rect><rect x="6" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 6: 50 mm</title></rect><rect x="7" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 7: 49 mm</title></rect><rect x="8" y="15" width="1" height="1" class="pg-self"/><rect x="9" y="15" width="1" height="1" class="pg-self"/><rect x="10" y="15" width="1" height="1" class="pg-self"/><rect x="11" y="15" width="1" height="1" class="pg-self"/><rect x="12" y="15" width="1" height="1" class="pg-self"/><rect x="13" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 13: 48 mm</title></rect><rect x="14" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 14: 46 mm</title></rect><rect x="15" y="15" width="1" height="1" class="pg-b4"><title>row 15, column 15: 47 mm</title></rect><rect x="0" y="0" width="16" height="16" class="pg-frame"/></svg><figcaption>Attempt 7: hand 22 mm past the chopstick. Chopstick at the bottom.</figcaption></figure></div>
 <p class="pg-legend"><span class="pg-li"><span class="pg-sw pg-b4"></span><span class="pg-sw pg-b2"></span><span class="pg-sw pg-b0"></span> the chopstick, nearer = stronger (up to 150 mm)</span><span class="pg-li"><span class="pg-sw pg-self"></span> the hand's own fingers (always in view)</span></p></div>
-<div class="tsc-wrap"><svg class="tof-scatter" viewBox="0 0 460 330" role="img" aria-labelledby="tsc-t tsc-d">
-<title id="tsc-t">Palm ToF band row against the hand's reach-axis offset at each close start</title>
-<desc id="tsc-d">37 close starts in 14 trials (R3A and R4A). The band row falls as the offset grows: Spearman minus 0.84. The 9 attempts of trial R4A P8 BL are joined in order; their Spearman is minus 0.97.</desc>
-<line class="grid" x1="46.0" x2="46.0" y1="16" y2="284"/>
-<text class="tick" x="46.0" y="300" text-anchor="middle">−40</text>
-<line class="grid" x1="112.7" x2="112.7" y1="16" y2="284"/>
-<text class="tick" x="112.7" y="300" text-anchor="middle">−20</text>
-<line class="zero" x1="179.3" x2="179.3" y1="16" y2="284"/>
-<text class="tick" x="179.3" y="300" text-anchor="middle">0</text>
-<line class="grid" x1="246.0" x2="246.0" y1="16" y2="284"/>
-<text class="tick" x="246.0" y="300" text-anchor="middle">+20</text>
-<line class="grid" x1="312.7" x2="312.7" y1="16" y2="284"/>
-<text class="tick" x="312.7" y="300" text-anchor="middle">+40</text>
-<line class="grid" x1="379.3" x2="379.3" y1="16" y2="284"/>
-<text class="tick" x="379.3" y="300" text-anchor="middle">+60</text>
-<line class="grid" x1="446.0" x2="446.0" y1="16" y2="284"/>
-<text class="tick" x="446.0" y="300" text-anchor="middle">+80</text>
-<line class="grid" x1="46" x2="446" y1="16.0" y2="16.0"/>
-<text class="tick" x="38" y="20.0" text-anchor="end">0</text>
-<line class="grid" x1="46" x2="446" y1="105.3" y2="105.3"/>
-<text class="tick" x="38" y="109.3" text-anchor="end">5</text>
-<line class="grid" x1="46" x2="446" y1="194.7" y2="194.7"/>
-<text class="tick" x="38" y="198.7" text-anchor="end">10</text>
-<line class="grid" x1="46" x2="446" y1="284.0" y2="284.0"/>
-<text class="tick" x="38" y="288.0" text-anchor="end">15</text>
-<text class="axis wide" x="246" y="322" text-anchor="middle">hand's reach-axis offset at the close start (mm; + = short of the rod)</text>
-<text class="axis narrow" x="246" y="324" text-anchor="middle">reach offset at close start (mm; + = short)</text>
-<text class="axis wide" transform="translate(13 150) rotate(-90)" text-anchor="middle">band row (0 = top of the palm image)</text>
-<text class="axis narrow" transform="translate(13 150) rotate(-90)" text-anchor="middle">band row (0 = top)</text>
-<circle class="pt" cx="225.0" cy="133.9" r="4.2"><title>R3A P1 BR, close 1: offset +14 mm, band row 6.6</title></circle>
-<circle class="pt" cx="199.3" cy="167.9" r="4.2"><title>R3A P7 BL, close 1: offset +6 mm, band row 8.5</title></circle>
-<circle class="pt" cx="219.7" cy="142.9" r="4.2"><title>R3A P7 BL, close 2: offset +12 mm, band row 7.1</title></circle>
-<circle class="pt" cx="225.7" cy="142.9" r="4.2"><title>R3A P7 BL, close 3: offset +14 mm, band row 7.1</title></circle>
-<circle class="pt" cx="248.3" cy="96.4" r="4.2"><title>R3A P8 FR, close 1: offset +21 mm, band row 4.5</title></circle>
-<circle class="pt" cx="175.0" cy="148.2" r="4.2"><title>R3A P8 FR, close 2: offset −1 mm, band row 7.4</title></circle>
-<circle class="pt" cx="72.0" cy="216.1" r="4.2"><title>R3A P8 FR, close 3: offset −32 mm, band row 11.2</title></circle>
-<circle class="pt" cx="277.7" cy="78.5" r="4.2"><title>R3A P6 BR, close 1: offset +30 mm, band row 3.5</title></circle>
-<circle class="pt" cx="251.0" cy="105.3" r="4.2"><title>R3A P3 BL, close 1: offset +22 mm, band row 5.0</title></circle>
-<circle class="pt" cx="169.7" cy="146.4" r="4.2"><title>R3A P2 FR, close 1: offset −3 mm, band row 7.3</title></circle>
-<circle class="pt" cx="181.0" cy="160.7" r="4.2"><title>R3A P2 FR, close 2: offset +0 mm, band row 8.1</title></circle>
-<circle class="pt" cx="202.3" cy="142.9" r="4.2"><title>R3A P4 FL, close 1: offset +7 mm, band row 7.1</title></circle>
-<circle class="pt" cx="221.3" cy="128.6" r="4.2"><title>R4A P2 BL, close 1: offset +13 mm, band row 6.3</title></circle>
-<circle class="pt" cx="276.0" cy="123.2" r="4.2"><title>R4A P2 BL, close 2: offset +29 mm, band row 6.0</title></circle>
-<circle class="pt" cx="113.0" cy="284.0" r="4.2"><title>R4A P2 BL, close 3: offset −20 mm, band row 15.0</title></circle>
-<circle class="pt" cx="197.3" cy="194.7" r="4.2"><title>R4A P2 BL, close 4: offset +5 mm, band row 10.0</title></circle>
-<circle class="pt" cx="194.0" cy="205.4" r="4.2"><title>R4A P2 BL, close 5: offset +4 mm, band row 10.6</title></circle>
-<circle class="pt" cx="161.7" cy="187.5" r="4.2"><title>R4A P2 BL, close 6: offset −5 mm, band row 9.6</title></circle>
-<circle class="pt" cx="171.7" cy="185.7" r="4.2"><title>R4A P1 FL, close 1: offset −2 mm, band row 9.5</title></circle>
-<circle class="pt" cx="194.3" cy="141.1" r="4.2"><title>R4A P7 BR, close 1: offset +4 mm, band row 7.0</title></circle>
-<circle class="pt" cx="171.0" cy="141.1" r="4.2"><title>R4A P7 BR, close 2: offset −2 mm, band row 7.0</title></circle>
-<circle class="pt" cx="208.3" cy="158.9" r="4.2"><title>R4A P7 BR, close 3: offset +9 mm, band row 8.0</title></circle>
-<circle class="pt" cx="216.7" cy="164.3" r="4.2"><title>R4A P7 BR, close 4: offset +11 mm, band row 8.3</title></circle>
-<circle class="pt" cx="214.3" cy="114.3" r="4.2"><title>R4A P7 BR, close 5: offset +10 mm, band row 5.5</title></circle>
-<circle class="pt" cx="208.3" cy="119.6" r="4.2"><title>R4A P3 BR, close 1: offset +9 mm, band row 5.8</title></circle>
-<circle class="pt" cx="439.0" cy="16.0" r="4.2"><title>R4A P6 FL, close 1: offset +78 mm, band row 0.0</title></circle>
-<circle class="pt" cx="387.0" cy="51.7" r="4.2"><title>R4A P6 FL, close 2: offset +62 mm, band row 2.0</title></circle>
-<circle class="pt" cx="200.3" cy="125.0" r="4.2"><title>R4A P4 FR, close 1: offset +6 mm, band row 6.1</title></circle>
-<polyline class="path" points="198.7,141.8 324.0,71.7 374.7,63.3 296.3,87.5 298.7,96.9 304.0,86.9 106.0,274.7 185.7,203.6 237.3,181.1"/>
-<circle class="pth" cx="198.7" cy="141.8" r="4.8"><title>R4A P8 BL attempt 1: offset +6 mm, band row 7.0</title></circle>
-<text class="pnum" x="187.7" y="145.8" text-anchor="end">1</text>
-<circle class="pth" cx="324.0" cy="71.7" r="4.8"><title>R4A P8 BL attempt 2: offset +43 mm, band row 3.1</title></circle>
-<text class="pnum" x="320.0" y="61.7" text-anchor="end">2</text>
-<circle class="pth" cx="374.7" cy="63.3" r="4.8"><title>R4A P8 BL attempt 3: offset +59 mm, band row 2.6</title></circle>
-<text class="pnum" x="383.7" y="67.3" text-anchor="start">3</text>
-<circle class="pth" cx="296.3" cy="87.5" r="4.8"><title>R4A P8 BL attempt 4: offset +35 mm, band row 4.0</title></circle>
-<text class="pnum" x="285.3" y="89.5" text-anchor="end">4</text>
-<circle class="pth" cx="298.7" cy="96.9" r="4.8"><title>R4A P8 BL attempt 5: offset +36 mm, band row 4.5</title></circle>
-<text class="pnum" x="300.7" y="113.9" text-anchor="start">5</text>
-<circle class="pth" cx="304.0" cy="86.9" r="4.8"><title>R4A P8 BL attempt 6: offset +37 mm, band row 4.0</title></circle>
-<text class="pnum" x="310.0" y="77.9" text-anchor="start">6</text>
-<circle class="pth" cx="106.0" cy="274.7" r="4.8"><title>R4A P8 BL attempt 7: offset −22 mm, band row 14.5</title></circle>
-<text class="pnum" x="116.0" y="278.7" text-anchor="start">7</text>
-<circle class="pth" cx="185.7" cy="203.6" r="4.8"><title>R4A P8 BL attempt 8: offset +2 mm, band row 10.5</title></circle>
-<text class="pnum" x="174.7" y="207.6" text-anchor="end">8</text>
-<circle class="pth-held" cx="237.3" cy="181.1" r="5.6"><title>R4A P8 BL attempt 9 (held): offset +17 mm, band row 9.2</title></circle>
-<text class="pnum" x="247.3" y="185.1" text-anchor="start">9</text>
-<rect class="legbg" x="52" y="20" width="196" height="64" rx="4"/>
-<circle class="pt" cx="64" cy="33" r="4.2"/><text class="leg" x="74" y="37">every close start (37)</text>
-<circle class="pth" cx="64" cy="51" r="4.8"/><text class="leg" x="74" y="55">R4A P8 BL, attempts 1–9</text>
-<circle class="pth-held" cx="64" cy="69" r="5.6"/><text class="leg" x="74" y="73">the attempt that held</text>
-</svg></div>
+<div class="tsc-wrap"><svg class="tof-scatter" viewBox="0 0 500 374" role="img" aria-labelledby="tsc-t tsc-d">
+<title id="tsc-t">Where the palm sensor sees the chopstick in its image (top to bottom), against how far short of the chopstick the hand stopped when the fingers started to close</title>
+<desc id="tsc-d">Each dot is one close of policy A: 37 closes in 14 trials (R3A and R4A). The farther short of the chopstick the hand stopped, the nearer the top of the palm-sensor image the chopstick appears; when the hand went past it, the chopstick appears near the bottom. One trial's 9 attempts (R4A P8 BL) are joined in order; the ninth is the one that held.</desc>
+<line class="grid" x1="92.0" x2="92.0" y1="30" y2="298"/>
+<text class="tick" x="92.0" y="314" text-anchor="middle">−40</text>
+<line class="grid" x1="157.7" x2="157.7" y1="30" y2="298"/>
+<text class="tick" x="157.7" y="314" text-anchor="middle">−20</text>
+<line class="zero" x1="223.3" x2="223.3" y1="30" y2="298"/>
+<text class="tick" x="223.3" y="314" text-anchor="middle">0</text>
+<line class="grid" x1="289.0" x2="289.0" y1="30" y2="298"/>
+<text class="tick" x="289.0" y="314" text-anchor="middle">+20</text>
+<line class="grid" x1="354.7" x2="354.7" y1="30" y2="298"/>
+<text class="tick" x="354.7" y="314" text-anchor="middle">+40</text>
+<line class="grid" x1="420.3" x2="420.3" y1="30" y2="298"/>
+<text class="tick" x="420.3" y="314" text-anchor="middle">+60</text>
+<line class="grid" x1="486.0" x2="486.0" y1="30" y2="298"/>
+<text class="tick" x="486.0" y="314" text-anchor="middle">+80</text>
+<line class="grid" x1="92" x2="486" y1="30.0" y2="30.0"/>
+<text class="tick" x="84" y="34.0" text-anchor="end">row 0 · top</text>
+<line class="zero" stroke-dasharray="5 4" x1="92" x2="486" y1="164.0" y2="164.0"/>
+<text class="tick" x="84" y="168.0" text-anchor="end">centre</text>
+<line class="grid" x1="92" x2="486" y1="298.0" y2="298.0"/>
+<text class="tick" x="84" y="302.0" text-anchor="end">row 15 · bottom</text>
+<text class="axis wide" x="92" y="331" text-anchor="start">← laterally too close</text>
+<text class="axis wide" x="92" y="346" text-anchor="start">(towards palm)</text>
+<text class="axis wide" x="486" y="331" text-anchor="end">laterally too far →</text>
+<text class="axis wide" x="486" y="346" text-anchor="end">(away from palm)</text>
+<text class="axis wide" x="289" y="366" text-anchor="middle">hand position when the fingers start to close (mm)</text>
+<text class="axis narrow" x="92" y="334" text-anchor="start">← too close</text>
+<text class="axis narrow" x="486" y="334" text-anchor="end">too far →</text>
+<text class="axis narrow" x="289" y="360" text-anchor="middle">hand at close start (mm)</text>
+<text class="axis wide" x="4" y="14">where the chopstick appears in the palm sensor's 16×16 depth image (row)</text>
+<text class="axis narrow" x="4" y="16">chopstick row in the palm image</text>
+<circle class="pt" cx="268.3" cy="147.9" r="4.2"><title>R3A P1 BR, close 1: hand 14 mm short of the chopstick; chopstick in row 6.6 of the palm image</title></circle>
+<circle class="pt" cx="243.0" cy="181.9" r="4.2"><title>R3A P7 BL, close 1: hand 6 mm short of the chopstick; chopstick in row 8.5 of the palm image</title></circle>
+<circle class="pt" cx="263.1" cy="156.9" r="4.2"><title>R3A P7 BL, close 2: hand 12 mm short of the chopstick; chopstick in row 7.1 of the palm image</title></circle>
+<circle class="pt" cx="269.0" cy="156.9" r="4.2"><title>R3A P7 BL, close 3: hand 14 mm short of the chopstick; chopstick in row 7.1 of the palm image</title></circle>
+<circle class="pt" cx="291.3" cy="110.4" r="4.2"><title>R3A P8 FR, close 1: hand 21 mm short of the chopstick; chopstick in row 4.5 of the palm image</title></circle>
+<circle class="pt" cx="219.1" cy="162.2" r="4.2"><title>R3A P8 FR, close 2: hand 1 mm past the chopstick; chopstick in row 7.4 of the palm image</title></circle>
+<circle class="pt" cx="117.6" cy="230.1" r="4.2"><title>R3A P8 FR, close 3: hand 32 mm past the chopstick; chopstick in row 11.2 of the palm image</title></circle>
+<circle class="pt" cx="320.2" cy="92.5" r="4.2"><title>R3A P6 BR, close 1: hand 30 mm short of the chopstick; chopstick in row 3.5 of the palm image</title></circle>
+<circle class="pt" cx="293.9" cy="119.3" r="4.2"><title>R3A P3 BL, close 1: hand 22 mm short of the chopstick; chopstick in row 5.0 of the palm image</title></circle>
+<circle class="pt" cx="213.8" cy="160.4" r="4.2"><title>R3A P2 FR, close 1: hand 3 mm past the chopstick; chopstick in row 7.3 of the palm image</title></circle>
+<circle class="pt" cx="225.0" cy="174.7" r="4.2"><title>R3A P2 FR, close 2: hand 0 mm short of the chopstick; chopstick in row 8.1 of the palm image</title></circle>
+<circle class="pt" cx="246.0" cy="156.9" r="4.2"><title>R3A P4 FL, close 1: hand 7 mm short of the chopstick; chopstick in row 7.1 of the palm image</title></circle>
+<circle class="pt" cx="264.7" cy="142.6" r="4.2"><title>R4A P2 BL, close 1: hand 13 mm short of the chopstick; chopstick in row 6.3 of the palm image</title></circle>
+<circle class="pt" cx="318.5" cy="137.2" r="4.2"><title>R4A P2 BL, close 2: hand 29 mm short of the chopstick; chopstick in row 6.0 of the palm image</title></circle>
+<circle class="pt" cx="158.0" cy="298.0" r="4.2"><title>R4A P2 BL, close 3: hand 20 mm past the chopstick; chopstick in row 15.0 of the palm image</title></circle>
+<circle class="pt" cx="241.1" cy="208.7" r="4.2"><title>R4A P2 BL, close 4: hand 5 mm short of the chopstick; chopstick in row 10.0 of the palm image</title></circle>
+<circle class="pt" cx="237.8" cy="219.4" r="4.2"><title>R4A P2 BL, close 5: hand 4 mm short of the chopstick; chopstick in row 10.6 of the palm image</title></circle>
+<circle class="pt" cx="205.9" cy="201.5" r="4.2"><title>R4A P2 BL, close 6: hand 5 mm past the chopstick; chopstick in row 9.6 of the palm image</title></circle>
+<circle class="pt" cx="215.8" cy="199.7" r="4.2"><title>R4A P1 FL, close 1: hand 2 mm past the chopstick; chopstick in row 9.5 of the palm image</title></circle>
+<circle class="pt" cx="238.1" cy="155.1" r="4.2"><title>R4A P7 BR, close 1: hand 4 mm short of the chopstick; chopstick in row 7.0 of the palm image</title></circle>
+<circle class="pt" cx="215.1" cy="155.1" r="4.2"><title>R4A P7 BR, close 2: hand 2 mm past the chopstick; chopstick in row 7.0 of the palm image</title></circle>
+<circle class="pt" cx="251.9" cy="172.9" r="4.2"><title>R4A P7 BR, close 3: hand 9 mm short of the chopstick; chopstick in row 8.0 of the palm image</title></circle>
+<circle class="pt" cx="260.1" cy="178.3" r="4.2"><title>R4A P7 BR, close 4: hand 11 mm short of the chopstick; chopstick in row 8.3 of the palm image</title></circle>
+<circle class="pt" cx="257.8" cy="128.3" r="4.2"><title>R4A P7 BR, close 5: hand 10 mm short of the chopstick; chopstick in row 5.5 of the palm image</title></circle>
+<circle class="pt" cx="251.9" cy="133.6" r="4.2"><title>R4A P3 BR, close 1: hand 9 mm short of the chopstick; chopstick in row 5.8 of the palm image</title></circle>
+<circle class="pt" cx="479.1" cy="30.0" r="4.2"><title>R4A P6 FL, close 1: hand 78 mm short of the chopstick; chopstick in row 0.0 of the palm image</title></circle>
+<circle class="pt" cx="427.9" cy="65.7" r="4.2"><title>R4A P6 FL, close 2: hand 62 mm short of the chopstick; chopstick in row 2.0 of the palm image</title></circle>
+<circle class="pt" cx="244.0" cy="139.0" r="4.2"><title>R4A P4 FR, close 1: hand 6 mm short of the chopstick; chopstick in row 6.1 of the palm image</title></circle>
+<polyline class="path" points="242.4,155.8 365.8,85.7 415.7,77.3 338.6,101.5 340.9,110.9 346.1,100.9 151.1,288.7 229.6,217.6 280.5,195.1"/>
+<circle class="pth" cx="242.4" cy="155.8" r="4.8"><title>R4A P8 BL, attempt 1: hand 6 mm short of the chopstick; chopstick in row 7.0 of the palm image</title></circle>
+<text class="pnum" x="231.4" y="159.8" text-anchor="end">1</text>
+<circle class="pth" cx="365.8" cy="85.7" r="4.8"><title>R4A P8 BL, attempt 2: hand 43 mm short of the chopstick; chopstick in row 3.1 of the palm image</title></circle>
+<text class="pnum" x="361.8" y="75.7" text-anchor="end">2</text>
+<circle class="pth" cx="415.7" cy="77.3" r="4.8"><title>R4A P8 BL, attempt 3: hand 59 mm short of the chopstick; chopstick in row 2.6 of the palm image</title></circle>
+<text class="pnum" x="424.7" y="81.3" text-anchor="start">3</text>
+<circle class="pth" cx="338.6" cy="101.5" r="4.8"><title>R4A P8 BL, attempt 4: hand 35 mm short of the chopstick; chopstick in row 4.0 of the palm image</title></circle>
+<text class="pnum" x="327.6" y="103.5" text-anchor="end">4</text>
+<circle class="pth" cx="340.9" cy="110.9" r="4.8"><title>R4A P8 BL, attempt 5: hand 36 mm short of the chopstick; chopstick in row 4.5 of the palm image</title></circle>
+<text class="pnum" x="342.9" y="127.9" text-anchor="start">5</text>
+<circle class="pth" cx="346.1" cy="100.9" r="4.8"><title>R4A P8 BL, attempt 6: hand 37 mm short of the chopstick; chopstick in row 4.0 of the palm image</title></circle>
+<text class="pnum" x="352.1" y="91.9" text-anchor="start">6</text>
+<circle class="pth" cx="151.1" cy="288.7" r="4.8"><title>R4A P8 BL, attempt 7: hand 22 mm past the chopstick; chopstick in row 14.5 of the palm image</title></circle>
+<text class="pnum" x="161.1" y="292.7" text-anchor="start">7</text>
+<circle class="pth" cx="229.6" cy="217.6" r="4.8"><title>R4A P8 BL, attempt 8: hand 2 mm short of the chopstick; chopstick in row 10.5 of the palm image</title></circle>
+<text class="pnum" x="218.6" y="221.6" text-anchor="end">8</text>
+<circle class="pth-held" cx="280.5" cy="195.1" r="5.6"><title>R4A P8 BL, attempt 9 (held): hand 17 mm short of the chopstick; chopstick in row 9.2 of the palm image</title></circle>
+<text class="pnum" x="290.5" y="199.1" text-anchor="start">9</text>
+</svg>
+<p class="tsc-legend"><span class="tsc-li"><svg class="tsc-key" width="30" height="12" viewBox="0 0 30 12" aria-hidden="true"><circle class="pt" cx="15" cy="6" r="4.2"/></svg>one close of policy A (37 in all)</span><span class="tsc-li"><svg class="tsc-key" width="30" height="12" viewBox="0 0 30 12" aria-hidden="true"><line class="path" x1="6" y1="6" x2="24" y2="6"/><circle class="pth" cx="6" cy="6" r="4.4"/><circle class="pth" cx="24" cy="6" r="4.4"/></svg>one trial's 9 attempts, in order (R4A P8 BL)</span><span class="tsc-li"><svg class="tsc-key" width="30" height="12" viewBox="0 0 30 12" aria-hidden="true"><circle class="pth-held" cx="15" cy="6" r="5"/></svg>the attempt that held</span></p></div>
 </div>
       </figure>
-      <p class="fineprint" style="margin-top:-14px"><b>Left:</b> the palm sensor at the start of three attempts in trial R4A P8 BL (16×16 zones; blank = nothing within 150&nbsp;mm). <b>Right:</b> band row against the hand's commanded reach-axis offset at all 37 close starts of R3A and R4A (14 trials); the 9 attempts of R4A P8 BL are joined in order. Proximity was off for policy A: these are passive recordings. The band rule (self-view mask, ≥ 5 zones per row) was chosen after looking at the grids, without the outcome labels. Correlations are descriptive at this n.</p>
+      <p class="fineprint" style="margin-top:-14px"><b>Images:</b> the palm sensor at the start of attempts 3, 9 and 7 of trial R4A P8 BL (numbered in the plot). 0&nbsp;mm = where the demonstrators typically begin to close. Rows of the palm image: 0 = top, 15 = bottom, 7–8 = its centre.</p>
 
     </div>
   </section>
 
-  <!-- 5 -->
   <section class="step" id="next" aria-labelledby="next-h">
     <div><div class="marker" aria-hidden="true">5</div></div>
     <div class="step-body">
       <div class="step-head"><p class="when">6–7 October 2026</p><h2 id="next-h">Next: does the VPLA use the ToF?</h2></div>
-      <ul class="points">
-        <li><strong>Tonight (6 October), offline Gate 1, pre-registered:</strong> is the ToF used, does it help, and is it the palm sensor that helps?</li>
-        <li><strong>Wednesday 7 October, only if Gate 1 passes:</strong> E_real against E_blind on the robot, blinded and interleaved, on the same 28 socket–corner slots, with A's 28 trials as the reference. Primary measure (pre-registered): first-attempt grasp.</li>
-        <li><strong>A positive result would let the paper claim</strong> a higher first-attempt grasp; and, reported but not pre-registered, fewer closes, less time to a secure grasp, retries that move toward the chopstick and fewer overshoot contacts. <strong>Nothing about the VPLA on the robot is known yet.</strong></li>
-      </ul>
-      <details>
-        <summary>Gate 1 in plain words, and the limits of Wednesday's test</summary>
-        <ul>
-          <li><b>Used:</b> do the twin's predicted actions change (by at least 1&nbsp;mm at the grasp point, or 1&nbsp;mm of finger opening) when its ToF input is zeroed or shuffled? <b>Helps:</b> on held-out recordings, is E_real's action error lower than E_blind's, and lower than with shuffled ToF? <b>Palm:</b> does most of that gain come from the palm sensor? Each rule has a pre-registered threshold and 95% interval.</li>
-          <li>A win of E_real over E_blind shows that the ToF helps this expert. It shows that the VPLA beats the vision-only policy only if E_real also beats A.</li>
-          <li>With 28 trials per arm only a large effect is detectable: against A's 12 of 28 first-attempt grasps, a true rate of 80% would be detected about 3 times in 4, and 60% only about 1 time in 6.</li>
-        </ul>
-      </details>
+      <p class="next-ph">Robot inference trials of the VPLA (the policy that also reads the hand's ToF sensors; trained 6 October) — results will be added here after the trials.</p>
 
-    </div>
-  </section>
-
-  <section class="appendix" id="teleop" aria-labelledby="teleop-h">
-    <h2 id="teleop-h" style="font-size:27px;margin-bottom:8px">Teleop demonstrations: how the corrections were taught</h2>
-    <p class="fineprint">Round-3 training data recorded by a human operator with the glove. These are <strong>not</strong> policy runs. Videos are being recorded; each slot fills in automatically once its file is uploaded.</p>
-    <div class="teleop-grid">
-      <figure data-teleop="media/teleop_lateral_too_far.mp4">
-        <span class="badge teleop">Teleop demonstration <small>— a human controls the robot (training data)</small></span>
-        <video controls muted playsinline preload="metadata" aria-label="Teleop demonstration: Lateral adjustment: too far"></video>
-        <div class="slot-ph"><div><b>Recording pending</b>Lateral adjustment: too far</div></div>
-        <h3>Lateral adjustment: too far</h3>
-        <figcaption>The hand arrives with the chopstick too far from the palm and moves closer before closing.</figcaption>
-      </figure>
-      <figure data-teleop="media/teleop_lateral_too_close.mp4">
-        <span class="badge teleop">Teleop demonstration <small>— a human controls the robot (training data)</small></span>
-        <video controls muted playsinline preload="metadata" aria-label="Teleop demonstration: Lateral adjustment: too close"></video>
-        <div class="slot-ph"><div><b>Recording pending</b>Lateral adjustment: too close</div></div>
-        <h3>Lateral adjustment: too close</h3>
-        <figcaption>The hand arrives with the chopstick too close to the palm and backs off before closing.</figcaption>
-      </figure>
-      <figure data-teleop="media/teleop_regrasp_too_far.mp4">
-        <span class="badge teleop">Teleop demonstration <small>— a human controls the robot (training data)</small></span>
-        <video controls muted playsinline preload="metadata" aria-label="Teleop demonstration: Regrasp: too far"></video>
-        <div class="slot-ph"><div><b>Recording pending</b>Regrasp: too far</div></div>
-        <h3>Regrasp: too far</h3>
-        <figcaption>The fingers close with the chopstick too far from the palm and miss; the hand reopens, corrects and grasps.</figcaption>
-      </figure>
-      <figure data-teleop="media/teleop_regrasp_too_deep.mp4">
-        <span class="badge teleop">Teleop demonstration <small>— a human controls the robot (training data)</small></span>
-        <video controls muted playsinline preload="metadata" aria-label="Teleop demonstration: Regrasp: too deep"></video>
-        <div class="slot-ph"><div><b>Recording pending</b>Regrasp: too deep</div></div>
-        <h3>Regrasp: too deep</h3>
-        <figcaption>The fingers close with the chopstick too deep, against the palm; the hand reopens, corrects and grasps.</figcaption>
-      </figure>
     </div>
   </section>
 
@@ -771,7 +723,7 @@
     </details>
   </section>
 
-  <footer>Robot: Fairino FR10 with a Tesollo DG-5F hand. Policy: π0.5 (openpi). Counts, never rates: one trial per socket and corner.</footer>
+  <footer>Robot: Fairino FR10 with a Tesollo DG-5F hand. Policy: π0.5 (openpi). One trial per socket and corner; percentages are of the 28 trials.</footer>
 </main>
 
 <script>
