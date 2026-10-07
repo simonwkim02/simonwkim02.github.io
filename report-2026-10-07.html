@@ -136,6 +136,12 @@
   .wristseq { margin: 18px 0 24px; }
   .wristseq .badge { margin-bottom: 8px; }
   .wristseq img { display: block; width: 100%; max-width: 1156px; height: auto; border-radius: 4px; }
+  /* section 4: old / new palm-sensor mount photos (equal heights: columns follow the aspect ratios) */
+  .palm-mounts { margin: 6px 0 24px; max-width: 860px; }
+  .palm-mounts .pm-grid { display: grid; grid-template-columns: 0.684fr 1.267fr; gap: 12px; align-items: start; }
+  .palm-mounts img { display: block; width: 100%; height: auto; border-radius: 4px; }
+  .palm-mounts .pm-cap { font-family: var(--sans); font-size: 13.5px; line-height: 1.45; color: var(--ink-2); margin: 6px 0 0; }
+  @media (max-width: 640px) { .palm-mounts .pm-grid { grid-template-columns: 1fr; } }
 
   @media (max-width: 900px) { .hl { grid-template-columns: 1fr; max-width: 640px; } }
   @media (max-width: 760px) { .tof-fig { grid-template-columns: 1fr; } }
@@ -467,7 +473,16 @@
     <div class="step-body">
       <div class="step-head"><p class="when">Recorded during R3A and R4A (14 trials); policy A never reads it</p><h2 id="tof-h">What the hand's ToF sensors saw</h2></div>
       <ul class="points">
-        <li><strong>The palm sensor sees how far short of the chopstick the hand stopped</strong> — the error behind A's misses. Each dot is one close of policy A (37 closes): when the hand stopped short, the palm sensor saw the chopstick near the top of its image; when the hand went past it, near the bottom. Policy A never reads this sensor; the VPLA does.</li>
+        <li><strong>The palm sensor sees how far or short of the chopstick the hand stopped</strong> — the error behind A's misses. Each dot is one close of policy A (37 closes): when the hand stopped short, the palm sensor saw the chopstick near the top of its image; when the hand went past it, near the bottom. Policy A never reads this sensor; the VPLA does.</li>
+      </ul>
+      <figure class="palm-mounts">
+        <div class="pm-grid">
+          <div><img src="media/palm-mount-old.jpg" width="1100" height="1608" loading="lazy" alt="The DG-5F hand with the old palm-sensor mount: the small green palm sensor board sits flat on the palm."><p class="pm-cap"><b>Old mount</b></p></div>
+          <div><img src="media/palm-mount-new.jpg" width="1100" height="868" loading="lazy" alt="The DG-5F hand with the new palm-sensor mount: the palm sensor board is moved and tilted toward the space between the thumb and the fingers."><p class="pm-cap"><b>New mount:</b> moved and tilted so that the palm sensor sees the chopstick at the centre of the grasp aperture</p></div>
+        </div>
+        <figcaption>Red circle: the palm sensor, a small green board on the palm (photos cropped to the hand).</figcaption>
+      </figure>
+      <ul class="points">
         <li><strong>Limits:</strong> one snapshot at the start of a close does not predict success, and once the fingers close, the palm sensor cannot tell whether the chopstick is in the hand.</li>
       </ul>
       <figure class="plate">
