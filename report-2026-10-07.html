@@ -132,6 +132,10 @@
   /* placeholder until the VPLA robot trials are in */
   .next-ph { max-width: var(--measure); padding: 14px 18px; border: 2px dashed var(--rule-strong); border-radius: 8px;
              font-family: var(--sans); font-size: 16px; line-height: 1.5; color: var(--ink-2); }
+  /* section 5: wrist-camera sequences at the close (exact 224 px policy input) */
+  .wristseq { margin: 18px 0 24px; }
+  .wristseq .badge { margin-bottom: 8px; }
+  .wristseq img { display: block; width: 100%; max-width: 1156px; height: auto; border-radius: 4px; }
 
   @media (max-width: 900px) { .hl { grid-template-columns: 1fr; max-width: 640px; } }
   @media (max-width: 760px) { .tof-fig { grid-template-columns: 1fr; } }
@@ -563,7 +567,34 @@
     <div><div class="marker" aria-hidden="true">5</div></div>
     <div class="step-body">
       <div class="step-head"><p class="when">6–7 October 2026</p><h2 id="next-h">Next: does the VPLA use the ToF?</h2></div>
-      <p class="next-ph">Robot inference trials of the VPLA (the policy that also reads the hand's ToF sensors; trained 6 October) — results will be added here after the trials.</p>
+      <h3 id="closure-h">Is the ToF needed during the close? The wrist camera already sees the chopstick</h3>
+      <p>Before training the VPLA to lean on the ToF at the close, we looked at what the wrist camera shows there. We went through every close of the 28 trials frame by frame: in all 47 closes that did not hold the chopstick, and in the 8 of 21 successful closes we sampled, the lower part of the chopstick stays in view from 1 s before the close until the fingers are shut. The strips below are exactly what policy A received: 224 × 224 pixels at their native size.</p>
+      <p class="fineprint">How to read the wrist image: the camera is rolled about 90°. The chopstick is the tan bar running from the hand to the right edge; the thumb is the grey shape on the left and the fingertips are at the top. The chopstick's tip is hidden behind the thumb, and its foot in the socket is beyond the right edge once the hand is at grasp height.</p>
+
+      <figure class="wristseq">
+        <span class="badge auto">Autonomous policy inference <small>— policy A (VLA), no human control</small></span>
+        <img src="media/wristseq_R1A-2_c1.png" width="1156" height="272" loading="lazy" alt="Policy A, trial R1A-2 at P2 BR: five 224-pixel camera frames. Four wrist frames from 1 s before the close to fingers shut show the chopstick between the thumb and the fingertips; the last frame is the ego camera at the close start.">
+        <figcaption><b>Held.</b> R1A-2, P2 BR: the first close holds the chopstick (operator: “successful trial good run”).</figcaption>
+      </figure>
+      <figure class="wristseq">
+        <span class="badge auto">Autonomous policy inference <small>— policy A (VLA), no human control</small></span>
+        <img src="media/wristseq_R2A-5_c4.png" width="1156" height="272" loading="lazy" alt="Policy A, trial R2A-5 at P6 BL, close 4: four wrist frames show the chopstick in view throughout while the fingers shut beside it; the ego frame shows the chopstick only as a faint line.">
+        <figcaption><b>Lifted empty.</b> R2A-5, P6 BL, close 4 of 5: when the close began, the hand was 16 mm past the chopstick along the reach axis. The chopstick is in view the whole time and the fingertips appear to close on it, yet the hand lifted empty.</figcaption>
+      </figure>
+      <figure class="wristseq">
+        <span class="badge auto">Autonomous policy inference <small>— policy A (VLA), no human control</small></span>
+        <img src="media/wristseq_R4A-4_c2.png" width="1156" height="272" loading="lazy" alt="Policy A, trial R4A-4 at P7 BR, close 2: four wrist frames show the chopstick close to the palm and in view throughout; the fingers close on air.">
+        <figcaption><b>Closed on air.</b> R4A-4, P7 BR, close 2 of 5: the hand was 11 mm too deep (“too close to palm”, in the operator's words). A placed the chopstick after later regrasps.</figcaption>
+      </figure>
+
+      <h3 id="closure-means-h">What this means for the ToF</h3>
+      <ul class="points">
+        <li><b>The camera already shows the error.</b> In both misses above the 1–2 cm offset is visible in the wrist image by eye, and the camera can see the chopstick touch the middle fingertip, because the thumb is the only digit on the far side. This fits two earlier offline results: a ToF-reading policy trained on the demonstrations learned to read the ToF but did not improve (7 October), and policy A's remaining end-of-approach error on held-out demonstrations could not be predicted from the ToF (6 October). For this close, the ToF may be redundant with the wrist camera.</li>
+        <li><b>Where the grasp fails: the last fine alignment.</b> In R2A-5 (P6 BL) and R4A-4 (P7 BR) the fingertips appear to make solid contact with the chopstick, yet in both the chopstick sat a little too far toward the palm and the grasp failed. This final adjustment of the hand against the chopstick, at the moment of contact, is where the ToF sensors could make the difference between success and failure.</li>
+        <li><b>What the ToF could still add: metric depth.</b> The ToF measures distance directly, while the image shows distance along the camera's line of sight mainly through how thick the chopstick looks, a much weaker cue. Whether that extra precision matters in the last centimetre is the open question. (The ego camera shows the chopstick only as a faint line 1–3 pixels wide.)</li>
+      </ul>
+
+      <p class="next-ph">Robot trials of the VPLA (the policy that also reads the hand's ToF sensors) are paused while we test whether the ToF is needed at the close.</p>
 
     </div>
   </section>
