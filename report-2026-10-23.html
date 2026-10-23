@@ -130,6 +130,14 @@
         <img src="media/d23_fingervip_fig11.jpg" width="1600" height="1154" loading="lazy" alt="FingerViP Figure 11: third-view, five fingertip and wrist views over time in the curtain-occluded retrieval task. The compartment behind the curtain is brightly lit and every fingertip camera sees the red Pringles can.">
         <figcaption>FingerViP's curtain task, all cameras over time: the space behind the curtain is brightly lit, and the object (also a Pringles can) is clearly visible to the fingertip cameras, and to the wrist camera under the curtain at t&nbsp;=&nbsp;0. Our task removes the light. Figure from Zhang et al., arXiv 2604.21331 (Fig. 11).</figcaption>
       </figure>
+      <details>
+        <summary>Two more CoRL 2026 papers close to ours: FingerEye and ProxiDex</summary>
+        <ul>
+          <li><strong>FingerEye</strong> (Xu et al., spotlight, <a href="https://arxiv.org/abs/2604.20689">arXiv 2604.20689</a>): two RGB cameras per fingertip (LEAP hand) looking through a clear plate on a compliant silicone ring. Before contact: images + implicit stereo depth. After contact: mini AprilTags printed inside the plate are tracked to measure its deflection, which gives a force/torque estimate. Transformer policy (not a VLA): mean success 37.5% wrist-only → 71.3% with FingerEye on six real tasks. No light of its own, so it needs room light.</li>
+          <li><strong>ProxiDex</strong> (Bai et al., <a href="https://arxiv.org/abs/2609.16586">arXiv 2609.16586</a>): “proximity” is <em>computed</em>, not sensed: distances between the hand's and the object's point clouds (one RGB-D camera + object reconstruction), averaged per region (palm, finger roots, fingertips). It feeds a diffusion policy (not a VLA) and is shown to the teleoperator in the VR headset as a proximity cue. Real world 72.6% vs 62.9% (CordViP). Needs the camera to see the object, so it fails under full occlusion.</li>
+          <li><strong>Ours:</strong> a real proximity sensor (dToF) in the fingertips and palm, inside a VLA, working in complete darkness.</li>
+        </ul>
+      </details>
       <div class="media-grid two">
         <figure>
           <span class="badge conf">Conference demo <small>— In So Kweon's group (KIST)</small></span>
