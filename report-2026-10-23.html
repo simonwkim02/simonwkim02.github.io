@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VPLA progress, 23 October</title>
-<meta name="description" content="Progress report for 23 October 2026: the lit puck-perturbation pilot (the cameras still see the moved puck, so it cannot show the ToF's value), related work on occluded retrieval, and the new curtain-occluded dark retrieval task.">
+<meta name="description" content="Progress report for 23 October 2026: the lit puck pilot failed (the cameras still see the moved puck), so the task moves into a dark curtained bookshelf; plus the case for attending CoRL 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&display=swap" rel="stylesheet">
@@ -56,6 +56,9 @@
 
   ol.questions { max-width: var(--measure); padding-left: 1.3em; }
   ol.questions li { margin-bottom: .8em; }
+  .media-grid.three img, .media-grid.three video { aspect-ratio: 4 / 3; object-fit: cover; }
+  #curtain-fig img { max-height: 560px; width: auto; max-width: 100%; }
+  table.cost td:first-child { white-space: normal; }
   ol.questions li::marker { font-family: var(--sans); font-weight: 700; color: var(--ink-3); }
 
   @media (max-width: 900px) { .media-grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -73,11 +76,10 @@
   <div class="page">
     <a href="./">Simon Won-Jin Kim</a>
     <nav aria-label="Sections">
-      <a href="#problem">Goal</a>
-      <a href="#related">Related work</a>
+      <a href="#goal">Goal</a>
       <a href="#pilot">Lit pilot</a>
-      <a href="#why">Why not</a>
       <a href="#dark">Dark task</a>
+      <a href="#corl">CoRL</a>
       <a href="#questions">Questions</a>
       <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Switch between light and dark theme">Dark</button>
     </nav>
@@ -87,223 +89,141 @@
 <main class="page">
 
   <div class="masthead">
-    <h1>The lit task cannot show what the ToF adds, so we are moving to the dark</h1>
-    <p class="dek headline">In yesterday's pilot the cameras still saw the puck after the stage moved it (the wrist camera in 14 of 14 cases), so a camera-only policy needs no proximity sensing there. Next we switch to retrieving an object from a dark bookshelf behind a blackout curtain. There the cameras see nothing, but the hand's ToF sensors bring their own infrared light and still measure distance.</p>
+    <h1>In normal light the cameras still see the object, so we are moving the task into the dark</h1>
+    <p class="dek headline">Yesterday's pilot: after the stage moved the puck under the hand, the wrist camera still saw it in 14 of 14 cases. Next: retrieve an object from a dark bookshelf behind a curtain, where the cameras see nothing but the hand's ToF sensors, which bring their own infrared light, still work.</p>
     <p class="meta">Simon Won-Jin Kim, KAIST Mechanical Engineering. Progress report for 23 October 2026. Previous report: <a href="report-2026-10-07.html">7 October</a>.</p>
   </div>
 
   <!-- 1 ------------------------------------------------------------------>
-  <section class="step" id="problem" aria-labelledby="problem-h">
+  <section class="step" id="goal" aria-labelledby="goal-h">
     <div><div class="marker" aria-hidden="true">1</div></div>
     <div class="step-body">
-      <div class="step-head"><p class="when">The goal</p><h2 id="problem-h">One task where proximity sensing beats vision</h2></div>
+      <div class="step-head"><p class="when">The goal</p><h2 id="goal-h">One task where proximity sensing beats vision</h2></div>
       <ul class="points">
-        <li><strong>The claim we need to show:</strong> on at least one task, a <em>VPLA</em> (vision + proximity + language → action: the π0.5 policy that also reads the hand's ToF proximity sensors) succeeds where a <em>VLA</em> (the same policy with cameras only) fails.</li>
-        <li><strong>So the task must defeat the cameras but not the ToF.</strong> The ToF sensors on the palm and fingertips are <em>active</em>: each sends out its own infrared light and measures distance on a small grid, at close range. They need no room light. In the lit chopstick task, no policy we trained with the ToF did better than the camera-only policy: the wrist camera already saw the chopstick.</li>
+        <li><strong>Claim to show:</strong> a VPLA (π0.5 + the hand's ToF proximity sensors) succeeds where the same policy with cameras only (VLA) fails. So the task must defeat the cameras but not the ToF.</li>
+        <li><strong>Closest work, FingerViP</strong> (CoRL 2026): fingertip <em>cameras</em> for curtain-occluded and closed-cabinet retrieval, 45/50 and 46/55 successes vs 28/50 and 34/55 with the wrist camera only. But cameras need light; their own future work lists “integrated illumination for low-light scenarios”. Our ToF is active and works in the dark.</li>
       </ul>
+      <div class="media-grid two">
+        <figure>
+          <span class="badge conf">Conference demo <small>— other group, KAIST</small></span>
+          <video controls muted playsinline preload="metadata" poster="media/d23_kaist_occlusion_01.jpg" src="media/d23_kaist_occlusion_01.mp4" aria-label="Conference demo by another group: complete-occlusion test in simulation"></video>
+          <figcaption>Nature “Autonomous Robotics” conference, KAIST, 13–15 Oct. “Complete occlusion” test (simulation): a hand finds a banana it cannot see by touch alone.</figcaption>
+        </figure>
+        <figure>
+          <span class="badge conf">Conference demo <small>— other group, KAIST</small></span>
+          <video controls muted playsinline preload="metadata" poster="media/d23_kaist_occlusion_02.jpg" src="media/d23_kaist_occlusion_02.mp4" aria-label="Conference demo by another group: simulated robot searching a tray by touch"></video>
+          <figcaption>Search by touch, then grasp (simulation). Occluded retrieval is an active topic.</figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 
   <!-- 2 ------------------------------------------------------------------>
-  <section class="step" id="related" aria-labelledby="related-h">
+  <section class="step" id="pilot" aria-labelledby="pilot-h">
     <div><div class="marker" aria-hidden="true">2</div></div>
     <div class="step-body">
-      <div class="step-head"><p class="when">Related work</p><h2 id="related-h">Occluded object retrieval: cameras on the fingertips, or touch</h2></div>
+      <div class="step-head"><p class="when">22 October</p><h2 id="pilot-h">The lit pilot failed: the cameras still see the moved puck</h2></div>
       <ul class="points">
-        <li><strong>FingerViP</strong> (Zhang et al., CoRL 2026, <a href="https://arxiv.org/abs/2604.21331">arXiv 2604.21331</a>) puts an RGB camera on each of the five fingertips of a 20-joint hand on a UR5e arm, and trains a diffusion policy (no language input) from teleoperated demonstrations. Two of its four tasks are the closest prior work to ours:
-          <ul>
-            <li><em>Curtain-occluded object retrieval:</em> “retrieve an object from a cabinet partially occluded by a hanging curtain”; “the object can only be observed through an opening at the bottom of the cabinet side.”</li>
-            <li><em>Closed-cabinet object retrieval:</em> slide and push a cabinet door open, reach in, grasp the object and pull it out.</li>
-          </ul>
-        </li>
-        <li><strong>Their fingertip cameras need light.</strong> In their limitations, with an unlit button “the fingertip view becomes nearly dark after insertion”, and their future work lists “integrated illumination for low-light scenarios”. The two retrieval tasks were not tested at different light levels.</li>
-        <li><strong>How ours differs:</strong> in-hand <em>active</em> proximity (it lights the scene itself and works in the dark, before contact) as an input to a vision-language-action policy, compared against the same policy without it.</li>
+        <li><strong>Idea:</strong> the hand hovers over a puck; a motorised stage under a felt board moves it 50–80&nbsp;mm sideways; the hand was supposed to hide it from the cameras so that only the palm ToF knows where it went.</li>
+        <li><strong>Result</strong> (4 teleop episodes, 14 moves): the wrist camera saw the puck after <strong>14 of 14</strong> moves, the palm camera after every move. The wrist camera looks past the fingertips, so no shift size or angle fixes this.</li>
       </ul>
-      <div class="table-wrap">
-        <table class="compact">
-          <thead><tr><th>FingerViP, Table 1 (successes)</th><th class="r">Curtain task</th><th class="r">Closed cabinet</th></tr></thead>
-          <tbody>
-            <tr><td>Wrist camera only</td><td class="r">28 of 50</td><td class="r">34 of 55</td></tr>
-            <tr><td>Third-person + wrist camera</td><td class="r">34 of 50</td><td class="r">39 of 55</td></tr>
-            <tr><td>FingerViP (fingertip cameras, full method)</td><td class="r">45 of 50</td><td class="r">46 of 55</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="fn">Numbers and quotes from arXiv 2604.21331v3 (§4.2, Table 1, §6 “Limitations and Future Work”, p. 9). Our open question: how much room light reaches their cabinet and curtain scenes. We have not checked this yet.</p>
-
-      <h3>Seen at the Nature “Autonomous Robotics” conference (KAIST, 13–15 October)</h3>
-      <p class="fineprint">Talk slides by another group, filmed by us from the audience. These are not our robot.</p>
-      <div class="media-grid two">
+      <div class="media-grid three" style="max-width:900px">
         <figure>
-          <span class="badge conf">Conference demo <small>— other group, filmed at KAIST</small></span>
-          <video controls muted playsinline preload="metadata" poster="media/d23_kaist_occlusion_01.jpg" src="media/d23_kaist_occlusion_01.mp4" aria-label="Conference demo by another group, filmed at KAIST: slide titled Ongoing MIDAS Test, Complete Occlusion"></video>
-          <figcaption>A talk slide titled “Ongoing MIDAS Test: Complete Occlusion, exploring shape and position hypotheses when the object is fully hidden”. In simulation, a hand touches a banana it cannot see, and the forces on its fingers narrow down where the banana is and what shape it has.</figcaption>
+          <span class="badge rigtest">Rig test <small>— no robot</small></span>
+          <img src="media/d23_rig_photo.jpg" width="1400" height="1050" loading="lazy" alt="The rig: a felt board on a motorised XY stage, with a white puck on top.">
+          <figcaption>Felt board on the XY stage, puck on top.</figcaption>
         </figure>
         <figure>
-          <span class="badge conf">Conference demo <small>— other group, filmed at KAIST</small></span>
-          <video controls muted playsinline preload="metadata" poster="media/d23_kaist_occlusion_02.jpg" src="media/d23_kaist_occlusion_02.mp4" aria-label="Conference demo by another group, filmed at KAIST: simulated robot probing a tray for a banana"></video>
-          <figcaption>A simulated two-armed robot with multi-finger hands probes a tray holding a banana and an orange. The plots show the estimated banana pose, its uncertainty and a rising confidence score. The on-screen phase goes from SEARCH and TRACE_BANANA to ALIGN_PREGRASP and LIFT_BANANA.</figcaption>
+          <span class="badge rigtest">Rig test <small>— no robot</small></span>
+          <video controls muted playsinline preload="metadata" poster="media/d23_rig_puck_moving.jpg" src="media/d23_rig_puck_moving.mp4" aria-label="Rig test, no robot: the stage moves the puck across the board"></video>
+          <figcaption>The stage moves the puck (magnet underneath).</figcaption>
+        </figure>
+        <figure>
+          <img src="media/d23_palm_closeup_b.jpg" width="1050" height="1400" loading="lazy" alt="Palm close-up: the green ToF board and, below it, the round palm-camera lens.">
+          <figcaption>Palm: ToF sensor (green board) and palm camera (round lens).</figcaption>
         </figure>
       </div>
-      <details>
-        <summary>Two more related systems (from our literature notes)</summary>
-        <ul>
-          <li><strong>MuseVLA</strong> (Liu et al., arXiv 2606.17598) adds thermal, audio and radar to a VLA by turning each reading into an image. One of its tasks is radar-assisted hidden-object retrieval with a dexterous hand.</li>
-          <li><strong>FingerEye</strong> (Xu et al., CoRL 2026, arXiv 2604.20689) puts binocular fingertip cameras with a compliant ring on the fingers, for close-range visual cues before contact. Its policy has no language input.</li>
-        </ul>
-      </details>
+      <figure class="wide" id="seqfig">
+        <span class="badge teleop">Teleop demonstration <small>— a human drives the robot; the stage moves the puck</small></span>
+        <img src="media/d23_sequence_ep0.jpg" width="1800" height="989" loading="lazy" alt="Episode 0: eight time points around a 70 mm shift, seen by the ego camera, the wrist camera, the palm camera and the palm ToF grid. The puck stays visible in the wrist and palm cameras; its ToF blob slides out of the ToF field during the shift.">
+        <figcaption>One 70&nbsp;mm move, every sensor. The wrist and palm cameras keep the puck in view the whole time; the palm ToF blob slides out of its field. In normal light, vision already solves this task.</figcaption>
+      </figure>
     </div>
   </section>
 
   <!-- 3 ------------------------------------------------------------------>
-  <section class="step" id="pilot" aria-labelledby="pilot-h">
+  <section class="step" id="dark" aria-labelledby="dark-h">
     <div><div class="marker" aria-hidden="true">3</div></div>
     <div class="step-body">
-      <div class="step-head"><p class="when">22 October 2026</p><h2 id="pilot-h">What we tried: moving the object under the hand, in normal light</h2></div>
-      <ul class="points">
-        <li><strong>The idea:</strong> the hand hovers over a white puck. When the operator presses a key, a motorised XY stage under a felt board moves the puck 50–80&nbsp;mm sideways, using a magnet underneath. We hoped the hand itself would hide the moved puck from the cameras, so that only the palm ToF could tell where it went.</li>
-        <li><strong>Four teleop episodes were recorded</strong>, with a human driving the robot with the glove: two single shifts (70&nbsp;mm at +16°; 58.4&nbsp;mm at +44°) and one sweep of 12 stops (50, 60, 70, 80&nbsp;mm × −45°, 0°, +45°). The fourth episode is unusable because the wrist camera froze.</li>
-      </ul>
-      <div class="media-grid two">
-        <figure>
-          <span class="badge rigtest">Rig test <small>— no robot, no policy</small></span>
-          <img src="media/d23_rig_photo.jpg" width="1400" height="1050" loading="lazy" alt="The perturbation rig: a light-grey felt board on a motorised XY stage, with a white puck on top.">
-          <figcaption>The rig: a felt board on a motorised XY stage, with the white puck on top.</figcaption>
-        </figure>
-        <figure>
-          <span class="badge rigtest">Rig test <small>— no robot, no policy</small></span>
-          <video controls muted playsinline preload="metadata" poster="media/d23_rig_puck_moving.jpg" src="media/d23_rig_puck_moving.mp4" aria-label="Rig test, no robot: the stage moves the puck across the board"></video>
-          <figcaption>The stage moves the puck across the board (real time, 23&nbsp;s).</figcaption>
+      <div class="step-head"><p class="when">Being built now</p><h2 id="dark-h">New task: take an object out of a dark bookshelf behind a curtain</h2></div>
+      <div class="media-grid two" style="align-items:start">
+        <ul class="points" style="margin:0">
+          <li><strong>Setup:</strong> the arm reaches through a strip blackout curtain into a dark shelf; a mini Pringles can sits at a random, logged spot in a marked area; one generic prompt.</li>
+          <li><strong>Why it fits:</strong> in the dark the wrist, palm and ego cameras see nothing; the ToF still measures distance. Darkness is checked per camera, every episode.</li>
+          <li><strong>Plan:</strong> (1) first dataset in complete darkness; (2) if the VPLA works, add bright / dim / dark and compare VLA vs VPLA at each level; (3) two unseen objects.</li>
+          <li><strong>Training:</strong> both policies from the π0.5 base, relative end-effector actions.</li>
+        </ul>
+        <figure id="curtain-fig">
+          <img src="media/d23_curtain.jpg" width="1050" height="1400" loading="lazy" alt="The blackout curtain on a rod, with dashed lines showing where it will be cut into vertical strips below an intact top band.">
+          <figcaption>The curtain, to be cut into strips (dashed) below an intact top band: the arm passes through, the strips fall back and block the light.</figcaption>
         </figure>
       </div>
-
-      <h3>The palm sensors</h3>
-      <div class="media-grid three" style="max-width:860px">
-        <figure>
-          <img src="media/d23_hand.jpg" width="1050" height="1400" loading="lazy" alt="The DG-5F hand with ToF modules on the fingertips and a sensor module on the palm.">
-          <figcaption>The DG-5F hand: ToF modules on the fingertips and a sensor module on the palm.</figcaption>
-        </figure>
-        <figure>
-          <img src="media/d23_palm_closeup_b.jpg" width="1050" height="1400" loading="lazy" alt="Close-up of the palm module: a green circuit board with the ToF sensor, and below it a small round camera lens in a white bracket.">
-          <figcaption>Palm close-up. The green board is the palm ToF sensor (TMF8829). The round lens in the white bracket below it is the palm camera.</figcaption>
-        </figure>
-        <figure>
-          <img src="media/d23_palm_closeup_a.jpg" width="1050" height="1400" loading="lazy" alt="A second close-up of the palm module between the fingers.">
-          <figcaption>The same module seen between the fingers.</figcaption>
-        </figure>
-      </div>
-
-      <h3>One shift, seen by every sensor</h3>
-      <figure class="wide" id="seqfig">
-        <span class="badge teleop">Teleop demonstration <small>— a human controls the robot; the stage moves the puck</small></span>
-        <img src="media/d23_sequence_ep0.jpg" width="1800" height="989" loading="lazy" alt="Episode 0: eight time points from 1 s before the shift to the hand re-hovering, seen by the zoomed ego camera, the wrist camera, the palm camera and the palm ToF depth grid. The puck stays visible in the wrist and palm cameras throughout; its ToF blob slides out of the top of the ToF field during the shift and returns at the re-hover.">
-        <figcaption>Episode 0 (70&nbsp;mm at +16°). Columns run from 1&nbsp;s before the shift to 3&nbsp;s after it, plus the moment the hand hovers over the puck again. The wrist and palm cameras see the puck in every column, and the ego crop shows it as a small white spot. The palm ToF shows the puck as a round green blob near the top of its field before the shift. During the shift the blob slides out of the field (by +2&nbsp;s only a sliver is left at the edge), and it returns at the re-hover. In normal light, the cameras keep the moved puck in view, while the ToF field loses it.</figcaption>
-      </figure>
-      <details>
-        <summary>Episode 3 (58.4&nbsp;mm at +44°), the same view</summary>
-        <figure class="wide">
-          <span class="badge teleop">Teleop demonstration <small>— a human controls the robot; the stage moves the puck</small></span>
-          <img src="media/d23_sequence_ep3.jpg" width="1800" height="989" loading="lazy" alt="Episode 3: the same four sensor rows over eight time points. The puck stays visible in the wrist and palm cameras; its ToF blob, at the top edge of the field before the shift, slides out over the top edge and returns at the re-hover.">
-          <figcaption>Same pattern. The puck slides out from under the fingers but stays in the wrist and palm camera views. In the ToF it starts at the top edge of the field, leaves over that edge, and returns at the re-hover.</figcaption>
-        </figure>
-      </details>
-      <details>
-        <summary>Why the fingertip ToF sensors are not shown</summary>
-        <p>The six fingertip/thumb ToF sensors are not shown: the index/middle 45° sensors and the thumb-palmar sensor see the hand's own fingers (~20–80&nbsp;mm across the whole field); the forward-looking fingertip sensors change during the shift, but by the same amount in equal-length windows without a shift, because the operator's fingers kept moving (hand joints 4–7° in the window), so they cannot be credited with seeing the puck.</p>
-      </details>
-
-      <details>
-        <summary>More rig footage: the stage visiting many positions, and the control panel</summary>
-        <div class="media-grid two">
-          <figure>
-            <span class="badge rigtest">Rig test <small>— no robot, no policy</small></span>
-            <video controls muted playsinline preload="none" poster="media/d23_rig_positions_4x.jpg" src="media/d23_rig_positions_4x.mp4" aria-label="Rig test, no robot: the stage moves the puck to a series of positions, 4 times speed"></video>
-            <figcaption>The stage moves the puck to a series of positions on the board (4× speed, 2&nbsp;min 46&nbsp;s in 41&nbsp;s).</figcaption>
-          </figure>
-          <figure>
-            <span class="badge rigtest">Rig test <small>— control screen, no robot</small></span>
-            <video controls muted playsinline preload="none" poster="media/d23_rig_panel.jpg" src="media/d23_rig_panel.mp4" aria-label="The stage control panel on the monitor, 22 October"></video>
-            <figcaption>The stage control panel (22 October). The operator starts a trial, and the shift fires on a key press. Its size and angle are drawn from the set range (here 50–80&nbsp;mm, ±45°).</figcaption>
-          </figure>
-        </div>
-      </details>
     </div>
   </section>
 
   <!-- 4 ------------------------------------------------------------------>
-  <section class="step" id="why" aria-labelledby="why-h">
+  <section class="step" id="corl" aria-labelledby="corl-h">
     <div><div class="marker" aria-hidden="true">4</div></div>
     <div class="step-body">
-      <div class="step-head"><p class="when">Review of the 22 October episodes</p><h2 id="why-h">Why this task cannot show the ToF's value: the cameras still see the moved puck</h2></div>
-      <ul class="points">
-        <li><strong>Wrist camera:</strong> it saw the puck after the shift in <strong>14 of 14</strong> cases (2 shifts and 12 sweep stops, every size from 50 to 80&nbsp;mm and every angle from −45° to +45°). It already saw it at the moment the operator triggered the shift in <strong>2 of 2</strong> cases.</li>
-        <li><strong>Ego camera:</strong> the puck is a ~10-pixel white spot next to the fingers in both shifts. That is small, but it is visible.</li>
-        <li><strong>Palm camera:</strong> it saw the puck at every sweep stop and in both shifts.</li>
-        <li><strong>Palm ToF:</strong> at the hover the puck sat near the top edge of the ToF field, not under the palm centre. After the shift it was at the edge of the field or outside it in <strong>5 of 12</strong> sweep stops.</li>
-        <li><strong>Why:</strong> the wrist camera looks past the fingertips. The hand hides only what lies behind its own body, and no shift size, angle or puck size changes that.</li>
-      </ul>
-      <p class="callout"><b>Conclusion:</b> in normal light, vision already solves the relocation, so this task cannot show that proximity sensing helps. To hide the object from every camera, we need darkness or a physical barrier, not the hand.</p>
-      <figure class="wide">
-        <span class="badge teleop">Teleop demonstration <small>— a human controls the robot; the stage moves the puck</small></span>
-        <img src="media/d23_sweep_wrist12.jpg" width="1840" height="688" loading="lazy" alt="Twelve wrist-camera frames, one after each sweep stop. The white puck is clearly visible beside or below the fingertips in all twelve.">
-        <figcaption>Episode 1, the sweep. The wrist-camera frame after each of the 12 stops (angle · shift size) shows the white puck clearly in all 12.</figcaption>
-      </figure>
+      <div class="step-head"><p class="when">Request</p><h2 id="corl-h">Attending CoRL 2026 (Austin, 9–12 November)</h2></div>
+      <!--CORL-->
     </div>
   </section>
 
   <!-- 5 ------------------------------------------------------------------>
-  <section class="step" id="dark" aria-labelledby="dark-h">
-    <div><div class="marker" aria-hidden="true">5</div></div>
-    <div class="step-body">
-      <div class="step-head"><p class="when">Next: being built now</p><h2 id="dark-h">The new task: retrieve an object from a dark bookshelf behind a curtain</h2></div>
-      <ul class="points">
-        <li><strong>Setup:</strong> the robot reaches through a strip blackout curtain into a dark bookshelf compartment and picks up the object. The main object is a mini Pringles can. A person places it by hand at a random spot inside a masking-tape area.</li>
-        <li><strong>Same instruction every time:</strong> one generic prompt, so an unseen object brings no new word.</li>
-        <li><strong>Teleoperation in the dark:</strong> the operator drives the robot while watching an infrared camera view. The policy does not get that view.</li>
-        <li><strong>Why it fits:</strong> inside the box the wrist, palm and ego RGB cameras see nothing, but the ToF lights the scene itself (infrared, 940&nbsp;nm), so it still measures distance to the object.</li>
-      </ul>
-      <h3>Plan</h3>
-      <ol class="points">
-        <li><strong>First dataset:</strong> complete darkness, one task.</li>
-        <li><strong>If that works:</strong> add light levels (bright, dim, dark) and compare VLA and VPLA at each, so the result is not just “a blind policy fails in the dark”.</li>
-        <li><strong>Generalisation:</strong> two unseen objects, still to be chosen.</li>
-        <li><strong>Checks before collecting:</strong> measure darkness per camera (mean image brightness, with the ToF on). Test each policy camera with a TV remote, which also emits near-infrared light: a camera that sees it would see the object by the ToF's own light. Check that the ToF sees each object.</li>
-      </ol>
-      <figure class="wide narrow" id="curtain-fig">
-        <img src="media/d23_curtain.jpg" loading="lazy" alt="The beige blackout curtain on a white tension rod, before cutting." onerror="this.style.display='none'">
-        <figcaption>The blackout curtain (before cutting): it will be cut into vertical strips, top band intact, so the hand and arm can pass through while the strips fall back and block the light.</figcaption>
-      </figure>
-      <details>
-        <summary>Curtain details</summary>
-        <ul>
-          <li>Two curtains, each cut into vertical strips with the top band left intact. The second layer is shifted by half a strip so the gaps do not line up.</li>
-          <li>Planned: one weight per strip, so the arm lifts single strips, not the whole sheet, and the top, sides and bottom sealed against the shelf.</li>
-          <li>The success criterion for the darkness is that no policy camera can find the object, not zero light.</li>
-        </ul>
-      </details>
-    </div>
-  </section>
-
-  <!-- 6 ------------------------------------------------------------------>
   <section class="step" id="questions" aria-labelledby="questions-h">
-    <div><div class="marker" aria-hidden="true">6</div></div>
+    <div><div class="marker" aria-hidden="true">5</div></div>
     <div class="step-body">
       <div class="step-head"><p class="when">For discussion today</p><h2 id="questions-h">Questions</h2></div>
       <ol class="questions">
-        <li><strong>Light levels:</strong> should we start with darkness only and add bright and dim levels once it works, or include all three from the start?</li>
-        <li><strong>Reviewer objections:</strong> how much should the paper address each of these?
-          <ul>
-            <li>“Just add a light or an LED to the hand.”</li>
-            <li>“Use an infrared camera.” We see this as the strongest objection.</li>
-            <li>“The task is trivial in the dark.”</li>
-          </ul>
-        </li>
-        <li><strong>Unseen objects:</strong> which two objects should we hold out to test generalisation?</li>
+        <li><strong>Light levels:</strong> start with darkness only and add bright and dim once it works, or all three from the start?</li>
+        <li><strong>Reviewers:</strong> the strongest objection is “use an infrared camera”. How much should the paper address it (and “just add a light”)?</li>
+        <li><strong>CoRL:</strong> may I go, and can the lab cover it?</li>
       </ol>
     </div>
   </section>
 
-  <footer>Robot: Fairino FR10 with a Tesollo DG-5F hand. Policy: π0.5 (openpi). Every robot video and image sequence from 22 October is a teleop demonstration; no policy was run.</footer>
+  <details style="margin-top:40px">
+    <summary>More detail (not needed for the meeting)</summary>
+    <figure class="wide">
+      <span class="badge teleop">Teleop demonstration <small>— a human drives the robot; the stage moves the puck</small></span>
+      <img src="media/d23_sweep_wrist12.jpg" width="1840" height="688" loading="lazy" alt="Twelve wrist-camera frames, one after each sweep stop; the white puck is visible in all twelve.">
+      <figcaption>The sweep: the wrist-camera frame after each of 12 moves (50–80&nbsp;mm, −45° to +45°) shows the puck in all 12.</figcaption>
+    </figure>
+    <figure class="wide">
+      <span class="badge teleop">Teleop demonstration <small>— a human drives the robot; the stage moves the puck</small></span>
+      <img src="media/d23_sequence_ep3.jpg" width="1800" height="989" loading="lazy" alt="Episode 3: the same four sensor rows over eight time points; the same pattern as episode 0.">
+      <figcaption>Episode 3 (58&nbsp;mm at +44°): the same pattern.</figcaption>
+    </figure>
+    <ul>
+      <li>Ego camera: the puck is a ~10-pixel spot. Palm ToF: at the hover the puck sat near the top edge of its field; after 5 of 12 moves it was at the edge or outside.</li>
+      <li>Fingertip ToF sensors are not shown: the 45° and thumb-palmar sensors see the hand's own fingers; the forward-looking ones change during a shift by the same amount as in windows without a shift (the operator's fingers kept moving), so they cannot be credited with seeing the puck.</li>
+      <li>FingerViP (arXiv 2604.21331v3, Table 1): wrist only 28/50 and 34/55; third-person + wrist 34/50 and 39/55; FingerViP 45/50 and 46/55 (curtain / closed cabinet). Related: MuseVLA (radar-assisted hidden-object retrieval), FingerEye (CoRL 2026, binocular fingertip cameras).</li>
+    </ul>
+    <div class="media-grid two">
+      <figure>
+        <span class="badge rigtest">Rig test <small>— no robot</small></span>
+        <video controls muted playsinline preload="none" poster="media/d23_rig_positions_4x.jpg" src="media/d23_rig_positions_4x.mp4" aria-label="Rig test, no robot: the stage moves the puck to a series of positions, 4 times speed"></video>
+        <figcaption>The stage visiting many positions (4× speed).</figcaption>
+      </figure>
+      <figure>
+        <img src="media/d23_hand.jpg" width="1050" height="1400" loading="lazy" alt="The DG-5F hand with ToF modules on the fingertips and a sensor module on the palm.">
+        <figcaption>The DG-5F hand with fingertip ToF modules and the palm module.</figcaption>
+      </figure>
+    </div>
+  </details>
+
+  <footer>Robot: Fairino FR10 with a Tesollo DG-5F hand. Policy: π0.5 (openpi). Every robot image from 22 October is a teleop demonstration; no policy was run.</footer>
 </main>
 
 <script>
