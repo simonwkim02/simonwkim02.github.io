@@ -60,7 +60,9 @@
   #curtain-fig img { max-height: 560px; width: auto; max-width: 100%; }
   table.legend { max-width: 860px; font-size: 14.5px; }
   table.legend td:first-child, table.legend td:nth-child(2) { white-space: nowrap; }
-  table.ws { max-width: 1000px; font-size: 14px; }
+  .step-body > details.wide-details { max-width: 1000px; }
+  table.compact.ws { max-width: 1000px; width: 100%; font-size: 14px; }
+  details.wide-details table.ws td { font-size: 14px; }
   table.ws td { vertical-align: top; }
   table.ws td:first-child { min-width: 150px; }
   table.ws td:nth-child(2) { white-space: nowrap; }
@@ -239,7 +241,7 @@
           </tbody>
         </table>
       </div>
-      <details open>
+      <details open class="wide-details">
         <summary>The CoRL workshops that matter for VPLA and the company (Thu 12 Nov; ranked)</summary>
         <div class="table-wrap">
           <table class="compact ws">
