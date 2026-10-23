@@ -58,6 +58,8 @@
   ol.questions li { margin-bottom: .8em; }
   .media-grid.three img, .media-grid.three video { aspect-ratio: 4 / 3; object-fit: cover; }
   #curtain-fig img { max-height: 560px; width: auto; max-width: 100%; }
+  table.legend { max-width: 860px; font-size: 14.5px; }
+  table.legend td:first-child, table.legend td:nth-child(2) { white-space: nowrap; }
   table.cost td:first-child { white-space: normal; }
   ol.questions li::marker { font-family: var(--sans); font-weight: 700; color: var(--ink-3); }
 
@@ -109,8 +111,21 @@
       </figure>
       <figure class="wide">
         <img src="media/d23_fingervip_table1.png" width="1254" height="371" loading="lazy" alt="FingerViP Table 1: success counts per method on the four tasks.">
-        <figcaption><b>TVC</b> = third-view (external) camera · <b>WC</b> = wrist camera · <b>FTC</b> = the five fingertip cameras · “w/” = with · <b>Ours</b> = third-view + five fingertip cameras, plus fingertip-camera poses and finger joint currents. On the two retrieval tasks, fingertip cameras raise success from 34/50 and 39/55 (TVC w/ WC) to 45/50 and 46/55. Table from Zhang et al., arXiv 2604.21331.</figcaption>
+        <figcaption>On the two retrieval tasks, fingertip cameras raise success from 34/50 and 39/55 (TVC w/ WC, their standard two-camera baseline) to 45/50 and 46/55. Table from Zhang et al., arXiv 2604.21331.</figcaption>
       </figure>
+      <div class="table-wrap">
+        <table class="compact legend">
+          <thead><tr><th>Row</th><th>Stands for</th><th>Cameras the policy gets</th></tr></thead>
+          <tbody>
+            <tr><td><b>TVC</b></td><td>Third-View Camera</td><td>one fixed external camera looking down at the scene (RealSense D435i)</td></tr>
+            <tr><td><b>WC</b></td><td>Wrist Camera</td><td>one camera on the wrist (also a D435i, added only for this comparison)</td></tr>
+            <tr><td><b>TVC w/ WC</b></td><td>third-view with wrist</td><td>both of the above: the standard two-camera baseline</td></tr>
+            <tr><td><b>FTC</b></td><td>FingerTip Cameras only</td><td>the five fingertip cameras, no external or wrist camera</td></tr>
+            <tr><td><b>FTC w/ WC</b></td><td>fingertips with wrist</td><td>the five fingertip cameras plus the wrist camera</td></tr>
+            <tr><td><b>Ours</b></td><td>FingerViP</td><td>third-view + five fingertip cameras, plus each fingertip camera's pose and the finger joint currents</td></tr>
+          </tbody>
+        </table>
+      </div>
       <figure class="wide" style="max-width:860px">
         <img src="media/d23_fingervip_fig11.jpg" width="1600" height="1154" loading="lazy" alt="FingerViP Figure 11: third-view, five fingertip and wrist views over time in the curtain-occluded retrieval task. The compartment behind the curtain is brightly lit and every fingertip camera sees the red Pringles can.">
         <figcaption>FingerViP's curtain task, all cameras over time: the space behind the curtain is brightly lit, and the object (also a Pringles can) is clearly visible to the fingertip cameras, and to the wrist camera under the curtain at t&nbsp;=&nbsp;0. Our task removes the light. Figure from Zhang et al., arXiv 2604.21331 (Fig. 11).</figcaption>
