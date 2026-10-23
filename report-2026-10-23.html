@@ -101,8 +101,16 @@
       <div class="step-head"><p class="when">The goal</p><h2 id="goal-h">One task where proximity sensing beats vision</h2></div>
       <ul class="points">
         <li><strong>Claim to show:</strong> a VPLA (π0.5 + the hand's ToF proximity sensors) succeeds where the same policy with cameras only (VLA) fails. So the task must defeat the cameras but not the ToF.</li>
-        <li><strong>Closest work, FingerViP</strong> (CoRL 2026): fingertip <em>cameras</em> for curtain-occluded and closed-cabinet retrieval, 45/50 and 46/55 successes vs 28/50 and 34/55 with the wrist camera only. But cameras need light; their own future work lists “integrated illumination for low-light scenarios”. Our ToF is active and works in the dark.</li>
+        <li><strong>Closest work, FingerViP</strong> (Zhang et al., CoRL 2026, <a href="https://arxiv.org/abs/2604.21331">arXiv 2604.21331</a>): an RGB camera in each of five fingertips, used for curtain-occluded and closed-cabinet retrieval. But cameras need light; their own future work lists “integrated illumination for low-light scenarios”. Our ToF is active and works in the dark.</li>
       </ul>
+      <figure class="wide">
+        <img src="media/d23_fingervip_fig1.jpg" width="1549" height="621" loading="lazy" alt="FingerViP overview figure: the UR5e arm with a five-fingertip-camera hand and a third-view camera, the five fingertip views, and the four tasks (confined-box button pressing, unstable-support stick retrieval, curtain-occluded object retrieval, closed-cabinet object retrieval) with generalization variants.">
+        <figcaption>FingerViP's setup and four tasks; the bottom two rows are the occluded-retrieval tasks closest to ours. Figure from Zhang et al., arXiv 2604.21331.</figcaption>
+      </figure>
+      <figure class="wide">
+        <img src="media/d23_fingervip_table1.png" width="1254" height="371" loading="lazy" alt="FingerViP Table 1: success counts per method on the four tasks.">
+        <figcaption><b>TVC</b> = third-view (external) camera · <b>WC</b> = wrist camera · <b>FTC</b> = the five fingertip cameras · “w/” = with · <b>Ours</b> = third-view + five fingertip cameras, plus fingertip-camera poses and finger joint currents. On the two retrieval tasks, fingertip cameras raise success from 34/50 and 39/55 (TVC w/ WC) to 45/50 and 46/55. Table from Zhang et al., arXiv 2604.21331.</figcaption>
+      </figure>
       <div class="media-grid two">
         <figure>
           <span class="badge conf">Conference demo <small>— other group, KAIST</small></span>
@@ -208,7 +216,7 @@
     <ul>
       <li>Ego camera: the puck is a ~10-pixel spot. Palm ToF: at the hover the puck sat near the top edge of its field; after 5 of 12 moves it was at the edge or outside.</li>
       <li>Fingertip ToF sensors are not shown: the 45° and thumb-palmar sensors see the hand's own fingers; the forward-looking ones change during a shift by the same amount as in windows without a shift (the operator's fingers kept moving), so they cannot be credited with seeing the puck.</li>
-      <li>FingerViP (arXiv 2604.21331v3, Table 1): wrist only 28/50 and 34/55; third-person + wrist 34/50 and 39/55; FingerViP 45/50 and 46/55 (curtain / closed cabinet). Related: MuseVLA (radar-assisted hidden-object retrieval), FingerEye (CoRL 2026, binocular fingertip cameras).</li>
+      <li>Related: MuseVLA (radar-assisted hidden-object retrieval), FingerEye (CoRL 2026, binocular fingertip cameras).</li>
     </ul>
     <div class="media-grid two">
       <figure>
