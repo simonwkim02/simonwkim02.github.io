@@ -99,7 +99,7 @@
       <div class="step-head"><p class="when">The goal</p><h2 id="problem-h">One task where proximity sensing beats vision</h2></div>
       <ul class="points">
         <li><strong>The claim we need to show:</strong> on at least one task, a <em>VPLA</em> (vision + proximity + language → action: the π0.5 policy that also reads the hand's ToF proximity sensors) succeeds where a <em>VLA</em> (the same policy with cameras only) fails.</li>
-        <li><strong>So the task must defeat the cameras but not the ToF.</strong> The ToF sensors on the palm and fingertips are <em>active</em>: each sends out its own infrared light and measures distance on a small grid, at close range. They need no room light. In the lit chopstick task, every policy we trained with the ToF leaned on the cameras instead.</li>
+        <li><strong>So the task must defeat the cameras but not the ToF.</strong> The ToF sensors on the palm and fingertips are <em>active</em>: each sends out its own infrared light and measures distance on a small grid, at close range. They need no room light. In the lit chopstick task, no policy we trained with the ToF did better than the camera-only policy: the wrist camera already saw the chopstick.</li>
       </ul>
     </div>
   </section>
