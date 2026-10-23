@@ -60,6 +60,10 @@
   #curtain-fig img { max-height: 560px; width: auto; max-width: 100%; }
   table.legend { max-width: 860px; font-size: 14.5px; }
   table.legend td:first-child, table.legend td:nth-child(2) { white-space: nowrap; }
+  table.ws { max-width: 1000px; font-size: 14px; }
+  table.ws td { vertical-align: top; }
+  table.ws td:first-child { min-width: 150px; }
+  table.ws td:nth-child(2) { white-space: nowrap; }
   table.cost td:first-child { white-space: normal; }
   ol.questions li::marker { font-family: var(--sans); font-weight: 700; color: var(--ink-3); }
 
@@ -235,18 +239,18 @@
           </tbody>
         </table>
       </div>
-      <details>
-        <summary>The CoRL workshops that matter for VPLA (Thu 12 Nov; ranked)</summary>
+      <details open>
+        <summary>The CoRL workshops that matter for VPLA and the company (Thu 12 Nov; ranked)</summary>
         <div class="table-wrap">
-          <table class="compact legend">
-            <thead><tr><th>Workshop</th><th>When</th><th>Why it matters for the company and VPLA</th></tr></thead>
+          <table class="compact ws">
+            <thead><tr><th>Workshop</th><th>When</th><th>Relevant topic (from its site)</th><th>Why it matters for us</th></tr></thead>
             <tbody>
-              <tr><td><a href="https://corl2026-robotcl.github.io/"><b>Pretrain to Adapt</b></a></td><td>PM</td><td>How to make a pretrained policy (like our π0.5) actually use a newly added sensor: exactly why our VPLA ignored the ToF, and what decides whether a dToF add-on is worth buying. Physical Intelligence (π0.5) invited.</td></tr>
-              <tr><td><a href="https://dex-manipulation.github.io/corl2026/"><b>Dexterous Manipulation</b> (3rd)</a></td><td>PM</td><td>Sensing when the hand itself hides the object, and new tactile/proximity sensor designs for robot hands: our dark-shelf task, and the hand-hardware buyers for in-hand dToF.</td></tr>
-              <tr><td><a href="https://bimanual-tool.github.io/"><b>BiDexTool</b></a></td><td>AM (likely)</td><td>Asks how touch, force and vision should be fed into VLAs: the fusion question VPLA faces. A hand maker (Sharpa) speaks: a potential dToF customer.</td></tr>
-              <tr><td><a href="https://umi-arena.airoa.io/"><b>UMI Arena</b></a></td><td>PM</td><td>Multi-finger force/touch sensing together with VLAs and fast data collection: where in-hand sensors meet the policies that would consume them.</td></tr>
-              <tr><td><a href="https://beneath-the-policy.github.io/"><b>Everything Beneath the Policy</b></a></td><td>AM</td><td>How sensor and observation design decide what a policy learns; welcomes negative results like ours (a policy ignoring a new sensor). Hardware-and-infrastructure audience.</td></tr>
-              <tr><td><a href="https://contact-rich-loco-manipulation.github.io/"><b>Contact-Rich Loco-Manipulation</b></a></td><td>PM</td><td>Multimodal sensing for contact on whole-body robots: a second market for hand-mounted dToF (medium fit).</td></tr>
+              <tr><td><a href="https://corl2026-robotcl.github.io/"><b>Pretrain to Adapt</b></a></td><td>PM</td><td>Call for papers: “Adapting pretrained policies to new sensor modalities (e.g. tactile, depth, audio, wrist and multi-view cameras)”.</td><td>Our exact problem: π0.5 ignored the added ToF. How to make a pretrained VLA actually use a new sensor decides whether a dToF add-on is worth buying. Physical Intelligence (π0.5) invited.</td></tr>
+              <tr><td><a href="https://bimanual-tool.github.io/"><b>BiDexTool: Bimanual Dexterous Tool Use</b></a></td><td>AM (likely)</td><td>Core challenge 3, “Multisensory Perception and Feedback”: “Vision alone is often insufficient … contacts may be occluded … How should these signals be fused and exposed to policies, controllers, and VLA/world-model systems …?”</td><td>The VPLA question (how to fuse a non-vision sensor into a VLA) and the company pitch (vision is not enough near contact). Hand maker Sharpa speaks: a potential dToF customer.</td></tr>
+              <tr><td><a href="https://dex-manipulation.github.io/corl2026/"><b>Dexterous Manipulation (3rd)</b></a></td><td>PM</td><td>“Perception: Seeing &amp; Feeling the World”: “robust visual perception under occlusion and clutter, tactile sensor designs and representations, and multi-modal fusion”; “How can robotic systems extract useful information when the hand itself occludes the object or scene?”</td><td>The hand hiding the object is why our lit pilot failed and why the dark task needs in-hand sensing; the audience designs and buys dexterous hands and their sensors.</td></tr>
+              <tr><td><a href="https://umi-arena.airoa.io/"><b>UMI Arena</b></a></td><td>PM</td><td>“Force and tactile sensing with multi-finger dexterity”; “Vision-language-action (VLA) models and diffusion policies for real-robot manipulation”.</td><td>The one workshop putting multi-finger sensing and VLAs side by side: where an in-hand dToF meets the policies that would use it.</td></tr>
+              <tr><td><a href="https://beneath-the-policy.github.io/"><b>Everything Beneath the Policy</b></a></td><td>AM</td><td>“the sensing and data collection pipeline”, “the action and observation spaces exposed to the policy”; invites “Negative or surprising results”.</td><td>How the observation design (our ToF tokens) decides what the policy learns; a fit for our negative result that a policy ignores an added sensor.</td></tr>
+              <tr><td><a href="https://contact-rich-loco-manipulation.github.io/"><b>Contact-Rich Loco-Manipulation</b></a></td><td>PM</td><td>Call-for-papers tag: “Multimodal sensing”.</td><td>Sensing for contact on whole-body robots: a second market for hand-mounted dToF (medium fit).</td></tr>
             </tbody>
           </table>
         </div>
