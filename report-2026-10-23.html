@@ -101,7 +101,7 @@
       <div class="step-head"><p class="when">The goal</p><h2 id="goal-h">One task where proximity sensing beats vision</h2></div>
       <ul class="points">
         <li><strong>Claim to show:</strong> a VPLA (π0.5 + the hand's ToF proximity sensors) succeeds where the same policy with cameras only (VLA) fails. So the task must defeat the cameras but not the ToF.</li>
-        <li><strong>Closest work, FingerViP</strong> (Zhang et al., CoRL 2026, <a href="https://arxiv.org/abs/2604.21331">arXiv 2604.21331</a>): an RGB camera in each of five fingertips, used for curtain-occluded and closed-cabinet retrieval. But cameras need light; their own future work lists “integrated illumination for low-light scenarios”. Our ToF is active and works in the dark.</li>
+        <li><strong>Closest work, FingerViP</strong> (Zhang et al., CoRL 2026, <a href="https://arxiv.org/abs/2604.21331">arXiv 2604.21331</a>): an RGB camera in each of five fingertips, used for curtain-occluded and closed-cabinet retrieval. <strong>Their occluded scenes are lit:</strong> the curtain covers only the top of the opening, and the compartment behind it is bright, so every fingertip camera (and the wrist camera at the start) sees the can by room light (their Fig. 11). Neither task was tested in the dark; their future work lists “integrated illumination for low-light scenarios”. Our ToF is active and works in complete darkness.</li>
       </ul>
       <figure class="wide">
         <img src="media/d23_fingervip_fig1.jpg" width="1549" height="621" loading="lazy" alt="FingerViP overview figure: the UR5e arm with a five-fingertip-camera hand and a third-view camera, the five fingertip views, and the four tasks (confined-box button pressing, unstable-support stick retrieval, curtain-occluded object retrieval, closed-cabinet object retrieval) with generalization variants.">
@@ -110,6 +110,10 @@
       <figure class="wide">
         <img src="media/d23_fingervip_table1.png" width="1254" height="371" loading="lazy" alt="FingerViP Table 1: success counts per method on the four tasks.">
         <figcaption><b>TVC</b> = third-view (external) camera · <b>WC</b> = wrist camera · <b>FTC</b> = the five fingertip cameras · “w/” = with · <b>Ours</b> = third-view + five fingertip cameras, plus fingertip-camera poses and finger joint currents. On the two retrieval tasks, fingertip cameras raise success from 34/50 and 39/55 (TVC w/ WC) to 45/50 and 46/55. Table from Zhang et al., arXiv 2604.21331.</figcaption>
+      </figure>
+      <figure class="wide" style="max-width:860px">
+        <img src="media/d23_fingervip_fig11.jpg" width="1600" height="1154" loading="lazy" alt="FingerViP Figure 11: third-view, five fingertip and wrist views over time in the curtain-occluded retrieval task. The compartment behind the curtain is brightly lit and every fingertip camera sees the red Pringles can.">
+        <figcaption>FingerViP's curtain task, all cameras over time: the space behind the curtain is brightly lit, and the object (also a Pringles can) is clearly visible to the fingertip cameras, and to the wrist camera under the curtain at t&nbsp;=&nbsp;0. Our task removes the light. Figure from Zhang et al., arXiv 2604.21331 (Fig. 11).</figcaption>
       </figure>
       <div class="media-grid two">
         <figure>
