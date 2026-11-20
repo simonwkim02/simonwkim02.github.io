@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grasping in the Dark with In-Hand Proximity</title>
+<meta name="description" content="Simon Won-Jin Kim: time-of-flight proximity sensors in a dexterous robot hand let a vision-language-action policy grasp a hidden Pringles can in complete darkness.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,100..125,300..800;1,100..125,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/home.css">
+</head>
+<body class="pf proj">
+<nav class="pill-nav" aria-label="Pages">
+  <a href="../">Home</a>
+  <a href="./" aria-current="page">Project page</a>
+  <a href="story.html">Full story</a>
+</nav>
+
+<header class="vhero">
+  <div class="wrap">
+    <p class="meta crumb"><a href="../">Simon Won-Jin Kim</a></p>
+    <h1>Grasping in the Dark with In-Hand Proximity</h1>
+    <p class="lede">In complete darkness, my policy with in-hand time-of-flight (ToF) proximity sensors grasped a hidden Pringles can at all 16 test positions. A camera-only policy, and one that simply took the same sensor readings as an extra input, grasped none.</p>
+    <figure class="f1" role="group" aria-label="The policy in complete darkness: what it senses, and where the hand came down at 16 test positions">
+      <div class="f1-p f1-ir">
+        <p class="f1-h">The task: grasp a Pringles can hidden in a dark, curtained shelf</p>
+        <div class="f1-photo">
+          <img src="../media/vpla/hero-ir.jpg" width="620" height="768" alt="Infrared side view of the robot hand closing around a Pringles can on a dark shelf.">
+          <i class="f1-lead to-bottom" style="left:45%;top:0;height:32%"></i><span class="f1-lab up" style="left:45%">Robot hand</span>
+          <i class="f1-lead to-top" style="left:55%;top:76%;bottom:0"></i><span class="f1-lab down" style="left:55%">Pringles can</span>
+        </div>
+        <p class="f1-note">Infrared camera; the policy never sees this view.</p>
+      </div>
+      <div class="f1-p f1-in">
+        <p class="f1-h">What the policy senses</p>
+        <div class="f1-tiles">
+          <p class="f1-row">ToF distance grids <span>brighter = closer</span></p>
+          <figure><img src="../media/vpla/hero-tof-index.png" width="200" height="200" alt="Index-fingertip distance grid: a bright shape where the Pringles can is."><figcaption>Index finger</figcaption></figure>
+          <figure><img src="../media/vpla/hero-tof-middle.png" width="200" height="200" alt="Middle-fingertip distance grid: a bright shape where the Pringles can is."><figcaption>Middle finger</figcaption></figure>
+          <figure><img src="../media/vpla/hero-tof-palm.png" width="200" height="200" alt="Palm distance grid: a bright shape where the Pringles can is."><figcaption>Palm</figcaption></figure>
+          <p class="f1-row">Camera images <span>nearly black</span></p>
+          <figure><img src="../media/vpla/hero-cam-scene.png" width="200" height="200" alt="Scene camera image: almost black."><figcaption>Scene</figcaption></figure>
+          <figure><img src="../media/vpla/hero-cam-wrist.png" width="200" height="200" alt="Wrist camera image: black."><figcaption>Wrist</figcaption></figure>
+          <figure><img src="../media/vpla/hero-cam-palm.png" width="200" height="200" alt="Palm camera image: black."><figcaption>Palm</figcaption></figure>
+          <p class="f1-row f1-nojoint">No joint angles as input</p>
+        </div>
+      </div>
+      <div class="f1-p f1-map">
+        <p class="f1-h">Where the hand came down, at 16 Pringles can positions not seen in training (top view)</p>
+        <p class="f1-side">&uarr; back of the shelf</p>
+        <div class="f1-plot">
+          <img src="../media/vpla/hero-map.jpg" width="1400" height="679" alt="Top-view map of 16 Pringles can positions. Each orange dot, where the hand of the policy with ToF sensors came down, sits right beside its Pringles can. Every green cross, where the camera-only policy's hand came down, is in one cluster near the left wall, far from most Pringles can positions.">
+        </div>
+        <p class="f1-side">&darr; front of the shelf (curtain)</p>
+        <ul class="f1-key">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="#fff" stroke="#1d1d1f" stroke-width="2.2"/></svg>Pringles can position</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h14" stroke="#1d1d1f" stroke-width="2"/></svg>Scale bar: 50 mm</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="#c4620f"/></svg>VLA policy with ToF sensors: grasped at all 16</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="#1f8a6e" stroke-width="3"/></svg>Camera-only VLA policy: grasped at none</li>
+        </ul>
+        <p class="f1-note">Each line joins a hand position to its Pringles can position.</p>
+      </div>
+    </figure>
+    <a class="f1-more" href="#built">&darr; The setup and the test</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="built">
+  <h2>The setup and the test</h2>
+  <div class="built">
+    <figure style="flex-grow:0;flex-basis:760px;margin:0 auto"><div class="tagged edge"><span class="hlab up" style="left:11.1%;transform:translateX(-35%)">Index ToF</span><span class="hlab up" style="left:37.9%">Palm ToF</span><img src="../media/vpla/hand-tof-v20.jpg" width="1240" height="805" loading="lazy" alt="The robot hand seen from the palm side, with ToF sensor boards in the index and middle fingertips and in the palm; lines mark the three sensors the policy uses."><span class="hlab down" style="left:10.5%;transform:translateX(-35%)">Middle ToF</span></div><figcaption><b>Seven time-of-flight (ToF) sensors</b>; the policy reads the palm sensor and the palm-facing sensor in the index and middle fingertips.</figcaption></figure>
+  </div>
+  <div class="built gantry-row">
+    <figure style="flex-grow:1.333"><img src="../media/vpla/shelf-gantry-v19.jpg" width="1000" height="750" loading="lazy" alt="A two-axis stepper-motor gantry mounted under the shelf floor, with yellow magnets on its carriage."><figcaption><b>An XY gantry</b> under the shelf floor moves the Pringles can by magnet to known positions.</figcaption></figure>
+    <figure style="flex-grow:0.75"><img src="../media/vpla/can-magnets.jpg" alt="The bottom of a Pringles can with five round magnets glued to it." width="750" height="1000" loading="lazy"><figcaption><b>Magnets under the Pringles can</b> couple it to the gantry&rsquo;s magnets through the felt floor.</figcaption></figure>
+    <figure style="flex-grow:0.5625"><div class="camtag"><div class="vbox"><span class="clab cl-top" style="left:53.7%">Top-view infrared camera</span><i class="cline cl-top" style="left:53.7%"></i><span class="clab cl-side" style="top:37.6%">Side-view infrared camera</span><i class="cline cl-side" style="top:37.6%"></i><video autoplay controls muted loop playsinline preload="metadata" poster="../media/vpla/gantry-moves-can-v17.jpg" width="540" height="960" aria-label="Inside the shelf with the lights on: the Pringles can slides across the felt floor to a new spot, again and again, pulled by the magnets of the gantry below."><source src="../media/vpla/gantry-moves-can-v17.mp4" type="video/mp4"></video></div></div><figcaption><b>Inside the shelf</b>: the gantry moves the Pringles can to a new spot (2&times;&nbsp;speed).</figcaption></figure>
+  </div>
+  <div class="built">
+    <figure style="flex-grow:1.853"><p class="plab"><span class="tag tele">Teleoperation</span></p><video class="tele" autoplay controls muted loop playsinline preload="metadata" poster="../media/vpla/operator-screen-v16.jpg" width="960" height="518" aria-label="The operator's screen during teleoperation: status bars, depth views of the shelf from above and from the side as the hand reaches in, seven live ToF distance grids from the hand, and at the bottom left an on-screen guide that shows the hand's position against the Pringles can's spot."><source src="../media/vpla/operator-screen-v16.mp4" type="video/mp4"></video><figcaption><b>Teleoperating in the dark</b>: shelf depth views, live ToF grids and an on-screen guide to the Pringles can.</figcaption></figure>
+    <figure style="flex-grow:1.778"><p class="plab"><span class="tag tele">Teleoperation</span></p><video class="tele" autoplay controls muted loop playsinline preload="metadata" poster="../media/vpla/dark-teleop-v18.jpg" width="1280" height="720" aria-label="A dark lab seen from the side: I stand beside the robot arm and hand and steer them, with monitors glowing at the left."><source src="../media/vpla/dark-teleop-v18.mp4" type="video/mp4"></video><figcaption><b>I teleoperate the robot</b> in the dark lab to record demonstrations (8&times;&nbsp;speed).</figcaption></figure>
+  </div>
+  <figure class="testclip"><p class="plab"><span class="tag auto">Autonomous</span></p><p class="vlabs three" aria-hidden="true"><span>Camera-only policy</span><span>Control: ToF readings marked invalid</span><span>Policy with ToF sensors</span></p><video class="auto" autoplay controls muted loop playsinline preload="metadata" poster="../media/vpla/position3-trio-v22.jpg" width="966" height="202" aria-label="Three top-down infrared clips of the same Pringles can position in the dark shelf. Left: the camera-only policy's hand comes down near the left wall and misses the Pringles can. Middle: the control, whose ToF readings are all marked invalid, also comes down near the left wall and misses. Right: the hand of the policy with ToF sensors comes down on the Pringles can and pulls it out."><source src="../media/vpla/position3-trio-v22.mp4" type="video/mp4"></video><figcaption><b>One of 16 test positions</b>, filmed by an infrared camera that no policy sees; a white circle marks the Pringles can (2&times;&nbsp;speed).</figcaption></figure>
+</section>
+
+<section id="idea" class="measure">
+  <p>Vision-language-action (VLA) models rely on camera images, so they <b>fail in the dark</b>. I <b>built seven proximity sensors into a robot hand</b> and fed three of them into &pi;<sub>0.5</sub>, a pretrained VLA model; the same model without them is the camera-only policy.</p>
+  <p>At first, the policy <b>ignored the sensors</b>: the fingers&rsquo; starting joint angles differed in every demonstration, so it likely recognized each demonstration by those angles and replayed its motion. I therefore <b>removed the joint angles from its input</b> and pre-trained and froze its sensor encoder to locate the Pringles can. Without these two changes, the same model approached the Pringles can at 0 of 16 positions in a later, unblinded test. A control trained the same way but with every ToF reading marked invalid approached it at only 1 of 16, so the difference comes from the ToF readings.</p>
+  <p><b>My part:</b> I designed the sensors&rsquo; circuit boards and built them into the hand, built the dark shelf with its gantry and a leader-follower teleoperation system, recorded the demonstrations, trained the policies and <b>ran every robot test</b>.</p>
+  <p class="result">The 16-position test was <b>pre-registered and blinded</b>, with the policies running in random order under hidden code names. Whether the hand approached the Pringles can, coming down within 40&nbsp;mm of it, was <b>computed from the robot&rsquo;s joint logs</b> by a fixed rule. In September, I <b>discarded all earlier comparisons</b> after finding a software delay in the arm-position input.</p>
+  <p class="limits"><b>Limits:</b> one object and one training seed, 16 trials per policy, no trials in normal light, test positions within the area the demonstrations covered, and grasps scored by an operator who could tell the policies apart.</p>
+  <p>To be submitted to RSS 2027.</p>
+  <p class="btns"><a class="btn" href="story.html">The full story, step by step</a></p>
+</section>
+
+</main>
+
+<footer class="pf-foot">Last updated November 2026.</footer>
+<script>if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('video[autoplay]').forEach(v => { v.removeAttribute('autoplay'); v.pause(); v.controls = true; });</script>
+<script>/* v22b: open at the top (or at the #anchor), also inside a viewer that keeps the previous page's scroll offset */ if (!location.hash && performance.getEntriesByType('navigation')[0]?.type === 'navigate') { const top = () => { scrollTo(0, 0); document.body.scrollIntoView({ block: 'start' }); }; top(); addEventListener('load', top, { once: true }); }</script>
+<script src="../assets/fs.js"></script>
+</body>
+</html>

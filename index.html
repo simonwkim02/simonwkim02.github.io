@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simon Won-Jin Kim</title>
+<meta name="description" content="Simon Won-Jin Kim: robot learning. Time-of-flight proximity sensors in a dexterous robot hand, built into a vision-language-action policy that grasps in complete darkness.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/home.css">
+</head>
+<body class="pf" id="top">
+
+<nav class="pill-nav" aria-label="Sections">
+  <a class="nav-about" href="#top">About</a>
+  <a href="#systems">Robot Systems</a>
+  <a href="#publications">Publications</a>
+  <a href="#posters">Posters</a>
+  <a href="#experience">Experience</a>
+  <a href="vpla/">Project page</a>
+</nav>
+
+<div class="pf-wrap">
+
+<aside class="side card" aria-label="Contact">
+  <img class="avatar" src="media/simon-profile.jpg" width="256" height="256" alt="Portrait photo of Simon Won-Jin Kim">
+  <h1>Simon Won-Jin Kim</h1>
+  <p class="role">Robot learning</p>
+  <p class="where">Post-master researcher, KAIST</p>
+  <ul class="mails">
+    <li><a href="mailto:simonkim02@kaist.ac.kr">simonkim02@kaist.ac.kr</a></li>
+    <li><a href="mailto:simon.kim02@gmail.com">simon.kim02@gmail.com</a></li>
+  </ul>
+  <p class="icons">
+    <a href="https://www.linkedin.com/in/simonwjkim" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor"/><rect x="6" y="10" width="2.6" height="8" fill="#fff"/><circle cx="7.3" cy="6.9" r="1.6" fill="#fff"/><path d="M11 10h2.5v1.3c.5-.9 1.6-1.5 2.9-1.5 2.1 0 3.1 1.3 3.1 3.6V18h-2.6v-4.2c0-1.1-.4-1.8-1.4-1.8s-1.9.8-1.9 2V18H11z" fill="#fff"/></svg></a>
+  </p>
+  <p class="side-cv"><a class="pill" href="files/Simon_Kim_CV_v5.pdf">CV (PDF)</a></p>
+</aside>
+
+<main class="pf-main">
+
+<section class="pf-hero card" aria-labelledby="hero-title">
+  <a class="hero-link" href="vpla/">
+    <h2 id="hero-title">Grasping in the Dark with In-Hand Proximity <span aria-hidden="true">&rarr;</span></h2>
+    <p class="hero-result">In complete darkness, my policy with in-hand time-of-flight (ToF) proximity sensors grasped a hidden Pringles can at all 16 test positions. A camera-only policy, and one that simply took the same sensor readings as an extra input, grasped none.</p>
+    <figure class="f1" role="group" aria-label="The policy in complete darkness: what it senses, and where the hand came down at 16 test positions">
+      <div class="f1-p f1-ir">
+        <p class="f1-h">The task: grasp a Pringles can hidden in a dark, curtained shelf</p>
+        <div class="f1-photo">
+          <img src="media/vpla/hero-ir.jpg" width="620" height="768" alt="Infrared side view of the robot hand closing around a Pringles can on a dark shelf.">
+          <i class="f1-lead to-bottom" style="left:45%;top:0;height:32%"></i><span class="f1-lab up" style="left:45%">Robot hand</span>
+          <i class="f1-lead to-top" style="left:55%;top:76%;bottom:0"></i><span class="f1-lab down" style="left:55%">Pringles can</span>
+        </div>
+        <p class="f1-note">Infrared camera; the policy never sees this view.</p>
+      </div>
+      <div class="f1-p f1-in">
+        <p class="f1-h">What the policy senses</p>
+        <div class="f1-tiles">
+          <p class="f1-row">ToF distance grids <span>brighter = closer</span></p>
+          <figure><img src="media/vpla/hero-tof-index.png" width="200" height="200" alt="Index-fingertip distance grid: a bright shape where the Pringles can is."><figcaption>Index finger</figcaption></figure>
+          <figure><img src="media/vpla/hero-tof-middle.png" width="200" height="200" alt="Middle-fingertip distance grid: a bright shape where the Pringles can is."><figcaption>Middle finger</figcaption></figure>
+          <figure><img src="media/vpla/hero-tof-palm.png" width="200" height="200" alt="Palm distance grid: a bright shape where the Pringles can is."><figcaption>Palm</figcaption></figure>
+          <p class="f1-row">Camera images <span>nearly black</span></p>
+          <figure><img src="media/vpla/hero-cam-scene.png" width="200" height="200" alt="Scene camera image: almost black."><figcaption>Scene</figcaption></figure>
+          <figure><img src="media/vpla/hero-cam-wrist.png" width="200" height="200" alt="Wrist camera image: black."><figcaption>Wrist</figcaption></figure>
+          <figure><img src="media/vpla/hero-cam-palm.png" width="200" height="200" alt="Palm camera image: black."><figcaption>Palm</figcaption></figure>
+          <p class="f1-row f1-nojoint">No joint angles as input</p>
+        </div>
+      </div>
+      <div class="f1-p f1-map">
+        <p class="f1-h">Where the hand came down, at 16 Pringles can positions not seen in training (top view)</p>
+        <p class="f1-side">&uarr; back of the shelf</p>
+        <div class="f1-plot">
+          <img src="media/vpla/hero-map.jpg" width="1400" height="679" alt="Top-view map of 16 Pringles can positions. Each orange dot, where the hand of the policy with ToF sensors came down, sits right beside its Pringles can. Every green cross, where the camera-only policy's hand came down, is in one cluster near the left wall, far from most Pringles can positions.">
+        </div>
+        <p class="f1-side">&darr; front of the shelf (curtain)</p>
+        <ul class="f1-key">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="#fff" stroke="#1d1d1f" stroke-width="2.2"/></svg>Pringles can position</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h14" stroke="#1d1d1f" stroke-width="2"/></svg>Scale bar: 50 mm</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="#c4620f"/></svg>VLA policy with ToF sensors: grasped at all 16</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="#1f8a6e" stroke-width="3"/></svg>Camera-only VLA policy: grasped at none</li>
+        </ul>
+      </div>
+    </figure>
+  </a>
+  <p class="plinks btns"><a class="btn" href="https://drive.google.com/file/d/13iM1GC16_O8QYmKsmqRwrK4ksybVNLFT/view">Preprint</a></p>
+</section>
+
+<section class="bio card" aria-label="About me">
+  <p>I am a post-master researcher in Prof. Hyung-Soon Park&rsquo;s lab at KAIST, where I finished my M.S. in mechanical engineering in August 2026. For my thesis, I <b>built seven time-of-flight proximity sensors into a dexterous robot hand</b> and fed three of them into &pi;<sub>0.5</sub>, a pretrained vision-language-action (VLA) model. The policy at first ignored the new sense, so I <b>changed its inputs and training until it relied on the sensors</b>. Before KAIST, I studied mechanical engineering at UC San Diego and worked as a mechanical engineer in industry for around four and a half years. During my master&rsquo;s, I learned how to collect demonstrations and fine-tune VLA models, but I feel I have only scratched the surface. In a PhD, I want to deepen this knowledge and explore the wider field of robot learning, from tactile and force sensing to the latest VLA architectures, world action models and reinforcement learning.</p>
+  <p class="red">Applying to PhD programs for Fall 2027</p>
+  <p class="pills">
+    <a class="pill" href="mailto:simonkim02@kaist.ac.kr">Email</a>
+    <a class="pill" href="files/Simon_Kim_CV_v5.pdf">CV</a>
+    <a class="pill" href="https://www.linkedin.com/in/simonwjkim">LinkedIn</a>
+    <!-- arXiv pill goes here once the preprint has its ID -->
+  </p>
+</section>
+
+<section id="systems" aria-labelledby="systems-h">
+  <h2 id="systems-h" class="sec">Robot Systems</h2>
+
+  <article class="system">
+    <h3>Grasping in the dark: a new sense for a VLA policy</h3>
+    <p>I built <b>ToF proximity sensors into a dexterous robot hand</b>, built a leader-follower teleoperation system to record demonstrations in the dark, and <b>made a pretrained VLA policy use the new sense</b> (VPLA: vision-proximity-language-action). To be submitted to RSS 2027.</p>
+    <p class="btns"><a class="btn" href="vpla/">Project page</a><a class="btn" href="vpla/story.html">Full story</a><a class="btn" href="https://drive.google.com/file/d/13iM1GC16_O8QYmKsmqRwrK4ksybVNLFT/view">Preprint</a></p>
+    <div class="cards">
+      <figure class="card mcard" style="--ar:1.54"><div class="tagged edge"><span class="hlab up" style="left:11.1%;transform:translateX(-35%)">Index ToF</span><span class="hlab up" style="left:37.9%">Palm ToF</span><img src="media/vpla/hand-tof-v20.jpg" width="1240" height="805" loading="lazy" alt="The robot hand seen from the palm side, with ToF sensor boards in the index and middle fingertips and in the palm; lines mark the three sensors the policy uses."><span class="hlab down" style="left:10.5%;transform:translateX(-35%)">Middle ToF</span></div><figcaption><b>ToF sensor hand</b> Seven ToF proximity sensors; the policy reads the palm and two fingertip sensors.</figcaption></figure>
+      <figure class="card mcard" style="--ar:1.853"><p class="plab"><span class="tag tele">Teleoperation</span></p><video class="tele" autoplay controls muted loop playsinline preload="metadata" poster="media/vpla/operator-screen-v16.jpg" width="960" height="518" aria-label="The operator's screen during teleoperation: status bars, depth views of the shelf from above and from the side as the hand reaches in, seven live ToF distance grids from the hand, and at the bottom left an on-screen guide that shows the hand's position against the Pringles can's spot."><source src="media/vpla/operator-screen-v16.mp4" type="video/mp4"></video><figcaption><b>Teleoperation in the dark</b> The operator&rsquo;s screen: shelf depth views, live ToF grids and an on-screen guide to the Pringles can.</figcaption></figure>
+      <figure class="card mcard" style="--ar:4.782"><p class="plab"><span class="tag auto">Autonomous</span></p><p class="vlabs three" aria-hidden="true"><span>Camera-only policy</span><span>Control: ToF readings marked invalid</span><span>Policy with ToF sensors</span></p><video class="auto" autoplay controls muted loop playsinline preload="metadata" poster="media/vpla/position3-trio-v22.jpg" width="966" height="202" aria-label="Three top-down infrared clips of the same Pringles can position in the dark shelf. Left: the camera-only policy's hand comes down near the left wall and misses the Pringles can. Middle: the control, whose ToF readings are all marked invalid, also comes down near the left wall and misses. Right: the hand of the policy with ToF sensors comes down on the Pringles can and pulls it out."><source src="media/vpla/position3-trio-v22.mp4" type="video/mp4"></video><figcaption><b>Grasping in the dark, 16/16</b> One of 16 positions in a pre-registered, blinded test; a white circle marks the Pringles can.</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="system">
+    <h3>A pipetting robot you can talk to</h3>
+    <p>I built a <b>three-axis gantry with a motorized pipette</b>, controlled with G-code and grbl firmware, and connected it to a local vision-language model (Qwen3-VL-8B). The model turns <b>plain English or Korean requests into pipetting plans</b>, which run only after rule-based safety checks and an operator&rsquo;s approval.</p>
+    <div class="cards">
+      <figure class="card mcard" style="--ar:.945"><img src="media/pipette/gantry-white.jpg" width="1200" height="1270" loading="lazy" alt="An aluminium three-axis gantry in front of a white backdrop, its motorized pipette above three labelled tubes and a sample plate."><figcaption><b>Gantry and pipette</b> The three-axis gantry and motorized pipette, controlled with G-code and grbl firmware.</figcaption></figure>
+      <figure class="card tcard" style="--ar:1.25">
+        <div class="plan" role="img" aria-label="A typed request and the 11-step pipetting plan the model made from it in 3.5 seconds, with the checks it passed.">
+          <p class="plan-h">Typed request</p>
+          <p class="plan-q">&ldquo;&hellip; Then transfer 100 &micro;L of buffer into the sample and mix the sample with 150 &micro;L 3 times. &hellip;&rdquo;</p>
+          <p class="plan-h">Plan from the model, 3.5 s</p>
+          <ol class="plan-steps"><li>move to WASTE</li><li>move to LYSATE</li><li>move to BUFFER</li><li>aspirate 100 &micro;L from BUFFER</li><li>dispense 100 &micro;L into SAMPLE</li><li>mix SAMPLE, 3 &times; 150 &micro;L</li><li class="more">&hellip; 11 steps in all</li></ol>
+          <p class="plan-ok">&check; containers known, volumes in range</p>
+        </div>
+        <figcaption><b>Plain request to protocol</b> An 11-step request, planned in 3.5 s.</figcaption>
+      </figure>
+      <figure class="card mcard" style="--ar:1.78"><video autoplay controls muted loop playsinline preload="metadata" poster="media/pipette/live-run.jpg" width="640" height="360" aria-label="The gantry moves the pipette between three labelled tubes, aspirating, dispensing and mixing."><source src="media/pipette/live-run.mp4" type="video/mp4"></video><figcaption><b>Live run</b> The 11-step request running on the robot (4&times; speed).</figcaption></figure>
+    </div>
+  </article>
+</section>
+
+<section id="publications" aria-labelledby="pubs-h">
+  <h2 id="pubs-h" class="sec">Publications</h2>
+  <article class="card pub">
+    <a class="thumb" href="vpla/"><img src="media/vpla/rss-ir-thumb.jpg" width="600" height="410" loading="lazy" alt="Infrared side view in complete darkness: the robot hand closing around a Pringles can."></a>
+    <div>
+      <h3>Grasping in the Dark with In-Hand Proximity: Integrating and Verifying a New Modality in VLAs</h3>
+      <p class="authors"><b>S. W.-J. Kim</b> and H.-S. Park</p>
+      <p class="venue">In preparation for Robotics: Science and Systems (RSS) 2027</p>
+      <p class="plinks btns"><a class="btn" href="vpla/">Project page</a><a class="btn" href="https://drive.google.com/file/d/13iM1GC16_O8QYmKsmqRwrK4ksybVNLFT/view">Preprint</a></p>
+    </div>
+  </article>
+  <article class="card pub pub-strip">
+    <figure class="thumb wide"><a href="media/robosoft2024-fig5.jpg"><img src="media/robosoft2024-fig5.jpg" width="1400" height="505" loading="lazy" alt="Four-part figure: the load-cell test setup; the sensor's force against a force gauge over repeated loads; a robot arm test bed with one joint driven by a twisted-string actuator; and force-control results over time."></a><figcaption>Fig. 5 of Cho et al., RoboSoft 2024 &copy; IEEE</figcaption></figure>
+    <div>
+      <h3>Cable-Integrated Single-Axis Load Cell for Tendon-Driven Robotic Actuation Enabled by Thin-Film Soft Sensor</h3>
+      <p class="authors">J. Cho, T. Park, <b>S. Kim</b> and Y.-L. Park</p>
+      <p class="venue">IEEE International Conference on Soft Robotics (RoboSoft), San Diego, CA, USA, April 2024, pp. 952&ndash;957</p>
+      <p class="mypart">I designed a robot arm test bed with one joint driven by a twisted-string actuator (TSA), and helped collect and analyze the data.</p>
+      <p class="plinks btns"><a class="btn" href="https://doi.org/10.1109/RoboSoft60065.2024.10521984">Paper</a></p>
+    </div>
+  </article>
+</section>
+
+<section id="posters" aria-labelledby="posters-h">
+  <h2 id="posters-h" class="sec">Posters</h2>
+  <article class="card pub">
+    <a class="thumb" href="https://drive.google.com/file/d/1rO6EysTOBVu7ao9ztd8WSnZNjhN2_ci6/view"><img src="media/posters/ksme2025-cad.jpg" width="683" height="322" loading="lazy" alt="3D CAD render of the pipetting platform: a three-axis gantry with the pipette on its vertical axis, inside an aluminium frame."></a>
+    <div>
+      <h3>Development of an Automated Pipette Dispensing System for High-Throughput Screening</h3>
+      <p class="authors"><b>S. W.-J. Kim</b> and H.-S. Park</p>
+      <p class="venue">KSME 80th Anniversary Conference, Gangwon, Korea, December 2025</p>
+      <p class="plinks btns"><a class="btn" href="https://drive.google.com/file/d/1rO6EysTOBVu7ao9ztd8WSnZNjhN2_ci6/view">Poster</a></p>
+    </div>
+  </article>
+  <article class="card pub pub-strip">
+    <a class="thumb" href="https://drive.google.com/file/d/1rZG7y4COdKQZkh20rZgphWdGvb0q5Zcz/view"><img src="media/posters/poster044-strip-v17.jpg" width="1950" height="360" loading="lazy" alt="Main figure of poster #044: four photos of the robot hand running on its own as it approaches a chopstick standing in a socket, closes on it, lifts it and places it in a white container."></a>
+    <p class="steps" aria-hidden="true"><span>1 Approach</span><span>2 Close</span><span>3 Lift</span><span>4 Place</span></p>
+    <div>
+      <h3>Vision&ndash;Proximity&ndash;Language&ndash;Action (VPLA): Can In-Hand Proximity Sensing Help a VLA Policy Grasp a Chopstick?</h3>
+      <p class="authors"><b>S. W.-J. Kim</b> and H.-S. Park</p>
+      <p class="venue">Poster #044, Nature Conferences: Autonomous Robotics, KAIST, Daejeon, Korea, October 2026</p>
+      <p class="plinks btns"><a class="btn" href="https://drive.google.com/file/d/1rZG7y4COdKQZkh20rZgphWdGvb0q5Zcz/view">Poster</a></p>
+    </div>
+  </article>
+</section>
+
+<section id="experience" aria-labelledby="exp-h">
+  <h2 id="exp-h" class="sec">Experience</h2>
+  <ul class="card exp">
+    <li><b>ScanUV</b> (Spokane, WA), mechanical engineer, 2020&ndash;2023: led prototypes of medical UV-C disinfection devices with time-of-flight sensors.</li>
+    <li><b>EOTRON LLC</b> (Riverside, CA), mechanical engineer, 2018&ndash;2020: cooling for high-power defense lasers, raising output power by 8%.</li>
+  </ul>
+</section>
+
+<section id="projects" aria-labelledby="proj-h">
+  <h2 id="proj-h" class="sec">Earlier Projects</h2>
+  <ul class="card exp">
+    <li><b>SonoHand</b> (UC San Diego), senior design capstone, 2020: with three teammates, built a robotic arm that holds an ultrasound probe in place on a patient, finishing the physical prototype during the COVID-19 lockdown. Featured in <a href="https://today.ucsd.edu/story/creating-an-engineering-senior-design-project.at-home">UC San Diego Today</a> (July 2020).</li>
+  </ul>
+</section>
+
+</main>
+</div>
+
+<footer class="pf-foot">Last updated November 2026.</footer>
+<script>if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('video[autoplay]').forEach(v => { v.removeAttribute('autoplay'); v.pause(); v.controls = true; });</script>
+<script>/* v22b: open at the top (or at the #anchor), also inside a viewer that keeps the previous page's scroll offset */ if (!location.hash && performance.getEntriesByType('navigation')[0]?.type === 'navigate') { const top = () => { scrollTo(0, 0); document.body.scrollIntoView({ block: 'start' }); }; top(); addEventListener('load', top, { once: true }); }</script>
+<script src="assets/fs.js"></script>
+</body>
+</html>
