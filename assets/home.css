@@ -94,7 +94,11 @@ h2.sec { font-size: 1.5rem; font-weight: 700; font-stretch: 106%; margin: 0 0 1r
 @media (max-width: 700px) { .mcard img, .mcard video { max-height: 340px; } }
 /* phone: the result map comes right under the sentence; the sidebar sits at the top, so "About" leaves the nav */
 @media (max-width: 700px) { .pf-hero .f1-map { order: -1; } .nav-about { display: none; } }
-@media (max-width: 700px) { .pill-nav { justify-content: center; } .pill-nav a { padding: .25rem .45rem; font-size: .8rem; } }
+@media (max-width: 700px) { .pill-nav { justify-content: safe center; } .pill-nav a { padding: .25rem .45rem; font-size: .8rem; } }
+/* phones narrower than 380 px: the four nav links fit in one row without being cut (safe center: never cut the first link) */
+@media (max-width: 380px) { .pill-nav a { padding: .25rem .3rem; font-size: .75rem; } }
+/* a nav tap lands the section title below the fixed nav, not under it */
+[id] { scroll-margin-top: 3.6rem; }
 
 /* v7: one thumbnail width for every publication card, each image at its own aspect ratio, so the titles line up */
 .pub, .pub:has(.wide) { grid-template-columns: 300px minmax(0, 1fr); }
@@ -169,6 +173,8 @@ h2.sec { font-size: 1.5rem; font-weight: 700; font-stretch: 106%; margin: 0 0 1r
   font-size: 12px; font-weight: 700; line-height: 1.2; padding: 1px 5px; white-space: nowrap; }
 .hlab.up { top: .15rem; }
 .hlab.down { bottom: .15rem; }
+/* phones narrower than 380 px: tighter labels, and "Palm ToF" sits a little right of its leader line, so it no longer overlaps "Index ToF" */
+@media (max-width: 380px) { .hlab { padding: 1px 3px; } .hlab.up + .hlab.up { transform: translateX(-25%); } }
 .mcard .tagged.edge { background: #fff; }
 .built + .built { margin-top: 1.2rem; }
 /* v17: the poster strip's step names sit under its four photos (the poster's printed badges are left out) */

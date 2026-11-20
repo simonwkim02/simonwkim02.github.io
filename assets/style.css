@@ -101,6 +101,7 @@ footer { padding: 2.5rem 0 3rem; border-top: 1px solid var(--rule); }
 @media (max-width: 700px) {
   .built { flex-direction: column; }
   .built figure { width: 100%; }
+  .built > figure { flex-basis: auto !important; }  /* the inline 760px basis would become a height in the column */
   .built img, .built video { max-height: 70vh; width: auto; margin: 0 auto; }
 }
 .testclip { max-width: 45rem; margin-top: 1.5rem; }

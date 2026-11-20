@@ -50,6 +50,7 @@ td.num { white-space: nowrap; } td.num b { font-size: 17px; }
 .maps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 16px; align-items: start; }
 .map { margin: 0; background: var(--surface); border: 1px solid var(--rule); padding: 12px; min-width: 0; }
 .map figcaption { font-weight: 600; font-size: 14.5px; margin-bottom: 6px; } .map svg { width: 100%; height: auto; display: block; }
+@media (max-width: 600px) { .map circle { transform-box: fill-box; transform-origin: center; transform: scale(1.9); } .map .lbl { font-size: 20px; transform: translateY(3px); } }  /* phones: dots big enough to read and tap */
 .map.axes { max-width: 620px; display: flex; flex-direction: column; gap: 8px; } .map.axes img { width: 100%; height: auto; display: block; border-radius: 3px; }
 .area { fill: none; stroke: var(--rule-strong); stroke-width: 1.2; } .tick { font: 11px var(--sans); fill: var(--ink-3); }
 .old { fill: var(--ink-3); opacity: .75; } .new { fill: var(--new); } .faint { fill: var(--ink-3); opacity: .35; }
