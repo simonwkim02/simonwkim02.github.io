@@ -1,0 +1,326 @@
+/* Home page (portfolio). Layout modeled on binghao-huang.github.io: white page, light sans-serif, soft rounded cards,
+   floating pill nav, sticky left sidebar card, pill buttons, publication cards with a thumbnail on the left.
+   Own code; loads after style.css, which still styles the hero figure (.f1). */
+body.pf { background: #fff; color: #222; font: 300 1rem/1.65 "Archivo", system-ui, sans-serif; }
+.pf a { color: #1d5faf; text-decoration: none; }
+.pf a:hover { text-decoration: underline; }
+.pf b, .pf h1, .pf h2, .pf h3 { font-weight: 650; }
+.card { background: #fff; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 6px 22px rgba(0,0,0,.07); }
+
+.pill-nav { position: fixed; top: .9rem; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: .2rem;
+  background: rgba(255,255,255,.88); backdrop-filter: blur(8px); border-radius: 999px; padding: .3rem; box-shadow: 0 2px 14px rgba(0,0,0,.1); }
+.pill-nav a { color: #333; font-weight: 450; font-size: .9rem; padding: .3rem .85rem; border-radius: 999px; white-space: nowrap; }
+.pill-nav a:hover { background: #f0f2f5; text-decoration: none; }
+
+.pf-wrap { max-width: 1240px; margin: 0 auto; padding: 4.8rem 1.5rem 2rem; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 2.2rem; align-items: start; }
+.side { position: sticky; top: 4.8rem; padding: 1.6rem 1.3rem; text-align: center; }
+.avatar { width: 128px; height: 128px; margin: 0 auto 1rem; border-radius: 50%; background: #dfe6ee; color: #4a5a6c; display: block; object-fit: cover; }
+.side h1 { font-size: 1.35rem; font-stretch: 105%; margin: 0 0 .3rem; }
+.side .role { font-size: 1rem; font-weight: 500; margin: 0; }
+.side .where { font-size: .9rem; color: #666; margin: 0 0 .9rem; }
+.mails { list-style: none; padding: 0; margin: 0 0 .8rem; font-size: .84rem; line-height: 1.6; word-break: break-all; }
+.icons { display: flex; justify-content: center; gap: .8rem; margin: 0; }
+.icons a { color: #444; }
+.icons svg { width: 26px; height: 26px; display: block; }
+
+.pf-main > section { margin-bottom: 2.6rem; padding: 0; border-top: 0; }
+.pf-main > section.card { padding: 1.4rem 1.6rem; }
+.hero-link { display: block; color: inherit !important; text-decoration: none !important; }
+.pf-hero h2 { font-size: clamp(1.35rem, 2.2vw, 1.75rem); font-weight: 750; font-stretch: 106%; letter-spacing: -.01em; margin-bottom: .45rem; }
+.pf-hero .hero-link:hover h2 { color: #1d5faf; }
+.hero-result { font-size: 1.08rem; line-height: 1.45; font-weight: 400; margin: 0 0 1rem; max-width: 52rem; }
+.pf-hero .f1 { border: 0; padding: 0; }
+.bio p { font-size: 1.02rem; margin: 0 0 .8rem; }
+.red { color: #c8102e; font-weight: 700 !important; }
+.pills { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 !important; }
+/* v20 (Simon 17:26): every link to a resource is a solid button in one accent colour; white on #1d5faf is 6.4:1 (WCAG AA) */
+.pf a.pill, .pf a.btn { display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 1.1rem; border-radius: 999px;
+  background: #1d5faf; color: #fff; font-weight: 600; font-size: .92rem; line-height: 1.2; text-decoration: none; }
+.pf a.pill:hover, .pf a.btn:hover { background: #174c8c; text-decoration: none; }
+.pf a.pill:focus-visible, .pf a.btn:focus-visible { outline: 3px solid #b35c00; outline-offset: 2px; }
+.btns { display: flex; flex-wrap: wrap; gap: .5rem; margin: .7rem 0 1rem !important; }
+.plinks.btns { margin-bottom: 0 !important; }
+@media (max-width: 700px) { .pf a.pill, .pf a.btn { min-height: 2.75rem; } }
+
+h2.sec { font-size: 1.5rem; font-weight: 700; font-stretch: 106%; margin: 0 0 1rem; }
+.system { margin-bottom: 2rem; }
+.system h3 { font-size: 1.15rem; margin-bottom: .3rem; }
+.system > p { max-width: 52rem; margin: 0 0 .9rem; }
+/* cards in one row share a height: each grows in proportion to its media's aspect ratio (--ar) */
+.cards { display: flex; flex-wrap: wrap; gap: 1rem; }
+.cards .card { flex: var(--ar) 1 calc(var(--ar) * 200px); min-width: 0; margin: 0; overflow: hidden; }
+.mcard img, .mcard video { width: 100%; aspect-ratio: var(--ar); object-fit: cover; border-radius: 0; background: #0b0f14; }
+.cards figcaption { font-family: inherit; font-size: .88rem; line-height: 1.4; color: #555; padding: .55rem .8rem .7rem; margin: 0; }
+.cards figcaption b { display: block; color: #222; font-size: .95rem; }
+.plan { background: #f6f8fa; padding: .7rem .85rem; font-size: .8rem; line-height: 1.35; }
+.plan p { margin: 0; }
+.plan-h { font-weight: 650; color: #333; margin-top: .3rem !important; }
+.plan-q { font-style: italic; color: #444; }
+.plan-steps { margin: .1rem 0 .2rem; padding-left: 1.4rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .74rem; }
+.plan-steps .more { list-style: none; color: #666; font-family: "Archivo", system-ui, sans-serif; }
+.plan-ok { color: #1f7a3a; font-weight: 500; }
+
+.pub { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 1.3rem; padding: 1rem; margin-bottom: 1rem; align-items: start; }
+.pub .thumb { display: block; margin: 0; }
+.pub .thumb img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
+.pub .thumb.wide img { height: auto; object-fit: contain; }
+.pub .thumb figcaption { font-family: inherit; font-size: .72rem; color: #777; margin-top: .25rem; }
+.pub:has(.wide) { grid-template-columns: 340px minmax(0, 1fr); }
+.pub h3 { font-size: 1rem; line-height: 1.35; margin: 0 0 .25rem; }
+.pub p { margin: 0 0 .15rem; font-size: .92rem; }
+.pub .venue { font-style: italic; color: #555; }
+.pub .mypart { color: #444; }
+.exp { list-style: none; margin: 0; padding: 1rem 1.4rem; }
+.exp li { margin: .3rem 0; font-size: .95rem; }
+.pf-foot { text-align: center; font-size: .85rem; color: #777; padding: 1rem 1rem 2.5rem; }
+
+@media (max-width: 900px) {
+  .pf-wrap { grid-template-columns: 1fr; padding-top: 4.2rem; }
+  .side { position: static; display: grid; grid-template-columns: 96px 1fr; gap: 0 1rem; text-align: left; align-items: center; padding: 1.1rem; }
+  .avatar { width: 96px; height: 96px; margin: 0; grid-row: span 4; }
+  .icons { justify-content: flex-start; }
+}
+@media (max-width: 700px) {
+  .pill-nav { left: .5rem; right: .5rem; transform: none; overflow-x: auto; top: .5rem; }
+  .pill-nav a { font-size: .82rem; padding: .25rem .6rem; }
+  .pf-wrap { padding: 3.6rem .8rem 1rem; gap: 1.4rem; }
+  .side { gap: 0 .8rem; padding: .9rem; }  /* keep the two-column card so the hero starts on the first phone screen */
+  .pf-main > section.card { padding: 1rem; }
+  .cards .card { flex-basis: 100%; }
+  .pub, .pub:has(.wide) { grid-template-columns: 1fr; }
+  .pub .thumb img { height: 180px; }
+  .pub .thumb.wide img { height: auto; }
+}
+@media (max-width: 700px) { .mcard img, .mcard video { max-height: 340px; } }
+/* phone: the result map comes right under the sentence; the sidebar sits at the top, so "About" leaves the nav */
+@media (max-width: 700px) { .pf-hero .f1-map { order: -1; } .nav-about { display: none; } }
+@media (max-width: 700px) { .pill-nav { justify-content: safe center; } .pill-nav a { padding: .25rem .45rem; font-size: .8rem; } }
+/* phones narrower than 380 px: the four nav links fit in one row without being cut (safe center: never cut the first link) */
+@media (max-width: 380px) { .pill-nav a { padding: .25rem .3rem; font-size: .75rem; } }
+/* a nav tap lands the section title below the fixed nav, not under it */
+[id] { scroll-margin-top: 3.6rem; }
+
+/* v7: one thumbnail width for every publication card, each image at its own aspect ratio, so the titles line up */
+.pub, .pub:has(.wide) { grid-template-columns: 300px minmax(0, 1fr); }
+.pub .thumb img, .pub .thumb.wide img { height: auto; object-fit: contain; }
+@media (max-width: 700px) { .pub, .pub:has(.wide) { grid-template-columns: 1fr; } .pub .thumb img { height: auto; } }
+
+/* v9: the project page and the full story share the home page's look (white page, light sans-serif, cards, pill nav) */
+.proj .pill-nav a[aria-current] { background: #eef2f7; font-weight: 550; }
+.proj .wrap { max-width: 1060px; padding: 0 1.5rem; }  /* v22c: one ~960 px column for text and images (was 1300) */
+.proj .vhero { padding-top: 4.4rem; }
+.proj .vhero h1 { font-weight: 750; font-stretch: 106%; }
+.proj .vhero .lede { font-weight: 400; }
+.proj .f1 { border: 0; border-radius: 14px; padding: 1.2rem 1.3rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 6px 22px rgba(0,0,0,.07); }
+/* desktop fold: title, sentence and figure sit centred in the first screen instead of leaving a blank band above the strip */
+@media (min-width: 701px) { .proj .vhero:has(.f1) > .wrap { justify-content: center; } .proj .f1-more { margin-top: 1.6rem; } }
+.proj main section { border-top: 0; padding: 2.2rem 0; }
+.proj .built img, .proj .built video, .proj .testclip video { border-radius: 10px; }
+.proj .built figcaption, .proj .testclip figcaption { font-family: inherit; font-size: .88rem; color: #555; }
+.proj #idea p { font-size: 1.05rem; }
+.proj .result { font-family: inherit; font-weight: 400; border-left-color: #c4620f; }
+.proj .meta { font-family: inherit; color: #666; }
+/* full story: the dark band becomes a light card like the home hero */
+.proj .hero { background: #fff; color: inherit; padding: 4.6rem 0 1rem; }
+.proj .hero a { color: #1d5faf; }
+.proj .hero .meta, .proj .hero figcaption { color: #666; }
+.proj .hero h1 { font-weight: 750; font-stretch: 106%; }
+.proj .hero .lede { font-weight: 400; }
+.proj .hero img { border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 6px 22px rgba(0,0,0,.07); }
+.proj .chapter { border-top: 1px solid #eceff3; }
+.proj .chapter .media img, .proj .chapter .media video { border-radius: 10px; }
+.proj h2 { font-weight: 700; font-stretch: 106%; }
+@media (max-width: 700px) { .proj .wrap { padding: 0 .9rem; } .proj .vhero { padding-top: 3.6rem; } .proj .hero { padding-top: 3.8rem; } }
+/* phone: the "Robot hand" label moves left so it stays inside the narrow infrared photo */
+@media (max-width: 700px) { .f1-photo .f1-tag:first-of-type { left: 20% !important; } }
+/* v10: on phones keep the tall gantry photo from filling the screen */
+@media (max-width: 700px) { .built img.tall { max-height: min(38vh, 320px); } }
+
+/* v16 (Simon 11-18 15:45): home hero in two rows, larger images, more air in the text */
+.pf-hero h2 { margin-bottom: .9rem; }
+.pf-hero .hero-result, .vhero .lede { line-height: 1.7; margin-bottom: 1.9rem; }
+:is(.pf-hero, .vhero) .f1 { grid-template-columns: 1fr 1.25fr; gap: 2.2rem 2rem; line-height: 1.5; }
+:is(.pf-hero, .vhero) .f1-map { grid-column: 1 / -1; }
+:is(.pf-hero, .vhero) .f1-h { margin-bottom: .8rem !important; }
+:is(.pf-hero, .vhero) .f1-tiles { gap: .5rem .9rem; }
+:is(.pf-hero, .vhero) .f1-row { margin-top: .5rem !important; }
+:is(.pf-hero, .vhero) .f1-key { gap: .5rem 1.8rem; margin-top: .9rem; }
+@media (max-width: 700px) { :is(.pf-hero, .vhero) .f1 { grid-template-columns: 1fr 1.5fr; gap: 1.4rem .8rem; } .pf-hero .hero-result, .vhero .lede { line-height: 1.6; margin-bottom: 1.3rem; } }
+/* v16: labels sit above and below the infrared photo, never on it; a thin leader line points to the hand and the can */
+.f1-photo { margin: 1.7rem 0 1.7rem; }
+.f1-lab { position: absolute; transform: translateX(-50%); font-weight: 650; font-size: .95rem; line-height: 1.2; white-space: nowrap; color: #b35c00; }
+.f1-lab.up { bottom: calc(100% + 5px); }
+.f1-lab.down { top: calc(100% + 5px); }
+.f1-lead { position: absolute; width: 0; border-left: 2px solid #b35c00; transform: translateX(-1px); }
+.f1-lead::after { content: ""; position: absolute; left: -5px; width: 8px; height: 8px; border-radius: 50%; background: #b35c00; border: 1px solid #fff; }
+.f1-lead.to-bottom::after { bottom: -5px; }
+.f1-lead.to-top::after { top: -5px; }
+.f1-lead.to-bottom { top: -5px !important; }
+.f1-lead.to-top { bottom: -5px !important; }
+@media (max-width: 700px) { .f1-lab { font-size: .8125rem; } .f1-photo { margin: 1.4rem 0; } }
+/* v16: the two policy names sit above the side-by-side trial clip, not on it */
+.vlabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0; padding: .4rem .6rem .35rem; font-size: .85rem; font-weight: 600; line-height: 1.25; color: #333; }
+.testclip .vlabs { padding: 0 0 .35rem; }
+/* v16: the poster's time strip spans the card; text below it */
+.pub.pub-strip, .pub.pub-strip:has(.wide) { grid-template-columns: 1fr; }
+/* v16: phones keep the five-link nav that fits; Posters sits right under Publications anyway */
+@media (max-width: 700px) { .pill-nav a[href="#posters"] { display: none; } }
+
+/* v17 (Simon 16:01 rule: no label on any image): hand-photo labels sit above and below the photo; the leader lines
+   drawn in the photo run from its edge to each sensor */
+.tagged.edge { padding: 1.55rem 0 1.55rem; }
+.hlab { position: absolute; transform: translateX(-50%); background: #fff; color: #b35c00; border: 1.5px solid #b35c00; border-radius: 4px;
+  font-size: 12px; font-weight: 700; line-height: 1.2; padding: 1px 5px; white-space: nowrap; }
+.hlab.up { top: .15rem; }
+.hlab.down { bottom: .15rem; }
+/* phones narrower than 380 px: tighter labels, and "Palm ToF" sits a little right of its leader line, so it no longer overlaps "Index ToF" */
+@media (max-width: 380px) { .hlab { padding: 1px 3px; } .hlab.up + .hlab.up { transform: translateX(-25%); } }
+.mcard .tagged.edge { background: #fff; }
+.built + .built { margin-top: 1.2rem; }
+/* v17: the poster strip's step names sit under its four photos (the poster's printed badges are left out) */
+.pub-strip .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: .25rem 0 0 !important; font-size: .82rem; font-weight: 600; color: #333; }
+.pub.pub-strip { row-gap: .35rem; } .pub-strip > div { margin-top: .7rem; }
+/* v18 (Simon 17:04): the clip shows its own white circle around the can again; the two policy names stay above it */
+.vlabs { padding: .4rem 0 0; }
+.vlabs span { position: relative; padding: 0 .6rem 4px; }
+.testclip .vlabs span { padding-left: 0; }
+.testclip video { width: 100%; }
+/* v19 (Simon 17:05, 17:07): the hero's input note; the project page's trial clip fills the content column */
+.f1-nojoint { border-top: 1px solid #ddd; padding-top: .45rem; }
+#built .testclip { max-width: none; }
+/* v19 (Simon 17:06): the gantry clip's two infrared cameras, labelled outside the video; each leader line ends at the
+   video's edge, at the camera's height or column (positions from work/v19/gantry-cams/result.md) */
+.camtag { padding: 2.4rem 0 0 6.6rem; }
+.camtag .vbox { position: relative; }
+.camtag video { display: block; }
+.clab { position: absolute; font-size: 12px; font-weight: 700; line-height: 1.2; color: #b35c00; background: #fff; border: 1.5px solid #b35c00; border-radius: 4px; padding: 1px 5px; }
+.clab.cl-top { bottom: calc(100% + 16px); transform: translateX(-50%); white-space: nowrap; }
+.clab.cl-side { right: calc(100% + 16px); transform: translateY(-50%); width: 5.2rem; text-align: right; }
+.cline { position: absolute; background: #b35c00; }
+.cline.cl-top { bottom: 100%; width: 1.5px; height: 16px; }
+.cline.cl-side { right: 100%; height: 1.5px; width: 16px; }
+@media (max-width: 700px) { .camtag .vbox { width: fit-content; margin: 0 auto; } }
+/* v19 (Simon 17:16 item 24): the chopstick before/after pair has its labels above the photos */
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; align-items: start; }
+.pair img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.plab { margin: 0 0 .3rem !important; font-weight: 650; font-size: .95rem; }
+/* v19 (Simon 17:16 item 16): three SO-101 clips side by side, each named above its video */
+.vtrio { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; align-items: end; }
+.chapter .media .vtrio video { display: block; width: 100%; height: auto; max-height: none; border-radius: 10px; }
+@media (max-width: 700px) { .vtrio { grid-template-columns: 1fr; } }
+/* v20 (Simon 17:16 item 21): four chopstick clips in a 2x2 grid, each named above its video */
+.vtrio.vquad { grid-template-columns: repeat(2, 1fr); align-items: start; }
+@media (max-width: 700px) { .vtrio.vquad { grid-template-columns: 1fr; } }
+/* v20 (Simon 17:52 item 27): every leader-line label and its line use one orange, #b35c00 (4.7:1 on white); the hand photo's lines were redrawn in it (work/v20/hand) */
+.f1-lab { font-weight: 700; }
+/* v21 (Simon 19:48 item 38): fabrication steps, a numbered caption under each tile, never on it */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem .8rem; align-items: start; }
+.chapter .media .steps img, .chapter .media .steps video { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; background: #fff; max-height: none; border-radius: 10px; border: 1px solid #eceff3; }
+.steps .scap { margin: .4rem 0 0 !important; font-size: .875rem; line-height: 1.4; }
+.steps .scap > b:first-child { margin-right: .2rem; }
+@media (max-width: 700px) { .steps { grid-template-columns: 1fr 1fr; } }
+/* v21 (Simon 19:48 item 36): every video has native controls (fullscreen); show the whole frame in fullscreen, not the card crop */
+video:fullscreen { object-fit: contain; }
+/* v22 (Simon 2026-11-19): full-screen button and the full-window fallback from assets/fs.js */
+/* v22b (Simon 2026-11-19): the button is outside the video, right-aligned just below it, not on the picture */
+.fsbtn { display: flex; align-items: center; gap: .3rem; width: fit-content; margin: .4rem 0 0 auto; padding: .2rem .7rem .2rem .55rem;
+  border: 1px solid #c9d1db; border-radius: 999px; background: #fff; color: #1c2128; font: 500 .8rem/1.3 "Archivo", system-ui, sans-serif; cursor: pointer; }
+.fsbtn:hover, .fsbtn:focus-visible { background: #eef2f7; border-color: #9aa8b8; }
+.fsbtn svg { width: 14px; height: 14px; flex: none; }
+.mcard .fsbtn { margin-right: .8rem; }
+.strip > .fsbtn { grid-row: 2; }  /* in a two-up strip the button goes under its video, not into the next cell */
+.fsov { position: fixed; inset: 0; z-index: 100; background: #000; display: flex; }
+.fsov[hidden] { display: none; }
+.fsov video { width: 100%; height: 100%; max-width: none; max-height: none; aspect-ratio: auto; object-fit: contain; margin: 0; border-radius: 0; }
+.fsx { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,.18);
+  color: #fff; font-size: 28px; line-height: 1; cursor: pointer; }
+.fsx:hover, .fsx:focus-visible { background: rgba(255,255,255,.32); }
+/* v22: result charts inside a clip grid stay at most 30rem tall */
+.chapter .media .vtrio a > img { max-height: 30rem; width: auto; margin: 0 auto; }
+/* v22 (Simon 2026-11-19): teleoperated demonstrations vs autonomous policy trials, told apart by a badge and a frame */
+.tag { display: inline-block; padding: .14rem .5rem; border-radius: 4px; font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; line-height: 1.35; color: #fff; vertical-align: .08em; margin-right: .35rem; }
+.tag.tele { background: #6b3fa0; }
+.tag.auto { background: #1f7a3a; }
+video.tele { box-shadow: 0 0 0 3px #6b3fa0; }
+video.auto { box-shadow: 0 0 0 3px #1f7a3a; }
+.mcard video.tele, .mcard video.auto, .fsov video { box-shadow: none; }
+.mcard > .plab { padding: .55rem .7rem 0; }
+.testclip > .plab { margin-bottom: .1rem !important; }
+/* v22: three-panel trial clip (camera-only | invalid-ToF control | VPLA) */
+.vlabs.three { grid-template-columns: repeat(3, 1fr); }
+.limits { font-size: .92rem; color: #555; }
+/* v22 (Simon 2026-11-19): gantry photo, Pringles can magnets and the shelf clip in one row, all three equally tall; the clip's
+   figure reserves its 6.6rem label margin, and the photos start 2.4rem down, level with the clip below its top label */
+@media (min-width: 701px) {
+  .built.gantry-row > figure:last-child { flex-basis: 6.6rem; }
+  .built.gantry-row > figure:not(:last-child) { padding-top: 2.4rem; }
+}
+/* v22 (Simon 2026-11-19): the three chopstick teleoperation clips in one row; column widths follow each clip's aspect ratio so
+   all three are equally tall; the story page is 1300 px wide and its figures fill the text column, so the row stays large */
+@media (min-width: 701px) { .vtrio.vrow3 { grid-template-columns: .5625fr 1.164fr 1.164fr; } }
+.proj .chapter .media { max-width: none; }
+@media (max-width: 700px) { .chapter .media .vrow3 > div:first-child video { max-height: 30rem; width: auto; margin: 0 auto; } }
+/* v22 (Simon 2026-11-19, "everything centered"): each single photo or clip sits centred in the story's text column, its caption
+   wrapped to the media's width; rows of several clips already fill the column */
+.proj .chapter .media > figure:not(:has(.vtrio, .steps, .pair, .vlabs, .tstrip)) { justify-self: center; width: fit-content; }
+.proj .chapter .media > figure:not(:has(.vtrio, .steps, .pair, .vlabs, .tstrip)) > figcaption { width: 0; min-width: 100%; }
+.proj .chapter .media > figure:has(.vlabs) > video { width: 100%; }
+/* v22b (Simon 2026-11-19, "difficult to see where each section ends"): on the home page each section is one white panel on a
+   light grey page, its title above a thin rule; cards inside a panel trade their shadow for a thin border */
+body.pf:not(.proj) { background: #eef1f5; }
+body.pf:not(.proj) .pf-main > section { margin-bottom: 1.6rem; }
+body.pf:not(.proj) .pf-main > section:not(.card) { background: #fff; border-radius: 14px; padding: 1.5rem 1.6rem 1.6rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 6px 22px rgba(0,0,0,.07); }
+body.pf:not(.proj) .pf-main > section:not(.card) .card { box-shadow: none; border: 1px solid #e3e7ec; }
+body.pf:not(.proj) .pf-main > section:not(.card) .exp { border: 0; padding: 0; }
+body.pf:not(.proj) .pf-main > section:not(.card) .pub:last-child, body.pf:not(.proj) .system:last-child { margin-bottom: 0; }
+body.pf:not(.proj) h2.sec { padding-bottom: .7rem; border-bottom: 1px solid #e3e7ec; margin-bottom: 1.2rem; }
+body.pf:not(.proj) .system + .system { border-top: 1px solid #e3e7ec; padding-top: 1.5rem; }
+@media (max-width: 700px) { body.pf:not(.proj) .pf-main > section:not(.card) { padding: 1rem; } }
+/* v22b (Simon 2026-11-19): the contact card has a labelled CV button (it was an unlabelled document icon) */
+.side-cv { margin: .9rem 0 0; }
+@media (max-width: 900px) { .side-cv { margin-top: .5rem; } }
+/* v22b (Simon 2026-11-19, "a bit too large"): on the project page the infrared photo and the six sensor tiles keep a fixed,
+   smaller size (they grew with the 1300 px page) and sit centred as a pair above the full-width map */
+@media (min-width: 701px) {
+  .vhero .f1 { grid-template-columns: 1fr minmax(0, 330px) minmax(0, 500px) 1fr; }
+  .vhero .f1-ir { grid-column: 2; }
+  .vhero .f1-in { grid-column: 3; }
+  .vhero .f1-map { grid-column: 2 / 4; }  /* the map shrinks with them (1210 -> 862 px) and lines up under the pair */
+  .proj .vhero:has(.f1) > .wrap { width: 100%; }  /* keep the hero as wide as the page; a narrower grid must not shrink it */
+}
+/* v22c (Simon 2026-11-19): the project page and the full story share the home page's sectioning (white panels on a light grey
+   page, each title over a thin rule); text runs the full panel width so it lines up with the image rows; story chapters are
+   panels with the date above the title instead of in a left column */
+body.pf.proj { background: #eef1f5; --measure: none; }
+.proj .hero { background: transparent; }
+.proj #built, .proj #idea, .proj #summary, .proj .chapter, .proj .chapter:first-child {
+  background: #fff; border: 0; border-radius: 14px; padding: 1.5rem 1.6rem 1.6rem; margin-bottom: 1.6rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 6px 22px rgba(0,0,0,.07); }
+.proj #built > h2, .proj #summary > h2, .proj .chapter h3 { padding-bottom: .7rem; border-bottom: 1px solid #e3e7ec; margin-bottom: 1.1rem; }
+@media (min-width: 900px) { .proj .chapter { grid-template-columns: 1fr; } .proj .chapter .media { grid-column: 1; } }
+.proj .chapter .when { margin-bottom: .35rem; }
+.proj main > section[aria-label] { padding: 0; }
+@media (max-width: 700px) { .proj #built, .proj #idea, .proj #summary, .proj .chapter, .proj .chapter:first-child { padding: 1rem; } }
+.vrow3 .plab .tag { display: table; margin-bottom: .2rem; }  /* v22c: in the narrower column each clip's name goes under its badge */
+/* v22c (Simon 2026-11-19): wrist-camera time strip from poster #044; its times are page text under each of the five frames */
+.tstrip { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; }
+.tstrip img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.tstrip p { margin: .4rem 0 0 !important; font: 650 .88rem/1.3 "Archivo", system-ui, sans-serif; text-align: center; }
+.tstrip p > span { display: block; font-weight: 400; color: #666; }
+@media (max-width: 700px) { .tstrip { gap: .3rem; } .tstrip p { font-size: .72rem; } }
+/* v22c (Simon 2026-11-19, "consistent rounding of all media"): one 10 px corner on every photo, chart and video (the round
+   profile photo excepted). Home media cards get a small inset so their photos and videos can carry the same corners. In the
+   fabrication steps each photo keeps its own shape inside its square tile, so the rounding sits on the photo, not on white space. */
+.f1 img, .proj .hero img, .pub .thumb img { border-radius: 10px; }
+.cards .mcard { padding: .5rem .5rem 0; }
+.mcard img, .mcard video { border-radius: 10px; }
+.mcard > .plab { padding: 0 .3rem; }
+.cards .mcard figcaption { padding: .5rem .3rem .7rem; }
+.mcard .fsbtn { margin-right: .3rem; }
+.chapter .media .steps a { display: flex; align-items: center; justify-content: center; aspect-ratio: 1; }
+.chapter .media .steps a > img { width: auto; height: auto; max-width: 100%; max-height: 100%; aspect-ratio: auto; background: none; }
+/* v22c (Simon 2026-11-19): calibration rows; each column's width follows its media's aspect ratio (--cols on the row), centred */
+@media (min-width: 701px) { .vtrio.ar { grid-template-columns: var(--cols); justify-content: center; align-items: start; } }
+@media (max-width: 700px) { .chapter .media .vtrio.ar video { max-height: 30rem; width: auto; margin: 0 auto; } }

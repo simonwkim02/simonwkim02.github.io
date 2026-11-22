@@ -1,0 +1,167 @@
+/* Simon Won-Jin Kim — personal site. Two faces: Archivo (names, headings, numbers), Source Serif 4 (reading text). */
+:root {
+  --page: #f4f5f6;
+  --ink: #1c2128;
+  --muted: #5b6573;
+  --rule: #d9dde2;
+  --link: #1d5faf;
+  --shelf: #101a26;      /* inside the dark shelf: hero band only */
+  --shelf-ink: #e8edf3;
+  --shelf-muted: #9aa8b8;
+  --signal: #f0a43a;     /* time-of-flight "near" reading: chapter markers and the hero rule */
+  --measure: 40rem;
+  --wide: 68rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #12171d; --ink: #e3e8ee; --muted: #9aa6b4; --rule: #2a323c; --link: #7fb0ec; --shelf: #0a1119;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #12171d; --ink: #e3e8ee; --muted: #9aa6b4; --rule: #2a323c; --link: #7fb0ec; --shelf: #0a1119;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font: 1.0625rem/1.65 "Source Serif 4", Georgia, serif;
+  font-optical-sizing: auto;
+}
+h1, h2, h3, .sans, nav, figcaption, .meta, .result, .pubs .venue { font-family: "Archivo", system-ui, sans-serif; }
+h1, h2, h3 { line-height: 1.15; margin: 0; }
+h2 { font-size: 1.6rem; font-weight: 700; font-stretch: 110%; letter-spacing: -0.01em; margin-bottom: 1rem; }
+h3 { font-size: 1.15rem; font-weight: 650; margin-bottom: .4rem; }
+p { margin: 0 0 1rem; }
+a { color: var(--link); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--signal); outline-offset: 3px; border-radius: 2px; }
+img, video { max-width: 100%; height: auto; display: block; border-radius: 4px; }
+figure { margin: 0; }
+figcaption { font-size: .8125rem; line-height: 1.45; color: var(--muted); margin-top: .5rem; }
+.wrap { max-width: var(--wide); margin: 0 auto; padding: 0 1rem; }
+.measure { max-width: var(--measure); }
+.meta { font-size: .875rem; color: var(--muted); }
+
+/* hero: the dark shelf */
+.hero { background: var(--shelf); color: var(--shelf-ink); padding: 3.5rem 0 3rem; }
+.hero a { color: var(--shelf-ink); }
+.hero .grid { display: grid; gap: 2.5rem; grid-template-columns: 1fr; align-items: center; }
+@media (min-width: 900px) { .hero .grid { grid-template-columns: 1fr 1.1fr; } }
+.hero h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; font-stretch: 112%; letter-spacing: -0.02em; }
+.hero h1::after { content: ""; display: block; width: 3.5rem; height: 4px; background: var(--signal); margin: 1.1rem 0 1.3rem; }
+.hero .lede { font-size: 1.3rem; line-height: 1.45; max-width: 30rem; }
+.hero .meta { color: var(--shelf-muted); }
+.hero figcaption { color: var(--shelf-muted); }
+nav.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-size: .95rem; margin-top: 1.4rem; }
+
+main section { padding: 3.25rem 0; border-top: 1px solid var(--rule); }
+main section:first-child { border-top: 0; }
+.cols { display: grid; gap: 2rem; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+
+.result { font-size: 1rem; line-height: 1.5; border-left: 4px solid var(--signal); padding: .2rem 0 .2rem 1rem; margin: 1.25rem 0; }
+.result strong { font-weight: 700; }
+
+.pubs { list-style: none; padding: 0; margin: 0; }
+.pubs li { margin-bottom: 1.1rem; }
+.pubs .venue { font-size: .875rem; color: var(--muted); display: block; }
+
+.strip { display: grid; gap: .6rem; grid-template-columns: repeat(3, 1fr); }
+.strip.two { grid-template-columns: repeat(2, 1fr); }
+.strip img, .strip video { width: 100%; aspect-ratio: 1; object-fit: cover; background: #000; }
+.hero video { max-height: 78vh; width: auto; margin-left: auto; }
+
+/* VPLA story: dated chapters on a rail; text keeps a reading measure, figures run wider */
+.chapter { display: grid; grid-template-columns: 1fr; gap: .25rem 2.5rem; padding: 2.75rem 0; border-top: 1px solid var(--rule); }
+@media (min-width: 900px) { .chapter { grid-template-columns: 11rem minmax(0, 1fr); } .chapter .media { grid-column: 2; } }
+.chapter h3, .chapter p, .chapter ul { max-width: var(--measure); }
+.chapter .media { max-width: 52rem; display: grid; gap: 1.5rem; margin-top: .75rem; }
+.chapter .media > figure > a > img, .chapter .media > figure > video { max-height: 30rem; width: auto; }
+.chapter:first-child { border-top: 0; padding-top: 0; }
+.chapter .when { font-family: "Archivo", system-ui, sans-serif; font-weight: 650; color: var(--muted); font-size: .9rem; position: relative; padding-left: 1.1rem; }
+.chapter .when::before { content: ""; position: absolute; left: 0; top: .45em; width: .55rem; height: .55rem; border-radius: 50%; background: var(--signal); }
+.chapter .why { font-style: italic; color: var(--muted); }
+.chapter figure + figure { margin-top: 1rem; }
+
+footer { padding: 2.5rem 0 3rem; border-top: 1px solid var(--rule); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* VPLA page v1: hero = title, one sentence, one figure (web version of the paper's Fig. 1) */
+.vhero { padding: 1.5rem 0 2rem; }
+.vhero .crumb { margin-bottom: .5rem; }
+.vhero h1 { font-size: clamp(1.7rem, 4vw, 2.8rem); font-weight: 800; font-stretch: 108%; letter-spacing: -0.02em; }
+.vhero .lede { font-size: clamp(1.05rem, 1.8vw, 1.3rem); line-height: 1.4; max-width: 52rem; margin: .7rem 0 1.2rem; }
+.vhero img { width: 100%; background: #fff; }
+/* strip of what was built: one row, each tile's width follows its media's aspect ratio */
+.built { display: flex; gap: .8rem; align-items: flex-start; }
+.built figure { flex-basis: 0; min-width: 0; }
+.built img, .built video { width: 100%; background: #0b0f14; }
+@media (max-width: 700px) {
+  .built { flex-direction: column; }
+  .built figure { width: 100%; }
+  .built > figure { flex-basis: auto !important; }  /* the inline 760px basis would become a height in the column */
+  .built img, .built video { max-height: 70vh; width: auto; margin: 0 auto; }
+}
+.testclip { max-width: 45rem; margin-top: 1.5rem; }
+@media (max-width: 700px) { .built img, .built video { max-height: 55vh; } }
+
+/* home v2: one screen; name, one research line, links, the VPLA hero figure as the link to the project */
+.home { padding: 2rem 0 1.5rem; }
+.home h1 { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; font-stretch: 112%; letter-spacing: -0.02em; }
+.home .lede { font-size: clamp(1.05rem, 1.8vw, 1.3rem); line-height: 1.4; max-width: 46rem; margin: .6rem 0 .4rem; }
+.home nav.links { margin: .8rem 0 1.4rem; }
+.feature { display: block; text-decoration: none; color: var(--ink); }
+.feature-title { display: block; line-height: 1.25; font-family: "Archivo", system-ui, sans-serif; font-weight: 700; font-size: 1.15rem; margin-bottom: .5rem; }
+.feature:hover .feature-title { color: var(--link); }
+.feature img { width: 100%; background: #fff; }
+.feature-result { display: block; font-size: 1rem; line-height: 1.4; max-width: 46rem; margin-bottom: .7rem; color: var(--ink); }
+@media (max-width: 700px) { .home { padding-top: 1rem; } .home nav.links { margin-bottom: 1rem; } }
+
+/* v4 hero: web version of the paper's Fig. 1; real text labels (>= 15 px), three panels in a row, stacked on phones */
+.f1 { display: grid; grid-template-columns: 1fr .9fr 2.5fr; gap: 1.2rem; align-items: start; background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 1rem 1.1rem .9rem; font-family: "Archivo", system-ui, sans-serif; font-size: 1rem; line-height: 1.3; color: var(--ink); }
+.f1 p { margin: 0; }
+.f1-h { font-weight: 700; font-size: 1.05rem; margin-bottom: .5rem !important; }
+.f1-photo { position: relative; }
+.f1-photo img, .f1-tiles img, .f1-plot img { display: block; width: 100%; height: auto; }
+.f1-tag { position: absolute; background: rgba(255,255,255,.92); color: #111; font-weight: 650; font-size: .95rem; padding: .05rem .4rem; border-radius: 3px; white-space: nowrap; }
+.f1-note, .f1-side, .f1-col span, .f1-scale { color: var(--muted); font-size: .9375rem; }
+.f1-note { margin-top: .35rem !important; }
+.f1-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .25rem .6rem; }
+.f1-col { font-weight: 650; font-size: .9375rem; line-height: 1.2; }
+.f1-col span { display: block; font-weight: 400; }
+.f1-tiles figure { margin: 0; }
+.f1-tiles img { border: 1px solid #888; }
+.f1-tiles figcaption { font-size: .9375rem; color: var(--ink); margin: .1rem 0 .2rem; line-height: 1.2; font-family: inherit; }
+.f1-plot { position: relative; }
+.f1-scale { position: absolute; left: 6.5%; bottom: 7.5%; }
+.f1-key { list-style: none; padding: 0; margin: .5rem 0 0; display: flex; flex-wrap: wrap; gap: .2rem 1.1rem; font-size: .9375rem; }
+.f1-key li { display: flex; align-items: center; gap: .35rem; }
+.f1-key svg { width: 16px; height: 16px; flex: none; }
+.feature .f1 { margin-top: .2rem; }
+@media (max-width: 700px) {
+  .f1 { grid-template-columns: 1fr 1.25fr; gap: .8rem .7rem; padding: .7rem; }
+  .f1-map { grid-column: 1 / -1; }
+  .f1-h { font-size: 1rem; }
+  .f1-tag, .f1-note, .f1-side, .f1-col, .f1-col span, .f1-tiles figcaption, .f1-scale, .f1-key { font-size: .875rem; }
+}
+/* the strip starts below the fold on desktop, so the first screen is only title, sentence and figure */
+@media (min-width: 701px) { .vhero:has(.f1) { min-height: min(100vh, 1000px); box-sizing: border-box; display: flex; flex-direction: column; } .vhero:has(.f1) > .wrap { flex: 1; display: flex; flex-direction: column; } .f1-more { margin-top: auto; padding-top: 1rem; align-self: center; font-family: "Archivo", system-ui, sans-serif; font-size: 1rem; } }
+.f1-more { display: block; }
+@media (max-width: 700px) { .f1-more { display: none; } }
+/* home on a phone stays one screen: the figure shows only its result panel (the map) */
+@media (max-width: 700px) { .feature .f1-ir, .feature .f1-in { display: none; } .feature .f1 { display: block; } }
+/* v4b: sensor tiles as two rows of three (ToF row, camera row), so the figure is shorter */
+.f1 { grid-template-columns: .85fr 1.3fr 2.2fr; }
+.f1-tiles { grid-template-columns: repeat(3, 1fr); gap: .15rem .5rem; }
+.f1-row { grid-column: 1 / -1; font-weight: 650; font-size: .9375rem; line-height: 1.25; margin-top: .15rem !important; }
+.f1-row span { font-weight: 400; color: var(--muted); white-space: nowrap; }
+@media (max-width: 700px) { .f1 { grid-template-columns: 1fr 1.5fr; } .f1-row, .f1-row span { font-size: .8125rem; } .f1-tiles { gap: .1rem .3rem; } .f1-tiles figcaption { font-size: .8125rem; } .home { padding-bottom: .5rem; } }
+@media (max-width: 700px) { .feature .f1-note, .feature .f1-side { display: none; } }
+
+/* v7: web version of the paper's Fig. 2 panel (c); labels are page text so they stay readable on a phone */
+.tagged { position: relative; }
+.tagged img { display: block; width: 100%; height: auto; }
+.ptag { position: absolute; transform: translate(-50%, -50%); background: #fff; color: #a8500d; border: 1.5px solid #c25e10; border-radius: 4px;
+  font-size: 12px; font-weight: 650; line-height: 1.2; padding: 1px 5px; white-space: nowrap; }
