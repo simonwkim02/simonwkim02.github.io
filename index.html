@@ -115,20 +115,51 @@
 
   <article class="system">
     <h3>A pipetting robot you can talk to</h3>
-    <p>I built a <b>three-axis gantry with a motorized pipette</b>, controlled with G-code and grbl firmware, and connected it to a local vision-language model (Qwen3-VL-8B). The model turns <b>plain English or Korean requests into pipetting plans</b>, which run only after rule-based safety checks and an operator&rsquo;s approval.</p>
+    <p>I built a <b>three-axis gantry with a motorized pipette</b>, controlled with G-code and grbl firmware, and connected it to a local vision-language model (VLM), Qwen3-VL-8B. The operator types one plain-English sentence, and the model <b>turns it into a pipetting plan of tube names and volumes</b>. The robot then runs the plan only after rule-based safety checks and the operator&rsquo;s approval.</p>
+    <div class="pfacts">
+      <div>
+        <p class="pf-lead"><b>Natural language to robot motion</b> The local VLM writes a checked protocol, and the executor turns it into G-code.</p>
+        <ul>
+          <li><b>6 of 8</b> test sentences became the correct protocol in one try each, including one in Korean. Rule-based checks now stop the other two before the robot moves.</li>
+          <li><b>12 steps</b> from one sentence ran on the robot: moves, transfers, a mix and a tip change.</li>
+          <li><b>477&ndash;589 s</b> per run over 3 runs; the two longer runs include fitting the first tip.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="pf-lead"><b>Calibrated custom pipette</b> Water weighed on a 0.001 g balance, with the pipette hand-held off the gantry.</p>
+        <ul>
+          <li><b>13.0 &micro;L/mm:</b> volume moved per millimetre of plunger travel.</li>
+          <li><b>0.1&ndash;2.5%:</b> error of the mean volume against the calibration&rsquo;s prediction.</li>
+          <li><b>1.55&ndash;2.86%:</b> shot-to-shot spread (coefficient of variation) at 96&ndash;200 &micro;L.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="pf-lead"><b>Safe by design</b></p>
+        <ul>
+          <li><b>The executor makes the coordinates:</b> it converts the model&rsquo;s plan (tube names, volumes and order) into positions from the saved tube positions and safety rules such as a safe Z height, so the pipette avoids the parts on the deck.</li>
+          <li><b>Tip-volume check:</b> impossible protocols, such as dispensing more than the tip holds, are rejected before they run.</li>
+          <li><b>Operator approval:</b> the robot moves only after the operator approves the plan.</li>
+        </ul>
+      </div>
+    </div>
     <div class="cards">
-      <figure class="card mcard" style="--ar:.945"><img src="media/pipette/gantry-white.jpg" width="1200" height="1270" loading="lazy" alt="An aluminium three-axis gantry in front of a white backdrop, its motorized pipette above three labelled tubes and a sample plate."><figcaption><b>Gantry and pipette</b> The three-axis gantry and motorized pipette, controlled with G-code and grbl firmware.</figcaption></figure>
-      <figure class="card tcard" style="--ar:1.25">
-        <div class="plan" role="img" aria-label="A typed request and the 11-step pipetting plan the model made from it in 3.5 seconds, with the checks it passed.">
+      <figure class="card mcard" style="--ar:1.778"><video autoplay controls muted loop playsinline preload="metadata" poster="media/pipette/demo-12step-v26.jpg" width="1280" height="720" aria-label="The gantry carries the pipette between five labelled tubes, aspirating, dispensing and mixing; at step 7 it ejects the used tip and picks a fresh one from the yellow tip rack."><source src="media/pipette/demo-12step-v26.mp4" type="video/mp4"></video><figcaption><b>Live demo: one sentence, 12 steps</b> An edit of three runs on the robot, including the tip change at step 7; badges mark each step and its playback speed.</figcaption></figure>
+      <figure class="card tcard" style="--ar:1.4">
+        <div class="plan" role="img" aria-label="The sentence the operator typed and the 12-step plan the model wrote from it, with the tip change at step 7.">
           <p class="plan-h">Typed request</p>
-          <p class="plan-q">&ldquo;&hellip; Then transfer 100 &micro;L of buffer into the sample and mix the sample with 150 &micro;L 3 times. &hellip;&rdquo;</p>
-          <p class="plan-h">Plan from the model, 3.5 s</p>
-          <ol class="plan-steps"><li>move to WASTE</li><li>move to LYSATE</li><li>move to BUFFER</li><li>aspirate 100 &micro;L from BUFFER</li><li>dispense 100 &micro;L into SAMPLE</li><li>mix SAMPLE, 3 &times; 150 &micro;L</li><li class="more">&hellip; 11 steps in all</li></ol>
+          <p class="plan-q">&ldquo;First move over the waste, then to the lysate, then to the buffer. Then transfer 100 &micro;L of buffer into the sample and mix the sample with 150 &micro;L 3 times. <mark>Then change the tip.</mark> Transfer 50 &micro;L of the sample into the lysis tube, then transfer 80 &micro;L from the lysis tube into the lysate. At the end, move over to the sample.&rdquo;</p>
+          <p class="plan-h">Plan from the model, 3.9&ndash;4.2 s</p>
+          <ol class="plan-steps two" start="0"><li class="ex">ensure a tip (executor)</li><li>move to WASTE</li><li>move to LYSATE</li><li>move to BUFFER</li><li>aspirate 100 &micro;L, BUFFER</li><li>dispense 100 &micro;L, SAMPLE</li><li>mix SAMPLE, 3 &times; 150 &micro;L</li><li class="hl">change tip</li><li>aspirate 50 &micro;L, SAMPLE</li><li>dispense 50 &micro;L, LYSIS</li><li>aspirate 80 &micro;L, LYSIS</li><li>dispense 80 &micro;L, LYSATE</li><li>move to SAMPLE</li></ol>
           <p class="plan-ok">&check; containers known, volumes in range</p>
         </div>
-        <figcaption><b>Plain request to protocol</b> An 11-step request, planned in 3.5 s.</figcaption>
+        <figcaption><b>Request to plan</b> Step 0 is the executor&rsquo;s own tip check, not a step from the model.</figcaption>
       </figure>
-      <figure class="card mcard" style="--ar:1.78"><video autoplay controls muted loop playsinline preload="metadata" poster="media/pipette/live-run.jpg" width="640" height="360" aria-label="The gantry moves the pipette between three labelled tubes, aspirating, dispensing and mixing."><source src="media/pipette/live-run.mp4" type="video/mp4"></video><figcaption><b>Live run</b> The 11-step request running on the robot (4&times; speed).</figcaption></figure>
+    </div>
+    <div class="cards quad">
+      <figure class="card mcard" style="--ar:.739"><img src="media/pipette/platform-v26.jpg" width="1020" height="1380" loading="lazy" alt="The pipetting platform on a grey background: the three-axis gantry with the motorized pipette, a yellow tip rack, a black tip ejector and five labelled tubes of blue liquid in a holder."><figcaption><b>Platform</b> Gantry, motorized pipette, tip rack, tip ejector and five tubes.</figcaption></figure>
+      <figure class="card mcard" style="--ar:.75"><video autoplay controls muted loop playsinline preload="metadata" poster="media/pipette/tip-exchange-v26.jpg" width="540" height="720" aria-label="Close-up of the pipette pressing onto a fresh tip in the yellow rack, then sliding into the slot of the black ejector, which strips the tip off."><source src="media/pipette/tip-exchange-v26.mp4" type="video/mp4"></video><figcaption><b>Automatic tip exchange</b> A fresh tip from the rack; the used one is stripped at a 3D-printed ejector.</figcaption></figure>
+      <figure class="card mcard" style="--ar:.815"><a href="media/pipette/console-v26.png"><img src="media/pipette/console-v26.png" width="1105" height="1355" loading="lazy" alt="The operator console's language panel: the typed sentence, the 12-step plan in a numbered list, and a green line saying the containers are known and taught, the volumes are in range and the tip ledger closes."></a><figcaption><b>Operator console</b> The request, the plan and its checks; nothing moves until Execute.</figcaption></figure>
+      <figure class="card mcard" style="--ar:1.569"><a href="media/pipette/diagram-v26.png"><img src="media/pipette/diagram-v26.png" width="1588" height="1012" loading="lazy" alt="Block diagram: a natural-language command (one operator sentence) goes to the local VLM, Qwen3-VL-8B, which writes a protocol JSON of tubes, microlitres and tip changes with no coordinates. A validator checks tip volume and tube names; after operator confirmation the executor converts microlitres to plunger millimetres and writes tip-change G-code, which drives the GRBL gantry's X, Y, Z and plunger axes."></a><figcaption><b>System diagram</b> The model outputs tube names, volumes and tip changes, but never coordinates.</figcaption></figure>
     </div>
   </article>
 </section>
@@ -140,7 +171,7 @@
     <div>
       <h3>Grasping in the Dark with In-Hand Proximity: Integrating and Verifying a New Modality in VLAs</h3>
       <p class="authors"><b>S. W.-J. Kim</b> and H.-S. Park</p>
-      <p class="venue">Manuscript in preparation</p>
+      <p class="venue">Submitted to arXiv, November 2026</p>
       <p class="plinks btns"><a class="btn" href="vpla/">Project page</a><a class="btn" href="https://drive.google.com/file/d/13iM1GC16_O8QYmKsmqRwrK4ksybVNLFT/view">Preprint</a></p>
     </div>
   </article>
