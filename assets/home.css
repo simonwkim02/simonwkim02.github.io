@@ -71,6 +71,9 @@ h2.sec { font-size: 1.5rem; font-weight: 700; font-stretch: 106%; margin: 0 0 1r
 .plan-steps.two li { break-inside: avoid; }
 .plan-steps .ex { color: #888; }
 .plan-steps .hl { color: #c2410c; font-weight: 700; }
+.plan-note { color: #666; font-size: .76rem; margin-top: .4rem !important; }
+.plan.plain { background: #fff; border-radius: 10px; }
+.tcard:not(:has(figcaption)) .plan { height: 100%; box-sizing: border-box; }
 @media (max-width: 900px) { .pfacts { grid-template-columns: 1fr; } }
 
 .pub { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 1.3rem; padding: 1rem; margin-bottom: 1rem; align-items: start; }

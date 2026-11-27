@@ -23,7 +23,8 @@
     <h1>A pipetting robot you can communicate with in natural language</h1>
     <p class="lede">I built a three-axis gantry robot with a motorized pipette and connected it to a local vision-language model (VLM). From one typed sentence, the model writes a pipetting plan of tube names and volumes, and the robot carries it out, changing its own tip along the way.</p>
     <div class="built">
-      <figure style="flex-grow:0;flex-basis:880px;margin:0 auto"><video autoplay controls muted loop playsinline preload="metadata" poster="../media/pipette/demo-12step-v26.jpg" width="1280" height="720" aria-label="The gantry carries the pipette between five labelled tubes, aspirating, dispensing and mixing; at step 7 it ejects the used tip and picks a fresh one from the yellow tip rack."><source src="../media/pipette/demo-12step-v26.mp4" type="video/mp4"></video><figcaption><b>Live demo: one sentence, 12 steps.</b> An edit of three runs on the robot, including the tip change at step 7; badges mark each step and its playback speed.</figcaption></figure>
+      <figure style="flex-grow:1.778"><video autoplay controls muted loop playsinline preload="metadata" poster="../media/pipette/demo-12step-v26.jpg" width="1280" height="720" aria-label="The gantry carries the pipette between five labelled tubes, aspirating, dispensing and mixing; at step 7 it ejects the used tip and picks a fresh one from the yellow tip rack."><source src="../media/pipette/demo-12step-v26.mp4" type="video/mp4"></video><figcaption><b>Live demo: one sentence, 12 steps.</b> An edit of three runs on the robot, including the tip change at step 7; badges mark each step and its playback speed.</figcaption></figure>
+      <figure style="flex-grow:.75"><div class="plan plain" role="img" aria-label="The 12-step plan the model wrote from one typed sentence; the number in the top-left corner of the video is the step being run."><p class="plan-h">Plan from the model, 12 steps</p><ol class="plan-steps"><li>move to WASTE</li><li>move to LYSATE</li><li>move to BUFFER</li><li>aspirate 100 &micro;L, BUFFER</li><li>dispense 100 &micro;L, SAMPLE</li><li>mix SAMPLE, 3 &times; 150 &micro;L</li><li class="hl">change tip</li><li>aspirate 50 &micro;L, SAMPLE</li><li>dispense 50 &micro;L, LYSIS</li><li>aspirate 80 &micro;L, LYSIS</li><li>dispense 80 &micro;L, LYSATE</li><li>move to SAMPLE</li></ol><p class="plan-note">The number in the video&rsquo;s top-left corner is the step being run.</p></div></figure>
     </div>
   </div>
 </header>
@@ -39,14 +40,12 @@
   </div>
   <div class="built">
     <figure style="flex-grow:1.4">
-      <div class="plan" role="img" aria-label="The sentence the operator typed and the 12-step plan the model wrote from it, with the tip change at step 7.">
+      <div class="plan" role="img" aria-label="The sentence the operator typed, with the phrase that asked for the tip change highlighted.">
         <p class="plan-h">Typed request</p>
         <p class="plan-q">&ldquo;First move over the waste, then to the lysate, then to the buffer. Then transfer 100 &micro;L of buffer into the sample and mix the sample with 150 &micro;L 3 times. <mark>Then change the tip.</mark> Transfer 50 &micro;L of the sample into the lysis tube, then transfer 80 &micro;L from the lysis tube into the lysate. At the end, move over to the sample.&rdquo;</p>
-        <p class="plan-h">Plan from the model, 3.9&ndash;4.2 s</p>
-        <ol class="plan-steps two" start="0"><li class="ex">ensure a tip (executor)</li><li>move to WASTE</li><li>move to LYSATE</li><li>move to BUFFER</li><li>aspirate 100 &micro;L, BUFFER</li><li>dispense 100 &micro;L, SAMPLE</li><li>mix SAMPLE, 3 &times; 150 &micro;L</li><li class="hl">change tip</li><li>aspirate 50 &micro;L, SAMPLE</li><li>dispense 50 &micro;L, LYSIS</li><li>aspirate 80 &micro;L, LYSIS</li><li>dispense 80 &micro;L, LYSATE</li><li>move to SAMPLE</li></ol>
         <p class="plan-ok">&check; containers known, volumes in range</p>
       </div>
-      <figcaption><b>Request to plan</b> Step 0 is the executor&rsquo;s own tip check, not a step from the model.</figcaption>
+      <figcaption><b>Typed request</b> From this one sentence, the model wrote the 12-step plan shown beside the video in 3.9&ndash;4.2 s.</figcaption>
     </figure>
     <figure style="flex-grow:1.569"><a href="../media/pipette/diagram-v26.png"><img src="../media/pipette/diagram-v26.png" width="1588" height="1012" loading="lazy" alt="Block diagram: a natural-language command (one operator sentence) goes to the local VLM, Qwen3-VL-8B, which writes a protocol JSON of tubes, microlitres and tip changes with no coordinates. A validator checks tip volume and tube names; after operator confirmation the executor converts microlitres to plunger millimetres and writes tip-change G-code, which drives the GRBL gantry's X, Y, Z and plunger axes."></a><figcaption><b>System diagram</b> The model outputs tube names, volumes and tip changes, but never coordinates.</figcaption></figure>
   </div>
