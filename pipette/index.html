@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A Pipetting Robot You Can Talk To</title>
+<title>A pipetting robot you can communicate with in natural language</title>
 <meta name="description" content="Simon Won-Jin Kim: a three-axis gantry robot with a motorized pipette that turns one typed sentence into a checked pipetting protocol, using a local vision-language model.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
 <header class="vhero">
   <div class="wrap">
     <p class="meta crumb"><a href="../">Simon Won-Jin Kim</a></p>
-    <h1>A Pipetting Robot You Can Talk To</h1>
+    <h1>A pipetting robot you can communicate with in natural language</h1>
     <p class="lede">I built a three-axis gantry robot with a motorized pipette and connected it to a local vision-language model (VLM). From one typed sentence, the model writes a pipetting plan of tube names and volumes, and the robot carries it out, changing its own tip along the way.</p>
     <div class="built">
       <figure style="flex-grow:0;flex-basis:880px;margin:0 auto"><video autoplay controls muted loop playsinline preload="metadata" poster="../media/pipette/demo-12step-v26.jpg" width="1280" height="720" aria-label="The gantry carries the pipette between five labelled tubes, aspirating, dispensing and mixing; at step 7 it ejects the used tip and picks a fresh one from the yellow tip rack."><source src="../media/pipette/demo-12step-v26.mp4" type="video/mp4"></video><figcaption><b>Live demo: one sentence, 12 steps.</b> An edit of three runs on the robot, including the tip change at step 7; badges mark each step and its playback speed.</figcaption></figure>
@@ -58,7 +58,7 @@
     <div>
       <p class="pf-lead"><b>Natural language to robot motion</b> The local VLM writes a checked protocol, and the executor turns it into G-code.</p>
       <ul>
-        <li><b>6 of 8</b> test sentences became the correct protocol in one try each, including one in Korean. Rule-based checks now stop the other two before the robot moves.</li>
+        <li><b>7/8:</b> test sentences converted into a correct protocol, in one try each and including one in Korean.</li>
         <li><b>12 steps</b> from one sentence ran on the robot: moves, transfers, a mix and a tip change.</li>
         <li><b>477&ndash;589 s</b> per run over 3 runs; the two longer runs include fitting the first tip.</li>
       </ul>
