@@ -59,7 +59,7 @@ h2.sec { font-size: 1.5rem; font-weight: 700; font-stretch: 106%; margin: 0 0 1r
 .plan-steps { margin: .1rem 0 .2rem; padding-left: 1.4rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .74rem; }
 .plan-steps .more { list-style: none; color: #666; font-family: "Archivo", system-ui, sans-serif; }
 .plan-ok { color: #1f7a3a; font-weight: 500; }
-/* v26: pipetting robot, the three result blocks of the 2026 report slide, and its 12-step plan */
+/* v26-27: pipetting robot project page (pipette/): the three result blocks of the 2026 report slide, and its 12-step plan */
 .pfacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin: 0 0 1rem; }
 .pfacts > div { background: #f6f8fa; border-radius: 10px; padding: .75rem .9rem .8rem; font-size: .9rem; line-height: 1.45; }
 .pfacts .pf-lead { margin: 0 0 .4rem; color: #444; }
@@ -71,7 +71,6 @@ h2.sec { font-size: 1.5rem; font-weight: 700; font-stretch: 106%; margin: 0 0 1r
 .plan-steps.two li { break-inside: avoid; }
 .plan-steps .ex { color: #888; }
 .plan-steps .hl { color: #c2410c; font-weight: 700; }
-.mcard > a { display: block; }
 @media (max-width: 900px) { .pfacts { grid-template-columns: 1fr; } }
 
 .pub { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 1.3rem; padding: 1rem; margin-bottom: 1rem; align-items: start; }
@@ -106,8 +105,6 @@ h2.sec { font-size: 1.5rem; font-weight: 700; font-stretch: 106%; margin: 0 0 1r
   .pub .thumb.wide img { height: auto; }
 }
 @media (max-width: 700px) { .mcard img, .mcard video { max-height: 340px; } }
-/* v26: the pipetting media row goes 2 x 2 on a phone and shows each image whole, without the 340 px crop */
-@media (max-width: 700px) { .cards.quad .card { flex: 1 1 calc(50% - .5rem); } .cards.quad .mcard img, .cards.quad .mcard video { max-height: none; } }
 /* phone: the result map comes right under the sentence; the sidebar sits at the top, so "About" leaves the nav */
 @media (max-width: 700px) { .pf-hero .f1-map { order: -1; } .nav-about { display: none; } }
 @media (max-width: 700px) { .pill-nav { justify-content: safe center; } .pill-nav a { padding: .25rem .45rem; font-size: .8rem; } }
